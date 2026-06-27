@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Version>0.1.0</Version>
+    <Authors>AJ Hoffer</Authors>
+    <RepositoryUrl>https://github.com/dochoffiday/Xperience.Relay</RepositoryUrl>
+  </PropertyGroup>
+</Project>

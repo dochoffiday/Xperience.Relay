@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Xperience.Relay.Client</PackageId>
+    <Description>Lightweight HTTP client for calling a deployed Xperience.Relay endpoint remotely. Has no dependency on the Kentico SDK -- just HTTP and Xperience.Relay.Contracts.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Xperience.Relay.Contracts\Xperience.Relay.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+  </ItemGroup>
+
+</Project>

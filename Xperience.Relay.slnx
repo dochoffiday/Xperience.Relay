@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Xperience.Relay.Contracts/Xperience.Relay.Contracts.csproj" />
+    <Project Path="src/Xperience.Relay.Client/Xperience.Relay.Client.csproj" />
+    <Project Path="src/Xperience.Relay.Core/Xperience.Relay.Core.csproj" />
+    <Project Path="src/Xperience.Relay.Hosting/Xperience.Relay.Hosting.csproj" />
+    <Project Path="src/Xperience.Relay.Kentico/Xperience.Relay.Kentico.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Xperience.Relay.Client.Tests/Xperience.Relay.Client.Tests.csproj" />
+    <Project Path="tests/Xperience.Relay.Core.Tests/Xperience.Relay.Core.Tests.csproj" />
+  </Folder>
+</Solution>

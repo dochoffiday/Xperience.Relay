@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Xperience.Relay.Kentico</PackageId>
+    <Description>Kentico Xperience handlers for Xperience.Relay commands (move, get-page, get-content, ...). Depends on the Kentico Xperience SDK -- deploy this package as part of the live Xperience web app.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Kentico.Xperience.Core" Version="31.5.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Xperience.Relay.Core\Xperience.Relay.Core.csproj" />
+    <ProjectReference Include="..\Xperience.Relay.Contracts\Xperience.Relay.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

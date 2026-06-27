@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Xperience.Relay.Contracts</PackageId>
+    <Description>Wire contracts (commands, results, discovery metadata) for Xperience.Relay -- a remote command-dispatch layer for Xperience by Kentico. Has no dependency on the Kentico SDK, so it's safe to reference from external clients.</Description>
+  </PropertyGroup>
+
+</Project>

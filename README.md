@@ -64,7 +64,7 @@ last resort.
 - `get-page-info` and `get-content-info` are the cheap, system-fields-only versions -- useful for resolving a path to an ID before a `move` without fetching full content fields.
 - `create-content-hub-folder` is idempotent -- safe to call even if the path already exists.
 - `create-content-item` accepts a binary file via `Asset.Base64` (Base64-encoded), publishes the item after creation, and optionally moves it into a content hub folder.
-- `query-content-items` includes draft content (`ForPreview = true`). `ContentKind` is `ReusableContent` or `WebPage`. At least one `Columns` entry is required.
+- `query-content-items` includes draft content (`ForPreview = true`). `ContentKind` is `"ReusableContent"` or `"WebPage"` (string, not integer) — `RelayClient` handles this automatically; if calling the HTTP API directly, pass the string value. At least one `Columns` entry is required.
 - `update-web-page` preserves the page's current published/draft state -- re-publishes if it was published, leaves as draft otherwise. `LinkedItemFields` maps field name to a list of content item GUIDs; pass an empty list to clear a field.
 
 ## Usage

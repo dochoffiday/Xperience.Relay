@@ -11,6 +11,8 @@ namespace Xperience.Relay.Hosting;
 
 public static class RelayEndpointRouteBuilderExtensions
 {
+    private static readonly JsonSerializerOptions DeserializeOptions = new(JsonSerializerDefaults.Web);
+
     /// <summary>
     /// Maps the relay's three HTTP endpoints under <see cref="RelayHostingOptions.BasePath"/>:
     /// POST {basePath}/commands (single command), POST {basePath}/batch (ordered list of commands),
@@ -67,7 +69,7 @@ public static class RelayEndpointRouteBuilderExtensions
         IRelayCommand? command;
         try
         {
-            command = (IRelayCommand?)envelope.Parameters.Deserialize(commandType);
+            command = (IRelayCommand?)envelope.Parameters.Deserialize(commandType, DeserializeOptions);
         }
         catch (JsonException ex)
         {

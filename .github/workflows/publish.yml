@@ -24,27 +24,19 @@ jobs:
         id: version
         run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
 
-      - name: Build
-        run: |
-          dotnet build src/Xperience.Relay.Contracts/Xperience.Relay.Contracts.csproj \
-            src/Xperience.Relay.Core/Xperience.Relay.Core.csproj \
-            src/Xperience.Relay.Client/Xperience.Relay.Client.csproj \
-            src/Xperience.Relay.Hosting/Xperience.Relay.Hosting.csproj \
-            src/Xperience.Relay.Kentico/Xperience.Relay.Kentico.csproj \
-            --configuration Release \
-            -p:Version=${{ steps.version.outputs.version }}
-
       - name: Pack
         run: |
-          dotnet pack src/Xperience.Relay.Contracts/Xperience.Relay.Contracts.csproj \
+          for proj in \
+            src/Xperience.Relay.Contracts/Xperience.Relay.Contracts.csproj \
             src/Xperience.Relay.Core/Xperience.Relay.Core.csproj \
             src/Xperience.Relay.Client/Xperience.Relay.Client.csproj \
             src/Xperience.Relay.Hosting/Xperience.Relay.Hosting.csproj \
-            src/Xperience.Relay.Kentico/Xperience.Relay.Kentico.csproj \
-            --configuration Release \
-            -p:Version=${{ steps.version.outputs.version }} \
-            --output ./nupkgs \
-            --no-build
+            src/Xperience.Relay.Kentico/Xperience.Relay.Kentico.csproj; do
+            dotnet pack "$proj" \
+              --configuration Release \
+              -p:Version=${{ steps.version.outputs.version }} \
+              --output ./nupkgs
+          done
 
       - name: NuGet login
         uses: NuGet/login@v1

@@ -46,12 +46,11 @@ jobs:
             --output ./nupkgs \
             --no-build
 
-      - name: Get NuGet OIDC token
-        id: nuget-token
-        run: |
-          token=$(curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=nuget.org" | jq -r '.value')
-          echo "token=$token" >> "$GITHUB_OUTPUT"
+      - name: NuGet login
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: ${{ secrets.NUGET_USER }}
 
       - name: Push to NuGet.org
-        run: dotnet nuget push "./nupkgs/*.nupkg" --api-key ${{ steps.nuget-token.outputs.token }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push "./nupkgs/*.nupkg" --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate

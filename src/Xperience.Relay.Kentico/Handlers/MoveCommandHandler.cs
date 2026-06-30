@@ -37,12 +37,11 @@ public class MoveCommandHandler : IRelayCommandHandler<MoveCommand>
             return RelayCommandResult.Fail($"Web page {command.WebPageId} was not found.");
         }
 
-        var nextOrder = await GetNextChildOrderAsync(command.ParentWebPageId, cancellationToken);
         var userId = _serviceAccountResolver.ResolveUserId();
         var webPageManager = _webPageManagerFactory.Create(channelId.Value, userId);
 
         await webPageManager.Move(
-            new MoveWebPageParameters(command.WebPageId, command.ParentWebPageId, nextOrder),
+            new MoveWebPageParameters(command.WebPageId, command.ParentWebPageId),
             cancellationToken);
 
         return RelayCommandResult.Ok($"Moved web page {command.WebPageId} under parent {command.ParentWebPageId}.");
@@ -60,20 +59,5 @@ public class MoveCommandHandler : IRelayCommandHandler<MoveCommand>
             cancellationToken: cancellationToken);
 
         return channelIds.FirstOrDefault();
-    }
-
-    /// <summary>Appends as the last child: one past the highest existing sibling order, or 0 if there are no siblings yet.</summary>
-    private async Task<int> GetNextChildOrderAsync(int parentWebPageId, CancellationToken cancellationToken)
-    {
-        var builder = new ContentItemQueryBuilder()
-            .ForContentTypes(_ => { })
-            .Parameters(p => p.Where(w => w.WhereEquals("WebPageItemParentID", parentWebPageId)));
-
-        var orders = await _contentQueryExecutor.GetWebPageResult(
-            builder,
-            container => container.WebPageItemOrder,
-            cancellationToken: cancellationToken);
-
-        return orders.Any() ? orders.Max() + 1 : 0;
     }
 }

@@ -1,4 +1,5 @@
 using CMS.ContentEngine;
+using CMS.DataEngine;
 using Microsoft.Extensions.Options;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
@@ -15,6 +16,7 @@ namespace Xperience.Relay.Kentico.Handlers;
 /// </summary>
 public class CreateContentHubFolderCommandHandler(
     IContentFolderManagerFactory contentFolderManagerFactory,
+    IInfoProvider<ContentFolderInfo> contentFolderInfoProvider,
     ServiceAccountResolver serviceAccountResolver,
     IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<CreateContentHubFolderCommand>
 {
@@ -35,12 +37,31 @@ public class CreateContentHubFolderCommandHandler(
 
         foreach (var segment in command.FolderPath.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
         {
-            var child = await folderManager.Get(segment);
+            // Scope the lookup to children of the current folder by display name.
+            // folderManager.Get(name) does a global code-name lookup and would silently
+            // match a same-named folder elsewhere in the tree.
+            var child = contentFolderInfoProvider.Get()
+                .WhereEquals(nameof(ContentFolderInfo.ContentFolderParentFolderID), current.ContentFolderID)
+                .WhereEquals(nameof(ContentFolderInfo.ContentFolderDisplayName), segment)
+                .FirstOrDefault();
+
             if (child == null)
             {
-                await folderManager.Create(current.ContentFolderID, new CreateContentFolderParameters(displayName: segment, name: segment));
-                child = await folderManager.Get(segment);
+                // Leave Name unset so Kentico generates a safe code name from the display name,
+                // rather than using the raw segment string which may contain spaces or special chars.
+                await folderManager.Create(current.ContentFolderID, new CreateContentFolderParameters(displayName: segment, name: null));
+
+                child = contentFolderInfoProvider.Get()
+                    .WhereEquals(nameof(ContentFolderInfo.ContentFolderParentFolderID), current.ContentFolderID)
+                    .WhereEquals(nameof(ContentFolderInfo.ContentFolderDisplayName), segment)
+                    .FirstOrDefault();
+
+                if (child == null)
+                {
+                    return RelayCommandResult.Fail($"Folder segment '{segment}' was created but could not be retrieved.");
+                }
             }
+
             current = child;
         }
 

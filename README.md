@@ -94,12 +94,10 @@ since the page-info handler is implemented via a content item query instead (see
 `LanguageName` (defaulting to `RelayKenticoOptions.DefaultLanguageName`). `GetContentInfoCommand`
 doesn't need it, since it goes through `IContentItemManager.GetContentItemMetadata` directly.
 
-**Why `move`'s sibling order is computed, not requested.** Since the command has no `Order` field
-by design, `MoveCommandHandler.GetNextChildOrderAsync` queries the target parent's existing children,
-takes `Max(WebPageItemOrder) + 1` (or `0` if there are none), and passes that into
-`MoveWebPageParameters`. This is a best-effort assumption about `Order`'s semantics (0-based,
-sequential) -- not verified against a live Xperience instance, since none was available while
-building this.
+**Why `move` doesn't specify a sibling order.** The Kentico docs show `MoveWebPageParameters`
+taking only `(webPageId, parentWebPageId)` with no order argument, implying Kentico handles
+last-child placement itself. The handler passes those two arguments and lets Kentico decide
+placement order.
 
 **Why `ContentInfo.WorkspaceName` holds a numeric ID, not a friendly name.** `ContentItemMetadata`
 exposes `WorkspaceId`, but no public API surface for resolving a workspace's display name was found
@@ -133,11 +131,15 @@ query result rather than calling a separate metadata API, so the channel ID and 
 resolved in a single round-trip. If the page was published the handler calls `TryPublish` after
 `TryUpdateDraft`; if it was a draft the update stays as a draft.
 
-**Why `create-content-hub-folder` walks segments rather than posting the full path.** Kentico's
-`IContentFolderManager` creates one folder at a time under a known parent. There's no "ensure path"
-API, so the handler splits the slash-separated path, calls `Get` for each segment (to check
-existence), and calls `Create` only for missing ones. This makes the command idempotent at each
-segment boundary, not just at the leaf.
+**Why `create-content-hub-folder` uses `IInfoProvider<ContentFolderInfo>` instead of
+`IContentFolderManager.Get`.** `IContentFolderManager` creates one folder at a time under a known
+parent, and there's no "ensure path" API. The handler splits the path and walks segments. The
+existence check uses `IInfoProvider<ContentFolderInfo>` filtered by both
+`ContentFolderParentFolderID` and `ContentFolderDisplayName` rather than `folderManager.Get(name)`,
+because `Get` is a global code-name lookup -- it would silently match a same-named folder anywhere
+in the tree and cause the walk to jump to the wrong branch. The `Create` call also omits `Name` so
+Kentico generates a safe code name from the display name, since raw path segments may contain spaces
+or special characters that aren't valid code name characters.
 
 ## What's not built yet
 

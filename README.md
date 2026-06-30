@@ -23,7 +23,7 @@ it, so a remote caller's client library never needs it.
 |---|---|---|
 | `Xperience.Relay.Contracts` | No | Command/result/envelope types shared by every other package. |
 | `Xperience.Relay.Core` | No | Command dispatch (`IRelayDispatcher`), pipeline behaviors, verb registry. Self-rolled, no MediatR dependency. |
-| `Xperience.Relay.Kentico` | Yes (`Kentico.Xperience.Core` 31.5.4) | Handlers that actually call Kentico APIs (`IWebPageManager`, `IContentItemManager`, ...). Deployed as part of the live Xperience app. |
+| `Xperience.Relay.Kentico` | Yes (`Kentico.Xperience.Core` >= 30.12.2) | Handlers that actually call Kentico APIs (`IWebPageManager`, `IContentItemManager`, ...). Deployed as part of the live Xperience app. |
 | `Xperience.Relay.Hosting` | No | ASP.NET Core endpoints (`/commands`, `/batch`, `/verbs`) exposing the dispatcher over HTTP, with API-key auth. |
 | `Xperience.Relay.Client` | No | Lightweight remote caller (`RelayClient`) -- no Kentico SDK dependency, just HTTP + the `Contracts` types. Resolves each command's verb from its `[RelayCommand]` attribute and posts to `/commands`/`/batch`, or reads `/verbs`. |
 

@@ -64,6 +64,12 @@ through JSON as a last resort.
   it, and optionally moves it into a content hub folder. Scalar fields go in `Fields`
   (`Dictionary<string, JsonElement>`); a binary file goes in `Asset` as a Base64-encoded string (see
   below). Returns `CreateContentItemResult { ContentItemGuid, ContentItemId }`.
+- **`query-content-items`** -- `QueryContentItemsCommand { ContentTypeName, IsWebPage, LanguageName?, Columns, WhereEquals? }`.
+  Fetches content items or web pages of a given type, returning only the requested columns as
+  `QueryContentItemsResult { Items: List<Dictionary<string, JsonElement>> }`. `IsWebPage` switches
+  between the web-page and reusable content item executor paths. `WhereEquals` filters are ANDed.
+  At least one column must be specified. Queries with `ForPreview = true` so draft content is
+  included.
 - **`update-web-page`** -- `UpdateWebPageCommand { WebPageId, LanguageName?, Fields?, LinkedItemFields? }`.
   Updates fields on an existing web page. Scalar fields go in `Fields`; linked-item fields (where
   the value is a list of content item GUIDs) go in `LinkedItemFields` -- pass an empty list to clear

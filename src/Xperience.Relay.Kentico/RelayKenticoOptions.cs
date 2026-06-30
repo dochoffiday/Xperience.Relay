@@ -14,4 +14,7 @@ public class RelayKenticoOptions
 
     /// <summary>Language used by commands that don't specify one explicitly.</summary>
     public string DefaultLanguageName { get; set; } = "en";
+
+    /// <summary>Workspace used by commands that don't specify one explicitly.</summary>
+    public string DefaultWorkspaceName { get; set; } = string.Empty;
 }

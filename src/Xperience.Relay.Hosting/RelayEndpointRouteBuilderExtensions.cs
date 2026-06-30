@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -11,7 +12,10 @@ namespace Xperience.Relay.Hosting;
 
 public static class RelayEndpointRouteBuilderExtensions
 {
-    private static readonly JsonSerializerOptions DeserializeOptions = new(JsonSerializerDefaults.Web);
+    private static readonly JsonSerializerOptions DeserializeOptions = new(JsonSerializerDefaults.Web)
+    {
+        Converters = { new JsonStringEnumConverter() }
+    };
 
     /// <summary>
     /// Maps the relay's three HTTP endpoints under <see cref="RelayHostingOptions.BasePath"/>:

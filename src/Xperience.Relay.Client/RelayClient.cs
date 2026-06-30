@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Xperience.Relay.Contracts;
 
 namespace Xperience.Relay.Client;
@@ -12,7 +13,10 @@ namespace Xperience.Relay.Client;
 /// </summary>
 public class RelayClient
 {
-    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
+    {
+        Converters = { new JsonStringEnumConverter() }
+    };
     private static readonly ConcurrentDictionary<Type, string> VerbsByCommandType = new();
 
     private readonly HttpClient _httpClient;

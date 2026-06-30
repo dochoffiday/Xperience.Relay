@@ -2,9 +2,15 @@ using System.Text.Json;
 
 namespace Xperience.Relay.Contracts.Commands;
 
+public enum RelayContentKind
+{
+    ReusableContent,
+    WebPage,
+}
+
 /// <summary>
 /// Queries reusable content items or web pages of a given content type, returning only the
-/// requested columns. Use <see cref="IsWebPage"/> to switch between the web-page and reusable
+/// requested columns. Use <see cref="ContentKind"/> to switch between the web-page and reusable
 /// content item executor paths. Results land in <see cref="QueryContentItemsResult"/> in
 /// <see cref="RelayCommandResult.Data"/>.
 /// </summary>
@@ -13,8 +19,7 @@ public class QueryContentItemsCommand : IRelayCommand
 {
     public string ContentTypeName { get; set; } = string.Empty;
 
-    /// <summary>When true, uses the web-page executor path; otherwise uses the reusable content item path.</summary>
-    public bool IsWebPage { get; set; }
+    public RelayContentKind ContentKind { get; set; } = RelayContentKind.ReusableContent;
 
     /// <summary>Defaults to <c>RelayKenticoOptions.DefaultLanguageName</c> when null.</summary>
     public string? LanguageName { get; set; }

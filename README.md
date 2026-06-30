@@ -37,135 +37,35 @@ at startup. A handler implements `IRelayCommandHandler<TCommand>` and is resolve
 
 Results travel as `RelayCommandResult { Success, Message, Error, Data }`. `Data` is `object?` rather
 than a generic type parameter, deliberately -- since everything crosses the wire as JSON anyway,
-adding a second generic type parameter through the dispatcher would buy nothing. Query-style verbs
-(`get-page`, `get-content-info`, ...) put their DTO in `Data`; callers deserialize based on which
-verb they called. `RelayCommandResult.GetData<T>()` handles this: it tries a direct cast first,
-falls back to `JsonElement.Deserialize<T>` if the result arrived over the wire, and round-trips
-through JSON as a last resort.
+adding a second generic type parameter through the dispatcher would buy nothing. Query-style commands
+put their DTO in `Data`; callers deserialize based on which command they called.
+`RelayCommandResult.GetData<T>()` handles this: it tries a direct cast first, falls back to
+`JsonElement.Deserialize<T>` if the result arrived over the wire, and round-trips through JSON as a
+last resort.
 
-## Verbs implemented so far
+## Commands
 
-- **`move`** -- `MoveCommand { WebPageId, ParentWebPageId }`. Deliberately has no `Order` field --
-  it always appends as the last child. Reordering is a future, separate `sort` command's job, not
-  this one's. Also deliberately assumes the parent already exists; this command does not create
-  folders along the way.
-- **`get-page-info`** / **`get-page`** -- `GetPageInfoCommand`/`GetPageCommand`, returning
-  `WebPageInfo`/`WebPageData`. Split this way (rather than always returning full field data) because
-  the cheap, system-fields-only version is what a caller needs to resolve a path to an ID before
-  sending a `move`, without paying for fetching a page's full content fields.
-- **`get-content-info`** / **`get-content`** -- same split, for reusable content items, returning
-  `ContentInfo`/`ContentData`.
-- **`create-content-hub-folder`** -- `CreateContentHubFolderCommand { FolderPath, WorkspaceName? }`.
-  Walks a slash-separated path (e.g. `"Imports/Audio"`) and creates any missing segments. Idempotent
-  -- safe to call even if the path already exists. Returns `CreateContentHubFolderResult { ContentFolderId }`
-  so the caller can feed the ID straight into a `create-content-item` command.
-- **`create-content-item`** -- `CreateContentItemCommand { ContentTypeName, DisplayName, LanguageName?,
-  WorkspaceName?, ContentFolderId?, Fields?, Asset? }`. Creates a new reusable content item, publishes
-  it, and optionally moves it into a content hub folder. Scalar fields go in `Fields`
-  (`Dictionary<string, JsonElement>`); a binary file goes in `Asset` as a Base64-encoded string (see
-  below). Returns `CreateContentItemResult { ContentItemGuid, ContentItemId }`.
-- **`query-content-items`** -- `QueryContentItemsCommand { ContentTypeName, IsWebPage, LanguageName?, Columns, WhereEquals? }`.
-  Fetches content items or web pages of a given type, returning only the requested columns as
-  `QueryContentItemsResult { Items: List<Dictionary<string, JsonElement>> }`. `IsWebPage` switches
-  between the web-page and reusable content item executor paths. `WhereEquals` filters are ANDed.
-  At least one column must be specified. Queries with `ForPreview = true` so draft content is
-  included.
-- **`update-web-page`** -- `UpdateWebPageCommand { WebPageId, LanguageName?, Fields?, LinkedItemFields? }`.
-  Updates fields on an existing web page. Scalar fields go in `Fields`; linked-item fields (where
-  the value is a list of content item GUIDs) go in `LinkedItemFields` -- pass an empty list to clear
-  a field. Preserves the page's current published/draft state: if it was published the draft is
-  immediately re-published after the update; if it was a draft the update stays as a draft.
+| Command | Parameters | Returns |
+|---|---|---|
+| `move` | `WebPageId`, `ParentWebPageId` | — |
+| `get-page-info` | `WebPageId`, `LanguageName?` | `WebPageInfo` |
+| `get-page` | `WebPageId`, `LanguageName?` | `WebPageData` |
+| `get-content-info` | `ContentItemId` | `ContentInfo` |
+| `get-content` | `ContentItemId`, `LanguageName?` | `ContentData` |
+| `create-content-hub-folder` | `FolderPath`, `WorkspaceName?` | `CreateContentHubFolderResult` |
+| `create-content-item` | `ContentTypeName`, `DisplayName`, `LanguageName?`, `WorkspaceName?`, `ContentFolderId?`, `Fields?`, `Asset?` | `CreateContentItemResult` |
+| `query-content-items` | `ContentTypeName`, `ContentKind`, `LanguageName?`, `Columns`, `WhereEquals?` | `QueryContentItemsResult` |
+| `update-web-page` | `WebPageId`, `LanguageName?`, `Fields?`, `LinkedItemFields?` | — |
 
-`GetPageCommand`/`GetContentCommand` always compose their `*Info` counterpart internally and layer
-field data on top, rather than duplicating the system-fields lookup.
-
-## Non-obvious implementation decisions
-
-**Why `MoveCommandHandler` doesn't use `IWebsiteChannelContext`.** Kentico's docs show
-`IWebPageManager` instances created via `webPageManagerFactory.Create(websiteChannelContext.WebsiteChannelID, userId)`
--- but that assumes you're inside a request already scoped to a known channel (e.g. rendering a
-page on that channel's site). Relay commands arrive channel-agnostic: a bare `WebPageId` with no
-known channel. So `MoveCommandHandler` resolves the channel ID first via a channel-agnostic content
-item query (`ContentItemQueryBuilder().ForContentTypes(...)`, reading
-`IWebPageContentQueryDataContainer.WebPageItemWebsiteChannelID`), *then* creates the channel-scoped
-manager. `GetPageInfoCommandHandler` and `UpdateWebPageCommandHandler` use the same query-based
-approach for the same reason.
-
-**Why `LanguageName` exists on some commands but not others.** `IWebPageManager.GetWebPageMetadata`
-and `IContentItemManager.GetContentItemMetadata` are language-neutral (no language parameter) --
-confirmed by reflecting over the real compiled `Kentico.Xperience.Core` SDK, not by guessing. But
-since the page-info handler is implemented via a content item query instead (see above), and any
-`ContentItemQueryBuilder` query requires `.InLanguage(...)`, `GetPageInfoCommand`, `GetPageCommand`,
-`GetContentCommand`, `UpdateWebPageCommand`, and `CreateContentItemCommand` all carry a nullable
-`LanguageName` (defaulting to `RelayKenticoOptions.DefaultLanguageName`). `GetContentInfoCommand`
-doesn't need it, since it goes through `IContentItemManager.GetContentItemMetadata` directly.
-
-**Why `move` doesn't specify a sibling order.** The Kentico docs show `MoveWebPageParameters`
-taking only `(webPageId, parentWebPageId)` with no order argument, implying Kentico handles
-last-child placement itself. The handler passes those two arguments and lets Kentico decide
-placement order.
-
-**Why `ContentInfo.WorkspaceName` holds a numeric ID, not a friendly name.** `ContentItemMetadata`
-exposes `WorkspaceId`, but no public API surface for resolving a workspace's display name was found
-in `Kentico.Xperience.Core` 31.5.4 (confirmed by reflecting over every type containing "Workspace" in
-the compiled assemblies -- none exist in the public API at this SDK version). If a later SDK version
-adds one, `GetContentInfoCommandHandler.FetchContentInfoAsync` is the place to use it.
-
-**Why the API key check in `RelayApiKeyEndpointFilter` hashes both sides before comparing.**
-`CryptographicOperations.FixedTimeEquals` is constant-time only when both inputs are the same
-length; comparing raw UTF-8 bytes of a wrong-length guess could still leak length via early
-allocation/comparison differences. Hashing both sides first (SHA-256) normalizes the length before
-the fixed-time comparison.
-
-**Why `RelayCommandResult.Data` isn't generic.** Considered threading a `TResult` generic parameter
-through `IRelayCommandHandler<TCommand, TResult>` and `RelayDispatcher`, but since results always
-serialize to JSON for the HTTP layer anyway, that would add real complexity (the dispatcher's
-reflection-based invocation in `RelayDispatcher.InvokeHandlerAsync` would need a second generic
-dimension) for no benefit a caller couldn't get more simply by deserializing `Data` into the DTO
-they expect for the verb they called.
-
-**Why `create-content-item` sends binary files as Base64.** All relay commands travel as plain JSON
-inside `RelayCommandEnvelope.Parameters`. Rather than designing a separate multipart upload path
-just for asset-bearing commands, the asset bytes are Base64-encoded in `RelayAsset.Base64` and
-decoded server-side to a temp file. The handler writes the bytes to a temp path, wraps it in
-Kentico's `ContentItemAssetMetadataWithSource`, and deletes the temp file in a `finally` block
-regardless of outcome.
-
-**Why `update-web-page` reads `ContentItemCommonDataVersionStatus` before writing.** The handler
-needs to know whether to re-publish after the update. It reads `VersionStatus` from the content
-query result rather than calling a separate metadata API, so the channel ID and published state are
-resolved in a single round-trip. If the page was published the handler calls `TryPublish` after
-`TryUpdateDraft`; if it was a draft the update stays as a draft.
-
-**Why `create-content-hub-folder` uses `IInfoProvider<ContentFolderInfo>` instead of
-`IContentFolderManager.Get`.** `IContentFolderManager` creates one folder at a time under a known
-parent, and there's no "ensure path" API. The handler splits the path and walks segments. The
-existence check uses `IInfoProvider<ContentFolderInfo>` filtered by both
-`ContentFolderParentFolderID` and `ContentFolderDisplayName` rather than `folderManager.Get(name)`,
-because `Get` is a global code-name lookup -- it would silently match a same-named folder anywhere
-in the tree and cause the walk to jump to the wrong branch. The `Create` call also omits `Name` so
-Kentico generates a safe code name from the display name, since raw path segments may contain spaces
-or special characters that aren't valid code name characters.
-
-## What's not built yet
-
-- **Integration/live testing** -- everything here is compile-verified against the real
-  `Kentico.Xperience.Core` 31.5.4 assembly (via a throwaway reflection probe used while building this,
-  not checked in), but none of it has run against an actual Xperience database. Treat the Kentico
-  handlers as "should work per the documented API," not "verified."
-- **`sort` command** -- explicitly deferred; `move` always appends last.
-- Per-request user attribution for Kentico's "Modified By" auditing. Right now every command runs as
-  one fixed `RelayKenticoOptions.ServiceAccountUserName`. Note that even per-request attribution
-  would *not* enforce that user's actual Kentico permissions -- Kentico's management API
-  (`IWebPageManagerFactory.Create(channelId, userId)`, `IContentItemManagerFactory.Create(userId)`)
-  documents that the `userId` is used for audit attribution only, not permission checks.
-- LICENSE file (this repo is public on GitHub; license choice not yet decided).
-
-## Publishing
-
-Packages are published to NuGet.org automatically by `.github/workflows/publish.yml` when a `v*.*.*`
-tag is pushed. The workflow builds and packs all five source projects at the tagged version, then
-pushes them to `https://api.nuget.org/v3/index.json`.
+**Notes:**
+- `LanguageName` defaults to `RelayKenticoOptions.DefaultLanguageName` when omitted.
+- `WorkspaceName` defaults to `RelayKenticoOptions.DefaultWorkspaceName` when omitted.
+- `get-page` / `get-content` compose their `*-info` counterpart internally and layer field data on top.
+- `get-page-info` and `get-content-info` are the cheap, system-fields-only versions -- useful for resolving a path to an ID before a `move` without fetching full content fields.
+- `create-content-hub-folder` is idempotent -- safe to call even if the path already exists.
+- `create-content-item` accepts a binary file via `Asset.Base64` (Base64-encoded), publishes the item after creation, and optionally moves it into a content hub folder.
+- `query-content-items` includes draft content (`ForPreview = true`). `ContentKind` is `ReusableContent` or `WebPage`. At least one `Columns` entry is required.
+- `update-web-page` preserves the page's current published/draft state -- re-publishes if it was published, leaves as draft otherwise. `LinkedItemFields` maps field name to a list of content item GUIDs; pass an empty list to clear a field.
 
 ## Usage
 
@@ -215,7 +115,7 @@ builder.Services.AddRelayClient(options =>
 });
 ```
 
-Inject `RelayClient` and call verbs directly:
+Inject `RelayClient` and call commands directly:
 
 ```csharp
 public class MyService(RelayClient relay)
@@ -250,8 +150,95 @@ public class MyService(RelayClient relay)
             },
         });
 
-        // Discovery -- lists verbs supported by the deployed relay endpoint
+        // Discovery -- lists commands supported by the deployed relay endpoint
         var discovery = await relay.GetDiscoveryAsync();
     }
 }
 ```
+
+## Non-obvious implementation decisions
+
+**Why `MoveCommandHandler` doesn't use `IWebsiteChannelContext`.** Kentico's docs show
+`IWebPageManager` instances created via `webPageManagerFactory.Create(websiteChannelContext.WebsiteChannelID, userId)`
+-- but that assumes you're inside a request already scoped to a known channel (e.g. rendering a
+page on that channel's site). Relay commands arrive channel-agnostic: a bare `WebPageId` with no
+known channel. So `MoveCommandHandler` resolves the channel ID first via a channel-agnostic content
+item query (`ContentItemQueryBuilder().ForContentTypes(...)`, reading
+`IWebPageContentQueryDataContainer.WebPageItemWebsiteChannelID`), *then* creates the channel-scoped
+manager. `GetPageInfoCommandHandler` and `UpdateWebPageCommandHandler` use the same query-based
+approach for the same reason.
+
+**Why `LanguageName` exists on some commands but not others.** `IWebPageManager.GetWebPageMetadata`
+and `IContentItemManager.GetContentItemMetadata` are language-neutral (no language parameter) --
+confirmed by reflecting over the real compiled `Kentico.Xperience.Core` SDK, not by guessing. But
+since the page-info handler is implemented via a content item query instead (see above), and any
+`ContentItemQueryBuilder` query requires `.InLanguage(...)`, `GetPageInfoCommand`, `GetPageCommand`,
+`GetContentCommand`, `UpdateWebPageCommand`, and `CreateContentItemCommand` all carry a nullable
+`LanguageName` (defaulting to `RelayKenticoOptions.DefaultLanguageName`). `GetContentInfoCommand`
+doesn't need it, since it goes through `IContentItemManager.GetContentItemMetadata` directly.
+
+**Why `move` doesn't specify a sibling order.** The Kentico docs show `MoveWebPageParameters`
+taking only `(webPageId, parentWebPageId)` with no order argument, implying Kentico handles
+last-child placement itself. The handler passes those two arguments and lets Kentico decide
+placement order.
+
+**Why `ContentInfo.WorkspaceName` holds a numeric ID, not a friendly name.** `ContentItemMetadata`
+exposes `WorkspaceId`, but no public API surface for resolving a workspace's display name was found
+in `Kentico.Xperience.Core` 31.5.4 (confirmed by reflecting over every type containing "Workspace" in
+the compiled assemblies -- none exist in the public API at this SDK version). If a later SDK version
+adds one, `GetContentInfoCommandHandler.FetchContentInfoAsync` is the place to use it.
+
+**Why the API key check in `RelayApiKeyEndpointFilter` hashes both sides before comparing.**
+`CryptographicOperations.FixedTimeEquals` is constant-time only when both inputs are the same
+length; comparing raw UTF-8 bytes of a wrong-length guess could still leak length via early
+allocation/comparison differences. Hashing both sides first (SHA-256) normalizes the length before
+the fixed-time comparison.
+
+**Why `RelayCommandResult.Data` isn't generic.** Considered threading a `TResult` generic parameter
+through `IRelayCommandHandler<TCommand, TResult>` and `RelayDispatcher`, but since results always
+serialize to JSON for the HTTP layer anyway, that would add real complexity (the dispatcher's
+reflection-based invocation in `RelayDispatcher.InvokeHandlerAsync` would need a second generic
+dimension) for no benefit a caller couldn't get more simply by deserializing `Data` into the DTO
+they expect for the command they called.
+
+**Why `create-content-item` sends binary files as Base64.** All relay commands travel as plain JSON
+inside `RelayCommandEnvelope.Parameters`. Rather than designing a separate multipart upload path
+just for asset-bearing commands, the asset bytes are Base64-encoded in `RelayAsset.Base64` and
+decoded server-side to a temp file. The handler writes the bytes to a temp path, wraps it in
+Kentico's `ContentItemAssetMetadataWithSource`, and deletes the temp file in a `finally` block
+regardless of outcome.
+
+**Why `update-web-page` reads `ContentItemCommonDataVersionStatus` before writing.** The handler
+needs to know whether to re-publish after the update. It reads `VersionStatus` from the content
+query result rather than calling a separate metadata API, so the channel ID and published state are
+resolved in a single round-trip. If the page was published the handler calls `TryPublish` after
+`TryUpdateDraft`; if it was a draft the update stays as a draft.
+
+**Why `create-content-hub-folder` uses `IInfoProvider<ContentFolderInfo>` instead of
+`IContentFolderManager.Get`.** `IContentFolderManager` creates one folder at a time under a known
+parent, and there's no "ensure path" API. The handler splits the path and walks segments. The
+existence check uses `IInfoProvider<ContentFolderInfo>` filtered by both
+`ContentFolderParentFolderID` and `ContentFolderDisplayName` rather than `folderManager.Get(name)`,
+because `Get` is a global code-name lookup -- it would silently match a same-named folder anywhere
+in the tree and cause the walk to jump to the wrong branch. The `Create` call also omits `Name` so
+Kentico generates a safe code name from the display name, since raw path segments may contain spaces
+or special characters that aren't valid code name characters.
+
+## What's not built yet
+
+- **Integration/live testing** -- everything here is compile-verified against the real
+  `Kentico.Xperience.Core` 31.5.4 assembly (via a throwaway reflection probe used while building this,
+  not checked in), but none of it has run against an actual Xperience database. Treat the Kentico
+  handlers as "should work per the documented API," not "verified."
+- **`sort` command** -- explicitly deferred; `move` always appends last.
+- Per-request user attribution for Kentico's "Modified By" auditing. Right now every command runs as
+  one fixed `RelayKenticoOptions.ServiceAccountUserName`. Note that even per-request attribution
+  would *not* enforce that user's actual Kentico permissions -- Kentico's management API
+  (`IWebPageManagerFactory.Create(channelId, userId)`, `IContentItemManagerFactory.Create(userId)`)
+  documents that the `userId` is used for audit attribution only, not permission checks.
+
+## Publishing
+
+Packages are published to NuGet.org automatically by `.github/workflows/publish.yml` when a `v*.*.*`
+tag is pushed. The workflow builds and packs all five source projects at the tagged version, then
+pushes them to `https://api.nuget.org/v3/index.json`.

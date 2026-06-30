@@ -51,7 +51,7 @@ public class QueryContentItemsCommandHandler(
 
         IEnumerable<Dictionary<string, JsonElement>> rows;
 
-        if (command.IsWebPage)
+        if (command.ContentKind == RelayContentKind.WebPage)
         {
             // IWebPageContentQueryDataContainer and IContentQueryDataContainer both have TryGetValue
             // but are distinct types, so the extraction lambda must be typed separately for each path.

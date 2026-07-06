@@ -7,8 +7,8 @@ namespace Xperience.Relay.Contracts.Commands;
 /// specify an explicit sibling order; the moved page is appended as the last child. Use a separate
 /// sort command afterward if a specific order is required.
 /// </summary>
-[RelayCommand("move")]
-public class MoveCommand : IRelayCommand
+[RelayCommand("move-web-page")]
+public class MoveWebPageCommand : IRelayCommand
 {
     public int WebPageId { get; set; }
     public int ParentWebPageId { get; set; }

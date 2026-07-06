@@ -7,9 +7,9 @@ namespace Xperience.Relay.Core.Tests;
 
 public class RelayDispatcherTests
 {
-    private class FakeMoveHandler : IRelayCommandHandler<MoveCommand>
+    private class FakeMoveHandler : IRelayCommandHandler<MoveWebPageCommand>
     {
-        public Task<RelayCommandResult> HandleAsync(MoveCommand command, CancellationToken cancellationToken = default) =>
+        public Task<RelayCommandResult> HandleAsync(MoveWebPageCommand command, CancellationToken cancellationToken = default) =>
             Task.FromResult(RelayCommandResult.Ok($"moved {command.WebPageId} to {command.ParentWebPageId}"));
     }
 
@@ -29,8 +29,8 @@ public class RelayDispatcherTests
     private static IServiceProvider BuildServices(Action<IServiceCollection>? configure = null)
     {
         var services = new ServiceCollection();
-        services.AddRelayCore(typeof(MoveCommand).Assembly);
-        services.AddScoped<IRelayCommandHandler<MoveCommand>, FakeMoveHandler>();
+        services.AddRelayCore(typeof(MoveWebPageCommand).Assembly);
+        services.AddScoped<IRelayCommandHandler<MoveWebPageCommand>, FakeMoveHandler>();
         configure?.Invoke(services);
         return services.BuildServiceProvider();
     }
@@ -41,7 +41,7 @@ public class RelayDispatcherTests
         var provider = BuildServices();
         var dispatcher = provider.GetRequiredService<IRelayDispatcher>();
 
-        var result = await dispatcher.DispatchAsync(new MoveCommand { WebPageId = 42, ParentWebPageId = 7 });
+        var result = await dispatcher.DispatchAsync(new MoveWebPageCommand { WebPageId = 42, ParentWebPageId = 7 });
 
         Assert.True(result.Success);
         Assert.Equal("moved 42 to 7", result.Message);
@@ -54,20 +54,20 @@ public class RelayDispatcherTests
         var provider = BuildServices(services => services.AddSingleton<IRelayPipelineBehavior>(behavior));
         var dispatcher = provider.GetRequiredService<IRelayDispatcher>();
 
-        await dispatcher.DispatchAsync(new MoveCommand { WebPageId = 1, ParentWebPageId = 0 });
+        await dispatcher.DispatchAsync(new MoveWebPageCommand { WebPageId = 1, ParentWebPageId = 0 });
 
         Assert.Equal(new[] { "before", "after" }, behavior.CallOrder);
     }
 
     [Theory]
-    [InlineData("move", typeof(MoveCommand))]
+    [InlineData("move-web-page", typeof(MoveWebPageCommand))]
     [InlineData("get-page-info", typeof(GetPageInfoCommand))]
     [InlineData("get-page", typeof(GetPageCommand))]
     [InlineData("get-content-info", typeof(GetContentInfoCommand))]
     [InlineData("get-content", typeof(GetContentCommand))]
     public void RelayVerbRegistry_DiscoversCommandsFromContractsAssembly(string verb, Type expectedType)
     {
-        var registry = new RelayVerbRegistry(new[] { typeof(MoveCommand).Assembly });
+        var registry = new RelayVerbRegistry(new[] { typeof(MoveWebPageCommand).Assembly });
 
         Assert.Contains(verb, registry.Verbs, StringComparer.OrdinalIgnoreCase);
         Assert.True(registry.TryGetCommandType(verb, out var commandType));

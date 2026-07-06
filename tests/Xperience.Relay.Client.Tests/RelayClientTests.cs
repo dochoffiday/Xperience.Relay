@@ -16,7 +16,7 @@ public class RelayClientTests
         var handler = new StubHttpMessageHandler(HttpStatusCode.OK, """{"success":true,"message":"moved 42 to 7"}""");
         var client = BuildClient(handler);
 
-        var result = await client.ExecuteAsync(new MoveCommand { WebPageId = 42, ParentWebPageId = 7 });
+        var result = await client.ExecuteAsync(new MoveWebPageCommand { WebPageId = 42, ParentWebPageId = 7 });
 
         Assert.True(result.Success);
         Assert.Equal("moved 42 to 7", result.Message);
@@ -24,7 +24,7 @@ public class RelayClientTests
         Assert.Equal("https://relay.example.com/api/relay/commands", handler.LastRequest.RequestUri!.ToString());
 
         using var sentBody = JsonDocument.Parse(handler.LastRequestBody!);
-        Assert.Equal("move", sentBody.RootElement.GetProperty("verb").GetString());
+        Assert.Equal("move-web-page", sentBody.RootElement.GetProperty("verb").GetString());
         Assert.Equal(42, sentBody.RootElement.GetProperty("parameters").GetProperty("webPageId").GetInt32());
     }
 
@@ -34,7 +34,7 @@ public class RelayClientTests
         var handler = new StubHttpMessageHandler(HttpStatusCode.OK, """{"success":true}""");
         var client = BuildClient(handler);
 
-        await client.ExecuteAsync(new MoveCommand { WebPageId = 1, ParentWebPageId = 2 }, @as: "firstMove");
+        await client.ExecuteAsync(new MoveWebPageCommand { WebPageId = 1, ParentWebPageId = 2 }, @as: "firstMove");
 
         using var sentBody = JsonDocument.Parse(handler.LastRequestBody!);
         Assert.Equal("firstMove", sentBody.RootElement.GetProperty("as").GetString());
@@ -46,7 +46,7 @@ public class RelayClientTests
         var handler = new StubHttpMessageHandler(HttpStatusCode.OK, "null");
         var client = BuildClient(handler);
 
-        var result = await client.ExecuteAsync(new MoveCommand { WebPageId = 1, ParentWebPageId = 2 });
+        var result = await client.ExecuteAsync(new MoveWebPageCommand { WebPageId = 1, ParentWebPageId = 2 });
 
         Assert.False(result.Success);
         Assert.NotNull(result.Error);
@@ -69,8 +69,8 @@ public class RelayClientTests
 
         var result = await client.ExecuteBatchAsync(new IRelayCommand[]
         {
-            new MoveCommand { WebPageId = 1, ParentWebPageId = 0 },
-            new MoveCommand { WebPageId = 2, ParentWebPageId = 1 },
+            new MoveWebPageCommand { WebPageId = 1, ParentWebPageId = 0 },
+            new MoveWebPageCommand { WebPageId = 2, ParentWebPageId = 1 },
         });
 
         Assert.Equal(2, result.Results.Count);
@@ -88,7 +88,7 @@ public class RelayClientTests
     {
         var handler = new StubHttpMessageHandler(
             HttpStatusCode.OK,
-            """{"relayVersion":"0.1.0","verbs":[{"verb":"move","parameters":{}}]}""");
+            """{"relayVersion":"0.1.0","verbs":[{"verb":"move-web-page","parameters":{}}]}""");
         var client = BuildClient(handler);
 
         var discovery = await client.GetDiscoveryAsync();
@@ -96,7 +96,7 @@ public class RelayClientTests
         Assert.Equal(HttpMethod.Get, handler.LastRequest!.Method);
         Assert.Equal("https://relay.example.com/api/relay/verbs", handler.LastRequest.RequestUri!.ToString());
         Assert.Equal("0.1.0", discovery.RelayVersion);
-        Assert.Equal("move", discovery.Verbs.Single().Verb);
+        Assert.Equal("move-web-page", discovery.Verbs.Single().Verb);
     }
 
     private class UndecoratedCommand : IRelayCommand

@@ -47,7 +47,8 @@ last resort.
 
 | Command | Parameters | Returns |
 |---|---|---|
-| `move` | `WebPageId`, `ParentWebPageId` | — |
+| `move-web-page` | `WebPageId`, `ParentWebPageId` | — |
+| `move-content-item` | `ContentItemIds`, `ContentFolderId` | — |
 | `get-page-info` | `WebPageId`, `LanguageName?` | `WebPageInfo` |
 | `get-page` | `WebPageId`, `LanguageName?` | `WebPageData` |
 | `get-content-info` | `ContentItemId` | `ContentInfo` |
@@ -79,7 +80,7 @@ Xperience web app project, then wire up DI and routing:
 ```csharp
 // Program.cs / Startup.cs
 
-builder.Services.AddRelayCore(typeof(MoveCommand).Assembly);   // verb registry + dispatcher
+builder.Services.AddRelayCore(typeof(MoveWebPageCommand).Assembly);   // verb registry + dispatcher
 builder.Services.AddRelayKentico();                             // Kentico-backed handlers
 builder.Services.AddRelayHosting();                             // API key filter
 
@@ -126,7 +127,7 @@ public class MyService(RelayClient relay)
     public async Task RunAsync()
     {
         // Single command
-        var result = await relay.ExecuteAsync(new MoveCommand
+        var result = await relay.ExecuteAsync(new MoveWebPageCommand
         {
             WebPageId       = 42,
             ParentWebPageId = 7,
@@ -161,15 +162,14 @@ public class MyService(RelayClient relay)
 
 ## Non-obvious implementation decisions
 
-**Why `MoveCommandHandler` doesn't use `IWebsiteChannelContext`.** Kentico's docs show
+**Why `MoveWebPageCommandHandler` doesn't use `IWebsiteChannelContext`.** Kentico's docs show
 `IWebPageManager` instances created via `webPageManagerFactory.Create(websiteChannelContext.WebsiteChannelID, userId)`
 -- but that assumes you're inside a request already scoped to a known channel (e.g. rendering a
 page on that channel's site). Relay commands arrive channel-agnostic: a bare `WebPageId` with no
-known channel. So `MoveCommandHandler` resolves the channel ID first via a channel-agnostic content
-item query (`ContentItemQueryBuilder().ForContentTypes(...)`, reading
-`IWebPageContentQueryDataContainer.WebPageItemWebsiteChannelID`), *then* creates the channel-scoped
-manager. `GetPageInfoCommandHandler` and `UpdateWebPageCommandHandler` use the same query-based
-approach for the same reason.
+known channel. So `MoveWebPageCommandHandler` resolves the channel ID first via
+`IInfoProvider<WebPageItemInfo>`, reading `WebPageItemWebsiteChannelID`, *then* creates the
+channel-scoped manager. `GetPageInfoCommandHandler` and `UpdateWebPageCommandHandler` use the same
+direct provider approach for the same reason.
 
 **Why `LanguageName` exists on some commands but not others.** `IWebPageManager.GetWebPageMetadata`
 and `IContentItemManager.GetContentItemMetadata` are language-neutral (no language parameter) --

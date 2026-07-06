@@ -9,9 +9,9 @@ namespace Xperience.Relay.Kentico;
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Registers handlers for the Kentico-backed relay commands (move, get-page-info, get-page,
-    /// get-content-info, get-content, create-content-item, update-web-page, update-content-item,
-    /// get-content-hub-folder, query-content-items). Call
+    /// Registers handlers for the Kentico-backed relay commands (move-web-page, move-content-item,
+    /// get-page-info, get-page, get-content-info, get-content, create-content-item, update-web-page,
+    /// update-content-item, get-content-hub-folder, query-content-items). Call
     /// <c>services.Configure&lt;RelayKenticoOptions&gt;(...)</c> separately to set
     /// <see cref="RelayKenticoOptions.ServiceAccountUserName"/> and related options.
     /// </summary>
@@ -19,7 +19,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<ServiceAccountResolver>();
 
-        services.AddScoped<IRelayCommandHandler<MoveCommand>, MoveCommandHandler>();
+        services.AddScoped<IRelayCommandHandler<MoveWebPageCommand>, MoveWebPageCommandHandler>();
+        services.AddScoped<IRelayCommandHandler<MoveContentItemCommand>, MoveContentItemCommandHandler>();
         services.AddScoped<GetPageInfoCommandHandler>();
         services.AddScoped<IRelayCommandHandler<GetPageInfoCommand>>(sp => sp.GetRequiredService<GetPageInfoCommandHandler>());
         services.AddScoped<IRelayCommandHandler<GetPageCommand>, GetPageCommandHandler>();

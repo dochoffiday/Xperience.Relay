@@ -14,12 +14,12 @@ namespace Xperience.Relay.Kentico.Handlers;
 /// direct WebPageItemInfo lookup before a channel-scoped <see cref="IWebPageManager"/> can
 /// be created.
 /// </summary>
-public class MoveCommandHandler(
+public class MoveWebPageCommandHandler(
     IWebPageManagerFactory webPageManagerFactory,
     IInfoProvider<WebPageItemInfo> webPageItemInfoProvider,
-    ServiceAccountResolver serviceAccountResolver) : IRelayCommandHandler<MoveCommand>
+    ServiceAccountResolver serviceAccountResolver) : IRelayCommandHandler<MoveWebPageCommand>
 {
-    public async Task<RelayCommandResult> HandleAsync(MoveCommand command, CancellationToken cancellationToken = default)
+    public async Task<RelayCommandResult> HandleAsync(MoveWebPageCommand command, CancellationToken cancellationToken = default)
     {
         var webPageItem = webPageItemInfoProvider.Get()
             .WhereEquals(nameof(WebPageItemInfo.WebPageItemID), command.WebPageId)

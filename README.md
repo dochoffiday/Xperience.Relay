@@ -52,20 +52,22 @@ last resort.
 | `get-page` | `WebPageId`, `LanguageName?` | `WebPageData` |
 | `get-content-info` | `ContentItemId` | `ContentInfo` |
 | `get-content` | `ContentItemId`, `LanguageName?` | `ContentData` |
-| `create-content-hub-folder` | `FolderPath`, `WorkspaceName?` | `CreateContentHubFolderResult` |
+| `get-content-hub-folder` | `FolderPath`, `WorkspaceName?` | `GetContentHubFolderResult` |
 | `create-content-item` | `ContentTypeName`, `DisplayName`, `LanguageName?`, `WorkspaceName?`, `ContentFolderId?`, `Fields?`, `Asset?` | `CreateContentItemResult` |
 | `query-content-items` | `ContentTypeName`, `ContentKind`, `LanguageName?`, `WebsiteChannelName?`, `Columns`, `WhereEquals?` | `QueryContentItemsResult` |
 | `update-web-page` | `WebPageId`, `LanguageName?`, `Fields?`, `LinkedItemFields?` | — |
+| `update-content-item` | `ContentItemId`, `LanguageName?`, `Fields?`, `LinkedItemFields?` | — |
 
 **Notes:**
 - `LanguageName` defaults to `RelayKenticoOptions.DefaultLanguageName` when omitted.
 - `WorkspaceName` defaults to `RelayKenticoOptions.DefaultWorkspaceName` when omitted.
 - `get-page` / `get-content` compose their `*-info` counterpart internally and layer field data on top.
 - `get-page-info` and `get-content-info` are the cheap, system-fields-only versions -- useful for resolving a path to an ID before a `move` without fetching full content fields.
-- `create-content-hub-folder` is idempotent -- safe to call even if the path already exists.
+- `get-content-hub-folder` is idempotent -- always returns the folder ID, creating any missing path segments along the way.
 - `create-content-item` accepts a binary file via `Asset.Base64` (Base64-encoded), publishes the item after creation, and optionally moves it into a content hub folder.
 - `query-content-items` includes draft content (`ForPreview = true`). `ContentKind` is `"ReusableContent"` or `"WebPage"` (string, not integer) — `RelayClient` handles this automatically; if calling the HTTP API directly, pass the string value. At least one `Columns` entry is required. `WebsiteChannelName` is required when `ContentKind` is `"WebPage"` and defaults to `RelayKenticoOptions.DefaultWebsiteChannelName`.
 - `update-web-page` preserves the page's current published/draft state -- re-publishes if it was published, leaves as draft otherwise. `LinkedItemFields` maps field name to a list of content item GUIDs; pass an empty list to clear a field.
+- `update-content-item` is the reusable content item equivalent of `update-web-page` -- same field/linked-item shape, same published/draft state preservation, no channel required.
 
 ## Usage
 
@@ -137,7 +139,7 @@ public class MyService(RelayClient relay)
         // Batch -- commands run in order, results returned in the same order
         var batch = await relay.ExecuteBatchAsync(new IRelayCommand[]
         {
-            new CreateContentHubFolderCommand { FolderPath = "Imports/Audio" },
+            new GetContentHubFolderCommand { FolderPath = "Imports/Audio" },
             new CreateContentItemCommand
             {
                 ContentTypeName = "Podcast.Episode",
@@ -215,7 +217,7 @@ query result rather than calling a separate metadata API, so the channel ID and 
 resolved in a single round-trip. If the page was published the handler calls `TryPublish` after
 `TryUpdateDraft`; if it was a draft the update stays as a draft.
 
-**Why `create-content-hub-folder` uses `IInfoProvider<ContentFolderInfo>` instead of
+**Why `get-content-hub-folder` uses `IInfoProvider<ContentFolderInfo>` instead of
 `IContentFolderManager.Get`.** `IContentFolderManager` creates one folder at a time under a known
 parent, and there's no "ensure path" API. The handler splits the path and walks segments. The
 existence check uses `IInfoProvider<ContentFolderInfo>` filtered by both

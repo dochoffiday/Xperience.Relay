@@ -22,7 +22,7 @@ public class CreateContentItemCommand : IRelayCommand
     public string? WorkspaceName { get; set; }
 
     /// <summary>
-    /// Content hub folder to place the item in after creation. Use the "create-content-hub-folder"
+    /// Content hub folder to place the item in after creation. Use the "get-content-hub-folder"
     /// command first to resolve or create the target folder and get its ID.
     /// </summary>
     public int? ContentFolderId { get; set; }

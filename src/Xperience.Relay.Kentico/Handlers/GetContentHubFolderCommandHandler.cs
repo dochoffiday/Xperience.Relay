@@ -11,18 +11,18 @@ namespace Xperience.Relay.Kentico.Handlers;
 /// <summary>
 /// Ensures a content hub folder path exists, creating any missing path segments. Idempotent —
 /// safe to call even if all segments already exist. Returns the leaf folder's
-/// <see cref="CreateContentHubFolderResult.ContentFolderId"/> so the caller can pass it directly
+/// <see cref="GetContentHubFolderResult.ContentFolderId"/> so the caller can pass it directly
 /// to a "create-content-item" command without a separate lookup.
 /// </summary>
-public class CreateContentHubFolderCommandHandler(
+public class GetContentHubFolderCommandHandler(
     IContentFolderManagerFactory contentFolderManagerFactory,
     IInfoProvider<ContentFolderInfo> contentFolderInfoProvider,
     ServiceAccountResolver serviceAccountResolver,
-    IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<CreateContentHubFolderCommand>
+    IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<GetContentHubFolderCommand>
 {
     private readonly RelayKenticoOptions _options = options.Value;
 
-    public async Task<RelayCommandResult> HandleAsync(CreateContentHubFolderCommand command, CancellationToken cancellationToken = default)
+    public async Task<RelayCommandResult> HandleAsync(GetContentHubFolderCommand command, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(command.FolderPath))
         {
@@ -76,7 +76,7 @@ public class CreateContentHubFolderCommandHandler(
 
         return RelayCommandResult.Ok(
             message: $"Folder '{command.FolderPath}' is ready (ID={current.ContentFolderID}).",
-            data: new CreateContentHubFolderResult { ContentFolderId = current.ContentFolderID });
+            data: new GetContentHubFolderResult { ContentFolderId = current.ContentFolderID });
     }
 
     private static string GetCodeName(string folderPath)

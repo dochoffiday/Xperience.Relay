@@ -24,8 +24,10 @@ public static class RelayEndpointRouteBuilderExtensions
     /// </summary>
     public static IEndpointRouteBuilder MapRelayEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var basePath = endpoints.ServiceProvider.GetRequiredService<IOptions<RelayHostingOptions>>().Value.BasePath;
-        var group = endpoints.MapGroup(basePath).AddEndpointFilter<RelayApiKeyEndpointFilter>();
+        var hostingOptions = endpoints.ServiceProvider.GetRequiredService<IOptions<RelayHostingOptions>>().Value;
+        var group = endpoints.MapGroup(hostingOptions.BasePath)
+            .AddEndpointFilter<RelayApiKeyEndpointFilter>()
+            .AddEndpointFilter(new RelayRequestBodySizeFilter(hostingOptions.MaxRequestBodySizeBytes));
 
         group.MapPost("/commands", ExecuteCommandAsync);
         group.MapPost("/batch", ExecuteBatchAsync);

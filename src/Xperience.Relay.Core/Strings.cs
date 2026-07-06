@@ -27,4 +27,19 @@ public static class Strings
 
         return final;
     }
+
+    /// <summary>
+    /// Shortens a string to the specified length, returning the original string if it's shorter than or equal to that length.
+    /// </summary>
+    public static string TrimLength(this string input, int length)
+    {
+        if (string.IsNullOrEmpty(input))
+        {
+            return input;
+        }
+
+        return input.Length > length
+                ? input[..length]
+                : input;
+    }
 }

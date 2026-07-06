@@ -1,6 +1,6 @@
-using System.Text.Json;
 using CMS.ContentEngine;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
 using Xperience.Relay.Core;
@@ -74,7 +74,7 @@ public class CreateContentItemCommandHandler(
             var createParams = new CreateContentItemParameters(
                 command.ContentTypeName,
                 null,
-                command.DisplayName,
+                command.DisplayName?.TrimLength(100),
                 languageName,
                 workspaceName);
 

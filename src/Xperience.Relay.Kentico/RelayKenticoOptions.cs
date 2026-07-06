@@ -17,4 +17,10 @@ public class RelayKenticoOptions
 
     /// <summary>Workspace used by commands that don't specify one explicitly.</summary>
     public string DefaultWorkspaceName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Website channel name used by <c>query-content-items</c> when <c>ContentKind</c> is
+    /// <c>WebPage</c> and the command doesn't specify one explicitly.
+    /// </summary>
+    public string DefaultWebsiteChannelName { get; set; } = string.Empty;
 }

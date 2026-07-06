@@ -35,7 +35,7 @@ public class GetPageCommandHandler : IRelayCommandHandler<GetPageCommand>
     {
         var languageName = command.LanguageName ?? _optionsValue.DefaultLanguageName;
 
-        var info = await _pageInfoHandler.FetchWebPageInfoAsync(command.WebPageId, languageName, cancellationToken);
+        var info = _pageInfoHandler.FetchWebPageInfo(command.WebPageId, languageName);
         if (info is null)
         {
             return RelayCommandResult.Fail($"Web page {command.WebPageId} was not found.");

@@ -54,7 +54,7 @@ last resort.
 | `get-content` | `ContentItemId`, `LanguageName?` | `ContentData` |
 | `create-content-hub-folder` | `FolderPath`, `WorkspaceName?` | `CreateContentHubFolderResult` |
 | `create-content-item` | `ContentTypeName`, `DisplayName`, `LanguageName?`, `WorkspaceName?`, `ContentFolderId?`, `Fields?`, `Asset?` | `CreateContentItemResult` |
-| `query-content-items` | `ContentTypeName`, `ContentKind`, `LanguageName?`, `Columns`, `WhereEquals?` | `QueryContentItemsResult` |
+| `query-content-items` | `ContentTypeName`, `ContentKind`, `LanguageName?`, `WebsiteChannelName?`, `Columns`, `WhereEquals?` | `QueryContentItemsResult` |
 | `update-web-page` | `WebPageId`, `LanguageName?`, `Fields?`, `LinkedItemFields?` | — |
 
 **Notes:**
@@ -64,7 +64,7 @@ last resort.
 - `get-page-info` and `get-content-info` are the cheap, system-fields-only versions -- useful for resolving a path to an ID before a `move` without fetching full content fields.
 - `create-content-hub-folder` is idempotent -- safe to call even if the path already exists.
 - `create-content-item` accepts a binary file via `Asset.Base64` (Base64-encoded), publishes the item after creation, and optionally moves it into a content hub folder.
-- `query-content-items` includes draft content (`ForPreview = true`). `ContentKind` is `"ReusableContent"` or `"WebPage"` (string, not integer) — `RelayClient` handles this automatically; if calling the HTTP API directly, pass the string value. At least one `Columns` entry is required.
+- `query-content-items` includes draft content (`ForPreview = true`). `ContentKind` is `"ReusableContent"` or `"WebPage"` (string, not integer) — `RelayClient` handles this automatically; if calling the HTTP API directly, pass the string value. At least one `Columns` entry is required. `WebsiteChannelName` is required when `ContentKind` is `"WebPage"` and defaults to `RelayKenticoOptions.DefaultWebsiteChannelName`.
 - `update-web-page` preserves the page's current published/draft state -- re-publishes if it was published, leaves as draft otherwise. `LinkedItemFields` maps field name to a list of content item GUIDs; pass an empty list to clear a field.
 
 ## Usage
@@ -83,9 +83,10 @@ builder.Services.AddRelayHosting();                             // API key filte
 
 builder.Services.Configure<RelayKenticoOptions>(options =>
 {
-    options.ServiceAccountUserName = "relay-service";  // Kentico user attributed to changes (audit only)
-    options.DefaultLanguageName    = "en";             // used when a command doesn't specify a language
-    options.DefaultWorkspaceName   = "Default";        // used when a command doesn't specify a workspace
+    options.ServiceAccountUserName      = "relay-service";  // Kentico user attributed to changes (audit only)
+    options.DefaultLanguageName         = "en";             // used when a command doesn't specify a language
+    options.DefaultWorkspaceName        = "Default";        // used when a command doesn't specify a workspace
+    options.DefaultWebsiteChannelName   = "MyChannel";      // required for query-content-items with ContentKind=WebPage
 });
 
 builder.Services.Configure<RelayHostingOptions>(options =>

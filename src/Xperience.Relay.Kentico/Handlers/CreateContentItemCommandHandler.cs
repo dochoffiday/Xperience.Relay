@@ -29,6 +29,11 @@ public class CreateContentItemCommandHandler(
         var languageName = command.LanguageName ?? _options.DefaultLanguageName;
         var workspaceName = command.WorkspaceName ?? _options.DefaultWorkspaceName;
 
+        if (string.IsNullOrWhiteSpace(workspaceName))
+        {
+            return RelayCommandResult.Fail("WorkspaceName is required. Set it on the command or configure RelayKenticoOptions.DefaultWorkspaceName.");
+        }
+
         var contentItemManager = contentItemManagerFactory.Create(userId);
 
         var fieldData = new Dictionary<string, object?>();

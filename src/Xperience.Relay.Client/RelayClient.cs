@@ -33,7 +33,12 @@ public class RelayClient
     {
         var envelope = ToEnvelope(command, @as);
         using var response = await _httpClient.PostAsJsonAsync("commands", envelope, JsonOptions, cancellationToken);
-        response.EnsureSuccessStatusCode();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var body = await response.Content.ReadAsStringAsync(cancellationToken);
+            return RelayCommandResult.Fail($"Relay endpoint returned {(int)response.StatusCode}: {body}");
+        }
 
         var result = await response.Content.ReadFromJsonAsync<RelayCommandResult>(JsonOptions, cancellationToken);
         return result ?? RelayCommandResult.Fail("Relay endpoint returned an empty response.");
@@ -49,7 +54,12 @@ public class RelayClient
         };
 
         using var response = await _httpClient.PostAsJsonAsync("batch", request, JsonOptions, cancellationToken);
-        response.EnsureSuccessStatusCode();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var body = await response.Content.ReadAsStringAsync(cancellationToken);
+            throw new HttpRequestException($"Relay batch endpoint returned {(int)response.StatusCode}: {body}", null, response.StatusCode);
+        }
 
         var result = await response.Content.ReadFromJsonAsync<RelayBatchResponse>(JsonOptions, cancellationToken);
         return result ?? new RelayBatchResponse();

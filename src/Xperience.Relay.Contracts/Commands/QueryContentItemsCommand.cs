@@ -24,6 +24,12 @@ public class QueryContentItemsCommand : IRelayCommand
     /// <summary>Defaults to <c>RelayKenticoOptions.DefaultLanguageName</c> when null.</summary>
     public string? LanguageName { get; set; }
 
+    /// <summary>
+    /// Required when <see cref="ContentKind"/> is <see cref="RelayContentKind.WebPage"/>.
+    /// Defaults to <c>RelayKenticoOptions.DefaultWebsiteChannelName</c> when null.
+    /// </summary>
+    public string? WebsiteChannelName { get; set; }
+
     /// <summary>Columns to fetch and return. At least one column is required.</summary>
     public List<string> Columns { get; set; } = [];
 

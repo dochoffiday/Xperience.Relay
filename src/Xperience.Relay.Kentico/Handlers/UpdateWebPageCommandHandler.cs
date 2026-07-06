@@ -1,6 +1,9 @@
 using System.Text.Json;
 using CMS.ContentEngine;
+using CMS.ContentEngine.Internal;
+using CMS.DataEngine;
 using CMS.Websites;
+using CMS.Websites.Internal;
 using Microsoft.Extensions.Options;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
@@ -16,7 +19,8 @@ namespace Xperience.Relay.Kentico.Handlers;
 /// </summary>
 public class UpdateWebPageCommandHandler(
     IWebPageManagerFactory webPageManagerFactory,
-    IContentQueryExecutor contentQueryExecutor,
+    IInfoProvider<WebPageItemInfo> webPageItemInfoProvider,
+    IInfoProvider<ContentItemCommonDataInfo> contentItemCommonDataInfoProvider,
     ServiceAccountResolver serviceAccountResolver,
     IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<UpdateWebPageCommand>
 {
@@ -32,27 +36,23 @@ public class UpdateWebPageCommandHandler(
 
         var languageName = command.LanguageName ?? _options.DefaultLanguageName;
 
-        var builder = new ContentItemQueryBuilder()
-            .ForContentTypes(_ => { })
-            .Parameters(p => p.Where(w => w.WhereEquals("WebPageItemID", command.WebPageId)));
+        var webPageItem = webPageItemInfoProvider.Get()
+            .WhereEquals(nameof(WebPageItemInfo.WebPageItemID), command.WebPageId)
+            .FirstOrDefault();
 
-        var pages = await contentQueryExecutor.GetWebPageResult(
-            builder,
-            container =>
-            {
-                container.TryGetValue<int>("ContentItemCommonDataVersionStatus", out var versionStatusInt);
-                return (
-                    ChannelId: container.WebPageItemWebsiteChannelID,
-                    IsPublished: (VersionStatus)versionStatusInt == VersionStatus.Published
-                );
-            },
-            cancellationToken: cancellationToken);
-
-        var page = pages.FirstOrDefault();
-        if (page == default)
+        if (webPageItem is null)
         {
             return RelayCommandResult.Fail($"Web page {command.WebPageId} was not found.");
         }
+
+        // Check whether the latest version is published so we can restore state after the update.
+        var commonData = contentItemCommonDataInfoProvider.Get()
+            .WhereEquals(nameof(ContentItemCommonDataInfo.ContentItemCommonDataContentItemID), webPageItem.WebPageItemContentItemID)
+            .WhereTrue(nameof(ContentItemCommonDataInfo.ContentItemCommonDataIsLatest))
+            .FirstOrDefault();
+
+        var isPublished = commonData is not null
+            && commonData.ContentItemCommonDataVersionStatus == VersionStatus.Published;
 
         var fieldData = new Dictionary<string, object?>();
 
@@ -75,13 +75,13 @@ public class UpdateWebPageCommandHandler(
         }
 
         var userId = serviceAccountResolver.ResolveUserId();
-        var webPageManager = webPageManagerFactory.Create(page.ChannelId, userId);
+        var webPageManager = webPageManagerFactory.Create(webPageItem.WebPageItemWebsiteChannelID, userId);
         var itemData = new ContentItemData(fieldData);
 
         await webPageManager.TryCreateDraft(command.WebPageId, languageName);
         await webPageManager.TryUpdateDraft(command.WebPageId, languageName, new UpdateDraftData(itemData));
 
-        if (page.IsPublished)
+        if (isPublished)
         {
             await webPageManager.TryPublish(command.WebPageId, languageName);
         }

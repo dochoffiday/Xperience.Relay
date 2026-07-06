@@ -27,11 +27,21 @@ public class QueryContentItemsCommandHandler(
         }
 
         var languageName = command.LanguageName ?? _options.DefaultLanguageName;
+        var websiteChannelName = command.WebsiteChannelName ?? _options.DefaultWebsiteChannelName;
+
+        if (command.ContentKind == RelayContentKind.WebPage && string.IsNullOrWhiteSpace(websiteChannelName))
+        {
+            return RelayCommandResult.Fail("WebsiteChannelName is required when ContentKind is WebPage. Set it on the command or configure RelayKenticoOptions.DefaultWebsiteChannelName.");
+        }
 
         var builder = new ContentItemQueryBuilder()
             .ForContentType(command.ContentTypeName, q =>
             {
                 q.Columns(command.Columns.ToArray());
+                if (command.ContentKind == RelayContentKind.WebPage)
+                {
+                    q.ForWebsite(websiteChannelName, PathMatch.Section("/"), false);
+                }
             })
             .InLanguage(languageName);
 

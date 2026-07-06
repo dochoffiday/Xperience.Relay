@@ -85,7 +85,14 @@ public static class RelayEndpointRouteBuilderExtensions
             return RelayCommandResult.Fail($"Parameters for verb '{envelope.Verb}' resolved to null.");
         }
 
-        return await dispatcher.DispatchAsync(command, cancellationToken);
+        try
+        {
+            return await dispatcher.DispatchAsync(command, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            return RelayCommandResult.Fail($"Unhandled exception executing verb '{envelope.Verb}': [{ex.GetType().Name}] {ex.Message}");
+        }
     }
 
     private static IResult GetDiscovery(RelayVerbRegistry registry)

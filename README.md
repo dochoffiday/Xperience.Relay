@@ -58,6 +58,7 @@ last resort.
 | `query-content-items` | `ContentTypeName`, `ContentKind`, `LanguageName?`, `WebsiteChannelName?`, `Columns`, `WhereEquals?` | `QueryContentItemsResult` |
 | `update-web-page` | `WebPageId`, `LanguageName?`, `Fields?`, `LinkedItemFields?` | — |
 | `update-content-item` | `ContentItemId`, `LanguageName?`, `Fields?`, `LinkedItemFields?` | — |
+| `query-sql` | `Query` | `QuerySqlResult` |
 
 **Notes:**
 - `LanguageName` defaults to `RelayKenticoOptions.DefaultLanguageName` when omitted.
@@ -69,6 +70,7 @@ last resort.
 - `query-content-items` includes draft content (`ForPreview = true`). `ContentKind` is `"ReusableContent"` or `"WebPage"` (string, not integer) — `RelayClient` handles this automatically; if calling the HTTP API directly, pass the string value. At least one `Columns` entry is required. `WebsiteChannelName` is required when `ContentKind` is `"WebPage"` and defaults to `RelayKenticoOptions.DefaultWebsiteChannelName`.
 - `update-web-page` preserves the page's current published/draft state -- re-publishes if it was published, leaves as draft otherwise. `LinkedItemFields` maps field name to a list of content item GUIDs; pass an empty list to clear a field.
 - `update-content-item` is the reusable content item equivalent of `update-web-page` -- same field/linked-item shape, same published/draft state preservation, no channel required.
+- `query-sql` executes a read-only SQL query against the Xperience database. Only `SELECT` and `WITH...SELECT` statements are permitted; DML/DDL keywords are rejected before execution. `QuerySqlResult` contains `Columns: string[]` and `Rows: string?[][]`. This is an application-level guard — configure a read-only DB login at the database level as the primary control.
 
 ## Usage
 

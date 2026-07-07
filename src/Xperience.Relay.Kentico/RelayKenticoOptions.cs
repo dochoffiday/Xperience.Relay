@@ -23,4 +23,9 @@ public class RelayKenticoOptions
     /// <c>WebPage</c> and the command doesn't specify one explicitly.
     /// </summary>
     public string DefaultWebsiteChannelName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Command timeout in seconds for <c>query-sql</c> execution. Defaults to 30 seconds.
+    /// </summary>
+    public int SqlQueryTimeoutSeconds { get; set; } = 30;
 }

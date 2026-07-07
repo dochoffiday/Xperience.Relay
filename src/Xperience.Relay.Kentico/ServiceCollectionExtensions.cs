@@ -11,7 +11,7 @@ public static class ServiceCollectionExtensions
     /// <summary>
     /// Registers handlers for the Kentico-backed relay commands (move-web-page, move-content-item,
     /// get-page-info, get-page, get-content-info, get-content, create-content-item, update-web-page,
-    /// update-content-item, get-content-hub-folder, query-content-items). Call
+    /// update-content-item, get-content-hub-folder, query-content-items, query-sql). Call
     /// <c>services.Configure&lt;RelayKenticoOptions&gt;(...)</c> separately to set
     /// <see cref="RelayKenticoOptions.ServiceAccountUserName"/> and related options.
     /// </summary>
@@ -32,6 +32,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRelayCommandHandler<UpdateContentItemCommand>, UpdateContentItemCommandHandler>();
         services.AddScoped<IRelayCommandHandler<GetContentHubFolderCommand>, GetContentHubFolderCommandHandler>();
         services.AddScoped<IRelayCommandHandler<QueryContentItemsCommand>, QueryContentItemsCommandHandler>();
+        services.AddScoped<IRelayCommandHandler<QuerySqlCommand>, QuerySqlCommandHandler>();
 
         return services;
     }

@@ -9,10 +9,9 @@ using Xperience.Relay.Kentico.Internal;
 namespace Xperience.Relay.Kentico.Handlers;
 
 /// <summary>
-/// Ensures a content hub folder path exists, creating any missing path segments. Idempotent —
-/// safe to call even if all segments already exist. Returns the leaf folder's
-/// <see cref="GetContentHubFolderResult.ContentFolderId"/> so the caller can pass it directly
-/// to a "create-content-item" command without a separate lookup.
+/// Looks up a content hub folder by ID, code name, or slash-separated path. When using
+/// <c>FolderPath</c> the command is idempotent — it creates any missing path segments along the
+/// way and returns the leaf folder's ID. The ID and code-name modes are read-only lookups.
 /// </summary>
 public class GetContentHubFolderCommandHandler(
     IContentFolderManagerFactory contentFolderManagerFactory,
@@ -24,16 +23,53 @@ public class GetContentHubFolderCommandHandler(
 
     public async Task<RelayCommandResult> HandleAsync(GetContentHubFolderCommand command, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(command.FolderPath))
+        // Exactly one lookup mode must be provided.
+        int providedCount = (command.ContentFolderId.HasValue ? 1 : 0)
+                          + (!string.IsNullOrWhiteSpace(command.CodeName) ? 1 : 0)
+                          + (!string.IsNullOrWhiteSpace(command.FolderPath) ? 1 : 0);
+
+        if (providedCount == 0)
         {
-            return RelayCommandResult.Fail("FolderPath must not be empty.");
+            return RelayCommandResult.Fail("One of ContentFolderId, CodeName, or FolderPath must be provided.");
         }
 
+        if (providedCount > 1)
+        {
+            return RelayCommandResult.Fail("Only one of ContentFolderId, CodeName, or FolderPath may be provided.");
+        }
+
+        if (command.ContentFolderId.HasValue)
+        {
+            var folder = contentFolderInfoProvider.Get()
+                .WhereEquals(nameof(ContentFolderInfo.ContentFolderID), command.ContentFolderId.Value)
+                .FirstOrDefault();
+
+            return folder is null
+                ? RelayCommandResult.Fail($"Content hub folder with ID {command.ContentFolderId.Value} was not found.")
+                : RelayCommandResult.Ok(
+                    message: $"Found folder '{folder.ContentFolderDisplayName}' (ID={folder.ContentFolderID}).",
+                    data: new GetContentHubFolderResult { ContentFolderId = folder.ContentFolderID });
+        }
+
+        if (!string.IsNullOrWhiteSpace(command.CodeName))
+        {
+            var folder = contentFolderInfoProvider.Get()
+                .WhereEquals(nameof(ContentFolderInfo.ContentFolderName), command.CodeName)
+                .FirstOrDefault();
+
+            return folder is null
+                ? RelayCommandResult.Fail($"Content hub folder with code name '{command.CodeName}' was not found.")
+                : RelayCommandResult.Ok(
+                    message: $"Found folder '{folder.ContentFolderDisplayName}' (ID={folder.ContentFolderID}).",
+                    data: new GetContentHubFolderResult { ContentFolderId = folder.ContentFolderID });
+        }
+
+        // FolderPath mode — walk and create if needed.
         var workspaceName = command.WorkspaceName ?? _options.DefaultWorkspaceName;
 
         if (string.IsNullOrWhiteSpace(workspaceName))
         {
-            return RelayCommandResult.Fail("WorkspaceName is required. Set it on the command or configure RelayKenticoOptions.DefaultWorkspaceName.");
+            return RelayCommandResult.Fail("WorkspaceName is required when using FolderPath. Set it on the command or configure RelayKenticoOptions.DefaultWorkspaceName.");
         }
 
         var userId = serviceAccountResolver.ResolveUserId();
@@ -42,7 +78,7 @@ public class GetContentHubFolderCommandHandler(
         var current = await folderManager.GetRoot(workspaceName);
         var workingPath = "";
 
-        foreach (var segment in command.FolderPath.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        foreach (var segment in command.FolderPath!.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
         {
             workingPath += "/" + segment;
 
@@ -81,9 +117,6 @@ public class GetContentHubFolderCommandHandler(
 
     private static string GetCodeName(string folderPath)
     {
-        // Use the full path to generate a code name to reduce the chance of collisions.
-        // Replace slashes with underscores and remove any invalid characters.
-
         folderPath = folderPath
             .TrimStart('/')
             .Replace('/', '_');

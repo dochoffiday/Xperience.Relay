@@ -61,10 +61,25 @@ public class RelayDispatcherTests
 
     [Theory]
     [InlineData("move-web-page", typeof(MoveWebPageCommand))]
+    [InlineData("move-content-item", typeof(MoveContentItemCommand))]
     [InlineData("get-page-info", typeof(GetPageInfoCommand))]
     [InlineData("get-page", typeof(GetPageCommand))]
     [InlineData("get-content-info", typeof(GetContentInfoCommand))]
     [InlineData("get-content", typeof(GetContentCommand))]
+    [InlineData("get-content-hub-folder", typeof(GetContentHubFolderCommand))]
+    [InlineData("create-content-item", typeof(CreateContentItemCommand))]
+    [InlineData("create-web-page", typeof(CreateWebPageCommand))]
+    [InlineData("query-web-page-items", typeof(QueryWebPageItemsCommand))]
+    [InlineData("query-reusable-items", typeof(QueryReusableItemsCommand))]
+    [InlineData("update-web-page", typeof(UpdateWebPageCommand))]
+    [InlineData("update-content-item", typeof(UpdateContentItemCommand))]
+    [InlineData("publish-web-page", typeof(PublishWebPageCommand))]
+    [InlineData("unpublish-web-page", typeof(UnpublishWebPageCommand))]
+    [InlineData("publish-content-item", typeof(PublishContentItemCommand))]
+    [InlineData("unpublish-content-item", typeof(UnpublishContentItemCommand))]
+    [InlineData("delete-web-page", typeof(DeleteWebPageCommand))]
+    [InlineData("delete-content-item", typeof(DeleteContentItemCommand))]
+    [InlineData("query-sql", typeof(QuerySqlCommand))]
     public void RelayVerbRegistry_DiscoversCommandsFromContractsAssembly(string verb, Type expectedType)
     {
         var registry = new RelayVerbRegistry(new[] { typeof(MoveWebPageCommand).Assembly });

@@ -53,6 +53,19 @@ public class RelayClientTests
     }
 
     [Fact]
+    public async Task ExecuteAsync_ReturnsFailResult_WhenServerReturnsNonSuccessStatus()
+    {
+        var handler = new StubHttpMessageHandler(HttpStatusCode.InternalServerError, "Unhandled exception: something broke");
+        var client = BuildClient(handler);
+
+        var result = await client.ExecuteAsync(new MoveWebPageCommand { WebPageId = 1, ParentWebPageId = 2 });
+
+        Assert.False(result.Success);
+        Assert.Contains("500", result.Error);
+        Assert.Contains("Unhandled exception: something broke", result.Error);
+    }
+
+    [Fact]
     public async Task ExecuteAsync_Throws_WhenCommandTypeHasNoRelayCommandAttribute()
     {
         var handler = new StubHttpMessageHandler(HttpStatusCode.OK, "{}");

@@ -56,8 +56,8 @@ last resort.
 | `get-content-hub-folder` | `ContentFolderId?`, `CodeName?`, `FolderPath?`, `WorkspaceName?` | `GetContentHubFolderResult` |
 | `create-content-item` | `ContentTypeName`, `DisplayName`, `LanguageName?`, `WorkspaceName?`, `ContentFolderId?`, `Fields?`, `Asset?` | `CreateContentItemResult` |
 | `create-web-page` | `WebsiteChannelName?`, `ParentWebPageItemId`, `ContentTypeName`, `DisplayName`, `LanguageName?`, `UrlSlug?`, `Fields?`, `LinkedItemFields?`, `PublishAfterCreate?` | `CreateWebPageResult` |
-| `query-web-page-items` | `ContentTypeNames`, `WebsiteChannelName?`, `LanguageName?`, `Columns`, `WhereEquals?` | `QueryItemsResult` |
-| `query-reusable-items` | `ContentTypeNames`, `LanguageName?`, `Columns`, `WhereEquals?` | `QueryItemsResult` |
+| `query-web-page-items` | `ContentTypeNames?`, `WebsiteChannelName?`, `LanguageName?`, `Columns?`, `WhereEquals?` | `QueryItemsResult` |
+| `query-reusable-items` | `ContentTypeNames?`, `LanguageName?`, `Columns?`, `WhereEquals?` | `QueryItemsResult` |
 | `update-web-page` | `WebPageId`, `LanguageName?`, `Fields?`, `LinkedItemFields?` | — |
 | `update-content-item` | `ContentItemId`, `LanguageName?`, `Fields?`, `LinkedItemFields?` | — |
 | `publish-web-page` | `WebPageId`, `LanguageName?` | — |
@@ -103,7 +103,7 @@ builder.Services.Configure<RelayKenticoOptions>(options =>
     options.ServiceAccountUserName      = "relay-service";  // Kentico user attributed to changes (audit only)
     options.DefaultLanguageName         = "en";             // used when a command doesn't specify a language
     options.DefaultWorkspaceName        = "Default";        // used when a command doesn't specify a workspace
-    options.DefaultWebsiteChannelName   = "MyChannel";      // required for query-content-items with ContentKind=WebPage
+    options.DefaultWebsiteChannelName   = "MyChannel";      // required for query-web-page-items
 });
 
 builder.Services.Configure<RelayHostingOptions>(options =>
@@ -194,7 +194,7 @@ since the page-info handler is implemented via a content item query instead (see
 `LanguageName` (defaulting to `RelayKenticoOptions.DefaultLanguageName`). `GetContentInfoCommand`
 doesn't need it, since it goes through `IContentItemManager.GetContentItemMetadata` directly.
 
-**Why `move` doesn't specify a sibling order.** The Kentico docs show `MoveWebPageParameters`
+**Why `move-web-page` doesn't specify a sibling order.** The Kentico docs show `MoveWebPageParameters`
 taking only `(webPageId, parentWebPageId)` with no order argument, implying Kentico handles
 last-child placement itself. The handler passes those two arguments and lets Kentico decide
 placement order.

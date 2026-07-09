@@ -30,6 +30,16 @@ public class CreateContentItemCommand : IRelayCommand
     /// <summary>Scalar fields (string, int, bool, …). JSON element type is preserved by the handler.</summary>
     public Dictionary<string, JsonElement>? Fields { get; set; }
 
+    /// <summary>
+    /// Linked-items fields. Maps field name to a list of ContentItemGUIDs.
+    /// </summary>
+    public Dictionary<string, List<Guid>>? LinkedItemFields { get; set; }
+
+    /// <summary>
+    /// Tag fields. Maps field name to a list of tag GUIDs.
+    /// </summary>
+    public Dictionary<string, List<Guid>>? TagFields { get; set; }
+
     /// <summary>Optional binary asset to upload into one of the content item's asset fields.</summary>
     public RelayAsset? Asset { get; set; }
 }

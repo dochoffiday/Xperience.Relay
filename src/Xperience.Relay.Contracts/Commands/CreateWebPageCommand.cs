@@ -34,6 +34,9 @@ public class CreateWebPageCommand : IRelayCommand
     /// <summary>Linked item fields — field name to list of content item GUIDs.</summary>
     public Dictionary<string, List<Guid>>? LinkedItemFields { get; set; }
 
+    /// <summary>Tag fields — field name to list of tag GUIDs.</summary>
+    public Dictionary<string, List<Guid>>? TagFields { get; set; }
+
     /// <summary>When true, publishes the page immediately after creation. Defaults to false.</summary>
     public bool PublishAfterCreate { get; set; }
 }

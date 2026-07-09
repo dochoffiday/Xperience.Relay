@@ -85,6 +85,17 @@ public class CreateWebPageCommandHandler(
             }
         }
 
+        if (command.TagFields != null)
+        {
+            foreach (var (key, guids) in command.TagFields)
+            {
+                fieldData[key] = new TagReferences
+                {
+                    Tags = guids.Select(g => new TagReference { Identifier = g })
+                };
+            }
+        }
+
         var userId = serviceAccountResolver.ResolveUserId();
         var webPageManager = webPageManagerFactory.Create(websiteChannel.WebsiteChannelID, userId);
 

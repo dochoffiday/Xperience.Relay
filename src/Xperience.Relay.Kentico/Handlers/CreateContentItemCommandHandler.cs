@@ -46,6 +46,27 @@ public class CreateContentItemCommandHandler(
             }
         }
 
+        if (command.LinkedItemFields != null)
+        {
+            foreach (var (key, guids) in command.LinkedItemFields)
+            {
+                fieldData[key] = guids
+                    .Select(g => new ContentItemReference { Identifier = g })
+                    .ToList();
+            }
+        }
+
+        if (command.TagFields != null)
+        {
+            foreach (var (key, guids) in command.TagFields)
+            {
+                fieldData[key] = new TagReferences
+                {
+                    Tags = guids.Select(g => new TagReference { Identifier = g })
+                };
+            }
+        }
+
         string? tempFile = null;
         try
         {

@@ -29,7 +29,8 @@ public class UpdateWebPageCommandHandler(
     public async Task<RelayCommandResult> HandleAsync(UpdateWebPageCommand command, CancellationToken cancellationToken = default)
     {
         if ((command.Fields == null || command.Fields.Count == 0)
-            && (command.LinkedItemFields == null || command.LinkedItemFields.Count == 0))
+            && (command.LinkedItemFields == null || command.LinkedItemFields.Count == 0)
+            && (command.TagFields == null || command.TagFields.Count == 0))
         {
             return RelayCommandResult.Fail("No fields provided — nothing to update.");
         }
@@ -71,6 +72,17 @@ public class UpdateWebPageCommandHandler(
                 fieldData[key] = guids
                     .Select(g => new ContentItemReference { Identifier = g })
                     .ToList();
+            }
+        }
+
+        if (command.TagFields != null)
+        {
+            foreach (var (key, guids) in command.TagFields)
+            {
+                fieldData[key] = new TagReferences
+                {
+                    Tags = guids.Select(g => new TagReference { Identifier = g })
+                };
             }
         }
 

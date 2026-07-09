@@ -54,12 +54,12 @@ last resort.
 | `get-content-info` | `ContentItemId` | `ContentInfo` |
 | `get-content` | `ContentItemId`, `LanguageName?` | `ContentData` |
 | `get-content-hub-folder` | `ContentFolderId?`, `CodeName?`, `FolderPath?`, `WorkspaceName?` | `GetContentHubFolderResult` |
-| `create-content-item` | `ContentTypeName`, `DisplayName`, `LanguageName?`, `WorkspaceName?`, `ContentFolderId?`, `Fields?`, `Asset?` | `CreateContentItemResult` |
-| `create-web-page` | `WebsiteChannelName?`, `ParentWebPageItemId`, `ContentTypeName`, `DisplayName`, `LanguageName?`, `UrlSlug?`, `Fields?`, `LinkedItemFields?`, `PublishAfterCreate?` | `CreateWebPageResult` |
+| `create-content-item` | `ContentTypeName`, `DisplayName`, `LanguageName?`, `WorkspaceName?`, `ContentFolderId?`, `Fields?`, `LinkedItemFields?`, `TagFields?`, `Asset?` | `CreateContentItemResult` |
+| `create-web-page` | `WebsiteChannelName?`, `ParentWebPageItemId`, `ContentTypeName`, `DisplayName`, `LanguageName?`, `UrlSlug?`, `Fields?`, `LinkedItemFields?`, `TagFields?`, `PublishAfterCreate?` | `CreateWebPageResult` |
 | `query-web-page-items` | `ContentTypeNames?`, `WebsiteChannelName?`, `LanguageName?`, `Columns?`, `WhereEquals?` | `QueryItemsResult` |
 | `query-reusable-items` | `ContentTypeNames?`, `LanguageName?`, `Columns?`, `WhereEquals?` | `QueryItemsResult` |
-| `update-web-page` | `WebPageId`, `LanguageName?`, `Fields?`, `LinkedItemFields?` | — |
-| `update-content-item` | `ContentItemId`, `LanguageName?`, `Fields?`, `LinkedItemFields?` | — |
+| `update-web-page` | `WebPageId`, `LanguageName?`, `Fields?`, `LinkedItemFields?`, `TagFields?` | — |
+| `update-content-item` | `ContentItemId`, `LanguageName?`, `Fields?`, `LinkedItemFields?`, `TagFields?` | — |
 | `publish-web-page` | `WebPageId`, `LanguageName?` | — |
 | `unpublish-web-page` | `WebPageId`, `LanguageName?` | — |
 | `publish-content-item` | `ContentItemId`, `LanguageName?` | — |
@@ -76,8 +76,8 @@ last resort.
 - `get-content-hub-folder` accepts exactly one of `ContentFolderId` (numeric ID), `CodeName` (global code name), or `FolderPath` (slash-separated display-name path). The `FolderPath` mode is idempotent — it creates any missing path segments along the way. `WorkspaceName` is only required when using `FolderPath`.
 - `create-content-item` accepts a binary file via `Asset.Base64` (Base64-encoded), publishes the item after creation, and optionally moves it into a content hub folder.
 - `query-web-page-items` and `query-reusable-items` both include draft content (`ForPreview = true`). `ContentTypeNames` accepts zero or more content type names; an empty list queries across all types (Kentico may or may not support this — if it doesn't, it will surface as a fail result). Results are a union across all listed types. Empty `Columns` returns all columns. `WebsiteChannelName` is required on `query-web-page-items` and defaults to `RelayKenticoOptions.DefaultWebsiteChannelName`.
-- `update-web-page` preserves the page's current published/draft state -- re-publishes if it was published, leaves as draft otherwise. `LinkedItemFields` maps field name to a list of content item GUIDs; pass an empty list to clear a field.
-- `update-content-item` is the reusable content item equivalent of `update-web-page` -- same field/linked-item shape, same published/draft state preservation, no channel required.
+- `update-web-page` preserves the page's current published/draft state -- re-publishes if it was published, leaves as draft otherwise. `LinkedItemFields` maps field name to a list of content item GUIDs; `TagFields` maps field name to a list of tag GUIDs; pass an empty list for either to clear that field.
+- `update-content-item` is the reusable content item equivalent of `update-web-page` -- same field/linked-item/tag shape, same published/draft state preservation, no channel required.
 - `publish-web-page` / `unpublish-web-page` and `publish-content-item` / `unpublish-content-item` are no-ops when the item is already in the target state — safe to call idempotently.
 - `create-web-page` creates a new web page as an `InitialDraft`. Set `PublishAfterCreate: true` to publish immediately. `WebsiteChannelName` is matched against the channel code name (not the display name). `ParentWebPageItemId` is required (use the target parent's `WebPageItemID`).
 - `delete-web-page` deletes a language variant of a web page. When `Permanently` is false the page goes to the recycle bin; set it to true to bypass the recycle bin. `RedirectToWebPageId` optionally creates a redirect to another page after deletion.

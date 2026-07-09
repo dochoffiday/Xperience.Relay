@@ -24,4 +24,10 @@ public class UpdateContentItemCommand : IRelayCommand
     /// An empty list clears the field.
     /// </summary>
     public Dictionary<string, List<Guid>>? LinkedItemFields { get; set; }
+
+    /// <summary>
+    /// Tag fields. Maps field name to a list of tag GUIDs.
+    /// An empty list clears the field.
+    /// </summary>
+    public Dictionary<string, List<Guid>>? TagFields { get; set; }
 }

@@ -59,10 +59,7 @@ public class CreateContentItemCommandHandler(
         {
             foreach (var (key, guids) in command.TagFields)
             {
-                fieldData[key] = new TagReferences
-                {
-                    Tags = guids.Select(g => new TagReference { Identifier = g }).ToList()
-                };
+                fieldData[key] = guids.Select(g => new TagReference { Identifier = g }).ToList();
             }
         }
 

@@ -13,6 +13,18 @@ internal static class QueryItemsHelpers
         {
             if (tryGetValue(col, out var val))
             {
+                // Kentico serializes tag/linked-item fields as JSON strings internally.
+                // Embedding them directly avoids double-encoding (string-of-a-string).
+                if (val is string s && s.Length > 0 && (s[0] == '[' || s[0] == '{'))
+                {
+                    try
+                    {
+                        dict[col] = JsonDocument.Parse(s).RootElement.Clone();
+                        continue;
+                    }
+                    catch (JsonException) { }
+                }
+
                 dict[col] = JsonDocument.Parse(JsonSerializer.Serialize(val)).RootElement.Clone();
             }
         }

@@ -1,11 +1,11 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Core;
 
@@ -41,10 +41,10 @@ public static class RelayEndpointRouteBuilderExtensions
         RelayCommandEnvelope envelope,
         IRelayDispatcher dispatcher,
         RelayVerbRegistry registry,
-        ILogger<RelayEndpointRouteBuilderExtensions> logger,
+        ILoggerFactory loggerFactory,
         CancellationToken cancellationToken)
     {
-        var result = await ExecuteEnvelopeAsync(envelope, dispatcher, registry, logger, cancellationToken);
+        var result = await ExecuteEnvelopeAsync(envelope, dispatcher, registry, loggerFactory.CreateLogger("Xperience.Relay.Hosting"), cancellationToken);
         return Results.Ok(result);
     }
 
@@ -52,9 +52,10 @@ public static class RelayEndpointRouteBuilderExtensions
         RelayBatchRequest request,
         IRelayDispatcher dispatcher,
         RelayVerbRegistry registry,
-        ILogger<RelayEndpointRouteBuilderExtensions> logger,
+        ILoggerFactory loggerFactory,
         CancellationToken cancellationToken)
     {
+        var logger = loggerFactory.CreateLogger("Xperience.Relay.Hosting");
         var results = new List<RelayCommandResult>(request.Commands.Count);
         foreach (var envelope in request.Commands)
         {
@@ -68,7 +69,7 @@ public static class RelayEndpointRouteBuilderExtensions
         RelayCommandEnvelope envelope,
         IRelayDispatcher dispatcher,
         RelayVerbRegistry registry,
-        ILogger<RelayEndpointRouteBuilderExtensions> logger,
+        ILogger logger,
         CancellationToken cancellationToken)
     {
         if (!registry.TryGetCommandType(envelope.Verb, out var commandType))

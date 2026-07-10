@@ -1,6 +1,5 @@
 using CMS.ContentEngine;
 using Microsoft.Extensions.Options;
-using System.Text.Json;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
 using Xperience.Relay.Core;
@@ -42,7 +41,7 @@ public class CreateContentItemCommandHandler(
         {
             foreach (var (key, value) in command.Fields)
             {
-                fieldData[key] = DeserializeJsonElement(value);
+                fieldData[key] = QueryItemsHelpers.DeserializeJsonElement(value);
             }
         }
 
@@ -130,15 +129,4 @@ public class CreateContentItemCommandHandler(
         }
     }
 
-    private static object? DeserializeJsonElement(JsonElement element) => element.ValueKind switch
-    {
-        JsonValueKind.String => element.GetString(),
-        JsonValueKind.Number when element.TryGetInt32(out var i) => i,
-        JsonValueKind.Number when element.TryGetInt64(out var l) => l,
-        JsonValueKind.Number => element.GetDouble(),
-        JsonValueKind.True => true,
-        JsonValueKind.False => false,
-        JsonValueKind.Null => null,
-        _ => element.ToString()
-    };
 }

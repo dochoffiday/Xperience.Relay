@@ -31,4 +31,16 @@ internal static class QueryItemsHelpers
         JsonValueKind.False => false,
         _ => null
     };
+
+    internal static object? DeserializeJsonElement(JsonElement element) => element.ValueKind switch
+    {
+        JsonValueKind.String => element.GetString(),
+        JsonValueKind.Number when element.TryGetInt32(out var i) => i,
+        JsonValueKind.Number when element.TryGetInt64(out var l) => l,
+        JsonValueKind.Number => element.GetDouble(),
+        JsonValueKind.True => true,
+        JsonValueKind.False => false,
+        JsonValueKind.Null => null,
+        _ => element.ToString()
+    };
 }

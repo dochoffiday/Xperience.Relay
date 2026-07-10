@@ -1,8 +1,8 @@
-using System.Text.Json;
 using CMS.ContentEngine;
 using CMS.DataEngine;
 using CMS.Websites;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
 using Xperience.Relay.Core;
@@ -91,7 +91,7 @@ public class CreateWebPageCommandHandler(
             {
                 fieldData[key] = new TagReferences
                 {
-                    Tags = guids.Select(g => new TagReference { Identifier = g })
+                    Tags = guids.Select(g => new TagReference { Identifier = g }).ToList()
                 };
             }
         }

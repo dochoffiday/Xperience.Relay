@@ -62,7 +62,7 @@ public class CreateContentItemCommandHandler(
             {
                 fieldData[key] = new TagReferences
                 {
-                    Tags = guids.Select(g => new TagReference { Identifier = g })
+                    Tags = guids.Select(g => new TagReference { Identifier = g }).ToList()
                 };
             }
         }

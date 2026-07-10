@@ -1,8 +1,8 @@
-using System.Text.Json;
 using CMS.ContentEngine;
 using CMS.ContentEngine.Internal;
 using CMS.DataEngine;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
 using Xperience.Relay.Core;
@@ -72,7 +72,7 @@ public class UpdateContentItemCommandHandler(
             {
                 fieldData[key] = new TagReferences
                 {
-                    Tags = guids.Select(g => new TagReference { Identifier = g })
+                    Tags = guids.Select(g => new TagReference { Identifier = g }).ToList()
                 };
             }
         }

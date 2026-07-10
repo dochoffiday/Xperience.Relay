@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Core;
@@ -40,9 +41,10 @@ public static class RelayEndpointRouteBuilderExtensions
         RelayCommandEnvelope envelope,
         IRelayDispatcher dispatcher,
         RelayVerbRegistry registry,
+        ILogger<RelayEndpointRouteBuilderExtensions> logger,
         CancellationToken cancellationToken)
     {
-        var result = await ExecuteEnvelopeAsync(envelope, dispatcher, registry, cancellationToken);
+        var result = await ExecuteEnvelopeAsync(envelope, dispatcher, registry, logger, cancellationToken);
         return Results.Ok(result);
     }
 
@@ -50,12 +52,13 @@ public static class RelayEndpointRouteBuilderExtensions
         RelayBatchRequest request,
         IRelayDispatcher dispatcher,
         RelayVerbRegistry registry,
+        ILogger<RelayEndpointRouteBuilderExtensions> logger,
         CancellationToken cancellationToken)
     {
         var results = new List<RelayCommandResult>(request.Commands.Count);
         foreach (var envelope in request.Commands)
         {
-            results.Add(await ExecuteEnvelopeAsync(envelope, dispatcher, registry, cancellationToken));
+            results.Add(await ExecuteEnvelopeAsync(envelope, dispatcher, registry, logger, cancellationToken));
         }
 
         return Results.Ok(new RelayBatchResponse { Results = results });
@@ -65,6 +68,7 @@ public static class RelayEndpointRouteBuilderExtensions
         RelayCommandEnvelope envelope,
         IRelayDispatcher dispatcher,
         RelayVerbRegistry registry,
+        ILogger<RelayEndpointRouteBuilderExtensions> logger,
         CancellationToken cancellationToken)
     {
         if (!registry.TryGetCommandType(envelope.Verb, out var commandType))
@@ -93,6 +97,7 @@ public static class RelayEndpointRouteBuilderExtensions
         }
         catch (Exception ex)
         {
+            logger.LogError(ex, "Unhandled exception executing verb '{Verb}'", envelope.Verb);
             return RelayCommandResult.Fail($"Unhandled exception executing verb '{envelope.Verb}': [{ex.GetType().Name}] {ex.Message}");
         }
     }

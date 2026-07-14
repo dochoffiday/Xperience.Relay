@@ -25,7 +25,7 @@ internal static class QueryItemsHelpers
                     catch (JsonException) { }
                 }
 
-                dict[col] = JsonDocument.Parse(JsonSerializer.Serialize(val)).RootElement.Clone();
+                dict[col] = JsonSerializer.SerializeToElement(val);
             }
         }
         return dict;

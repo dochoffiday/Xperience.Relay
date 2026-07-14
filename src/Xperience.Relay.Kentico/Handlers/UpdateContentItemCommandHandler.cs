@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
 using Xperience.Relay.Core;
+using Xperience.Relay.Kentico.Extensions;
 using Xperience.Relay.Kentico.Internal;
 
 namespace Xperience.Relay.Kentico.Handlers;
@@ -43,7 +44,7 @@ public class UpdateContentItemCommandHandler(
             return RelayCommandResult.Fail($"Content item {command.ContentItemId} was not found.");
         }
 
-        var isPublished = commonData.ContentItemCommonDataVersionStatus == VersionStatus.Published;
+        var isPublished = commonData.IsPublished();
 
         var fieldData = new Dictionary<string, object?>();
 

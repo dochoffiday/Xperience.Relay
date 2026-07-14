@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
-using Xperience.Relay.Core;
 
 namespace Xperience.Relay.Core.Tests;
 
@@ -79,6 +78,7 @@ public class RelayDispatcherTests
     [InlineData("unpublish-content-item", typeof(UnpublishContentItemCommand))]
     [InlineData("delete-web-page", typeof(DeleteWebPageCommand))]
     [InlineData("delete-content-item", typeof(DeleteContentItemCommand))]
+    [InlineData("update-slug", typeof(UpdateSlugCommand))]
     [InlineData("query-sql", typeof(QuerySqlCommand))]
     public void RelayVerbRegistry_DiscoversCommandsFromContractsAssembly(string verb, Type expectedType)
     {

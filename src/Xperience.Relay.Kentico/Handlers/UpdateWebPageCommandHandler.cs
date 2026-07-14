@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
 using Xperience.Relay.Core;
+using Xperience.Relay.Kentico.Extensions;
 using Xperience.Relay.Kentico.Internal;
 
 namespace Xperience.Relay.Kentico.Handlers;
@@ -51,8 +52,7 @@ public class UpdateWebPageCommandHandler(
             .WhereTrue(nameof(ContentItemCommonDataInfo.ContentItemCommonDataIsLatest))
             .FirstOrDefault();
 
-        var isPublished = commonData is not null
-            && commonData.ContentItemCommonDataVersionStatus == VersionStatus.Published;
+        var isPublished = commonData.IsPublished();
 
         var fieldData = new Dictionary<string, object?>();
 

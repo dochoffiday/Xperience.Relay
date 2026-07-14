@@ -60,6 +60,7 @@ last resort.
 | `query-reusable-items` | `ContentTypeNames?`, `LanguageName?`, `Columns?`, `WhereEquals?` | `QueryItemsResult` |
 | `update-web-page` | `WebPageId`, `LanguageName?`, `Fields?`, `LinkedItemFields?`, `TagFields?` | — |
 | `update-content-item` | `ContentItemId`, `LanguageName?`, `Fields?`, `LinkedItemFields?`, `TagFields?` | — |
+| `update-slug` | `WebPageId`, `LanguageName?`, `Slug` | — |
 | `publish-web-page` | `WebPageId`, `LanguageName?` | — |
 | `unpublish-web-page` | `WebPageId`, `LanguageName?` | — |
 | `publish-content-item` | `ContentItemId`, `LanguageName?` | — |
@@ -77,6 +78,7 @@ last resort.
 - `create-content-item` accepts a binary file via `Asset.Base64` (Base64-encoded), publishes the item after creation, and optionally moves it into a content hub folder.
 - `query-web-page-items` and `query-reusable-items` both include draft content (`ForPreview = true`). `ContentTypeNames` accepts zero or more content type names; an empty list queries across all types (Kentico may or may not support this — if it doesn't, it will surface as a fail result). Results are a union across all listed types. Empty `Columns` returns all columns. `WebsiteChannelName` is required on `query-web-page-items` and defaults to `RelayKenticoOptions.DefaultWebsiteChannelName`.
 - `update-web-page` preserves the page's current published/draft state -- re-publishes if it was published, leaves as draft otherwise. `LinkedItemFields` maps field name to a list of content item GUIDs; `TagFields` maps field name to a list of tag GUIDs; pass an empty list for either to clear that field.
+- `update-slug` updates the URL slug on a web page. Follows the same published/draft state preservation as `update-web-page` -- re-publishes if the page was published so the slug change goes live immediately.
 - `update-content-item` is the reusable content item equivalent of `update-web-page` -- same field/linked-item/tag shape, same published/draft state preservation, no channel required.
 - `publish-web-page` / `unpublish-web-page` and `publish-content-item` / `unpublish-content-item` are no-ops when the item is already in the target state — safe to call idempotently.
 - `create-web-page` creates a new web page as an `InitialDraft`. Set `PublishAfterCreate: true` to publish immediately. `WebsiteChannelName` is matched against the channel code name (not the display name). `ParentWebPageItemId` is required (use the target parent's `WebPageItemID`).

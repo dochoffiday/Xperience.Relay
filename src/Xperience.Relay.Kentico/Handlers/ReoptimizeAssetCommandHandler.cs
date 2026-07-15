@@ -95,11 +95,19 @@ public class ReoptimizeAssetCommandHandler(
 
         var isPublished = commonData.IsPublished();
 
+        var freshMetadata = new ContentItemAssetMetadata
+        {
+            Identifier = Guid.NewGuid(),
+            Name = assetMetadata.Metadata.Name,
+            Extension = assetMetadata.Metadata.Extension,
+            Size = assetMetadata.Metadata.Size
+        };
+
         var fieldData = new Dictionary<string, object?>
         {
             [command.FieldName] = new ContentItemAssetMetadataWithSource(
                 new ContentItemAssetFileSource(filePath, false),
-                assetMetadata.Metadata)
+                freshMetadata)
         };
 
         var userId = serviceAccountResolver.ResolveUserId();

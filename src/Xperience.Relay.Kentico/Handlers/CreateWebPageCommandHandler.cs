@@ -95,33 +95,70 @@ public class CreateWebPageCommandHandler(
         var userId = serviceAccountResolver.ResolveUserId();
         var webPageManager = webPageManagerFactory.Create(websiteChannel.WebsiteChannelID, userId);
 
-        // Use the constructor that auto-generates the code name from the display name.
-        var createParams = new CreateWebPageParameters(
-            displayName: command.DisplayName,
-            languageName: languageName,
-            contentItemParameters: new ContentItemParameters(command.ContentTypeName, new ContentItemData(fieldData)))
+        var tempFiles = new List<string>();
+        try
         {
-            ParentWebPageItemID = command.ParentWebPageItemId,
-            VersionStatus = VersionStatus.InitialDraft,
-            UrlSlug = command.UrlSlug,
-        };
-
-        var webPageItemId = await webPageManager.Create(createParams, cancellationToken);
-
-        if (command.PublishAfterCreate)
-        {
-            await webPageManager.TryPublish(webPageItemId, languageName, cancellationToken);
-        }
-
-        var webPageMetadata = await webPageManager.GetWebPageMetadata(webPageItemId);
-
-        return RelayCommandResult.Ok(
-            message: $"Created web page '{command.DisplayName}' (ID={webPageItemId}){(command.PublishAfterCreate ? ", published" : ", draft")}.",
-            data: new CreateWebPageResult
+            if (command.Assets != null)
             {
-                WebPageItemId = webPageItemId,
-                WebPageItemGuid = webPageMetadata.WebPageGUID,
-            });
+                foreach (var asset in command.Assets.Where(a => a.IsValid()))
+                {
+                    var bytes = Convert.FromBase64String(asset.Base64);
+                    var ext = Path.GetExtension(asset.FileName);
+                    var tempFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ext);
+                    await File.WriteAllBytesAsync(tempFile, bytes, cancellationToken);
+                    tempFiles.Add(tempFile);
+
+                    var file = CMS.IO.FileInfo.New(tempFile);
+                    var assetMetadata = new ContentItemAssetMetadata
+                    {
+                        Extension = file.Extension,
+                        Identifier = Guid.NewGuid(),
+                        LastModified = DateTime.UtcNow,
+                        Name = asset.FileName,
+                        Size = file.Length
+                    };
+
+                    fieldData[asset.FieldName] = new ContentItemAssetMetadataWithSource(
+                        new ContentItemAssetFileSource(file.FullName, false),
+                        assetMetadata);
+                }
+            }
+
+            // Use the constructor that auto-generates the code name from the display name.
+            var createParams = new CreateWebPageParameters(
+                displayName: command.DisplayName,
+                languageName: languageName,
+                contentItemParameters: new ContentItemParameters(command.ContentTypeName, new ContentItemData(fieldData)))
+            {
+                ParentWebPageItemID = command.ParentWebPageItemId,
+                VersionStatus = VersionStatus.InitialDraft,
+                UrlSlug = command.UrlSlug,
+            };
+
+            var webPageItemId = await webPageManager.Create(createParams, cancellationToken);
+
+            if (command.PublishAfterCreate)
+            {
+                await webPageManager.TryPublish(webPageItemId, languageName, cancellationToken);
+            }
+
+            var webPageMetadata = await webPageManager.GetWebPageMetadata(webPageItemId);
+
+            return RelayCommandResult.Ok(
+                message: $"Created web page '{command.DisplayName}' (ID={webPageItemId}){(command.PublishAfterCreate ? ", published" : ", draft")}.",
+                data: new CreateWebPageResult
+                {
+                    WebPageItemId = webPageItemId,
+                    WebPageItemGuid = webPageMetadata.WebPageGUID,
+                });
+        }
+        finally
+        {
+            foreach (var tempFile in tempFiles)
+            {
+                if (File.Exists(tempFile)) File.Delete(tempFile);
+            }
+        }
     }
 
 }

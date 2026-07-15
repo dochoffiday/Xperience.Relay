@@ -54,12 +54,12 @@ last resort.
 | `get-content-info` | `ContentItemId` | `ContentInfo` |
 | `get-content` | `ContentItemId`, `LanguageName?` | `ContentData` |
 | `get-content-hub-folder` | `ContentFolderId?`, `CodeName?`, `FolderPath?`, `WorkspaceName?` | `GetContentHubFolderResult` |
-| `create-content-item` | `ContentTypeName`, `DisplayName`, `LanguageName?`, `WorkspaceName?`, `ContentFolderId?`, `Fields?`, `LinkedItemFields?`, `TagFields?`, `Asset?` | `CreateContentItemResult` |
-| `create-web-page` | `WebsiteChannelName?`, `ParentWebPageItemId`, `ContentTypeName`, `DisplayName`, `LanguageName?`, `UrlSlug?`, `Fields?`, `LinkedItemFields?`, `TagFields?`, `PublishAfterCreate?` | `CreateWebPageResult` |
+| `create-content-item` | `ContentTypeName`, `DisplayName`, `LanguageName?`, `WorkspaceName?`, `ContentFolderId?`, `Fields?`, `LinkedItemFields?`, `TagFields?`, `Assets?` | `CreateContentItemResult` |
+| `create-web-page` | `WebsiteChannelName?`, `ParentWebPageItemId`, `ContentTypeName`, `DisplayName`, `LanguageName?`, `UrlSlug?`, `Fields?`, `LinkedItemFields?`, `TagFields?`, `Assets?`, `PublishAfterCreate?` | `CreateWebPageResult` |
 | `query-web-page-items` | `ContentTypeNames?`, `WebsiteChannelName?`, `LanguageName?`, `Columns?`, `WhereEquals?` | `QueryItemsResult` |
 | `query-reusable-items` | `ContentTypeNames?`, `LanguageName?`, `Columns?`, `WhereEquals?` | `QueryItemsResult` |
-| `update-web-page` | `WebPageId`, `LanguageName?`, `Fields?`, `LinkedItemFields?`, `TagFields?` | — |
-| `update-content-item` | `ContentItemId`, `LanguageName?`, `Fields?`, `LinkedItemFields?`, `TagFields?` | — |
+| `update-web-page` | `WebPageId`, `LanguageName?`, `Fields?`, `LinkedItemFields?`, `TagFields?`, `Assets?` | — |
+| `update-content-item` | `ContentItemId`, `LanguageName?`, `Fields?`, `LinkedItemFields?`, `TagFields?`, `Assets?` | — |
 | `update-slug` | `WebPageId`, `LanguageName?`, `Slug` | — |
 | `publish-web-page` | `WebPageId`, `LanguageName?` | — |
 | `unpublish-web-page` | `WebPageId`, `LanguageName?` | — |
@@ -76,7 +76,7 @@ last resort.
 - `get-page` / `get-content` compose their `*-info` counterpart internally and layer field data on top.
 - `get-page-info` and `get-content-info` are the cheap, system-fields-only versions -- useful for resolving a path to an ID before a `move` without fetching full content fields.
 - `get-content-hub-folder` accepts exactly one of `ContentFolderId` (numeric ID), `CodeName` (global code name), or `FolderPath` (slash-separated display-name path). The `FolderPath` mode is idempotent — it creates any missing path segments along the way. `WorkspaceName` is only required when using `FolderPath`.
-- `create-content-item` accepts a binary file via `Asset.Base64` (Base64-encoded), publishes the item after creation, and optionally moves it into a content hub folder.
+- `create-content-item` accepts one or more binary files via `Assets` (each a Base64-encoded `RelayAsset`), publishes the item after creation, and optionally moves it into a content hub folder. `create-web-page`, `update-web-page`, and `update-content-item` accept the same `Assets` list to upload into any number of asset fields in a single call.
 - `query-web-page-items` and `query-reusable-items` both include draft content (`ForPreview = true`). `ContentTypeNames` accepts zero or more content type names; an empty list queries across all types (Kentico may or may not support this — if it doesn't, it will surface as a fail result). Results are a union across all listed types. Empty `Columns` returns all columns. `WebsiteChannelName` is required on `query-web-page-items` and defaults to `RelayKenticoOptions.DefaultWebsiteChannelName`.
 - `update-web-page` preserves the page's current published/draft state -- re-publishes if it was published, leaves as draft otherwise. `LinkedItemFields` maps field name to a list of content item GUIDs; `TagFields` maps field name to a list of tag GUIDs; pass an empty list for either to clear that field.
 - `update-slug` updates the URL slug on a web page. Follows the same published/draft state preservation as `update-web-page` -- re-publishes if the page was published so the slug change goes live immediately.
@@ -163,12 +163,15 @@ public class MyService(RelayClient relay)
             {
                 ContentTypeName = "Podcast.Episode",
                 DisplayName     = "Episode 1",
-                Asset = new RelayAsset
-                {
-                    FieldName = "AudioFile",
-                    FileName  = "episode-1.mp3",
-                    Base64    = Convert.ToBase64String(File.ReadAllBytes("episode-1.mp3")),
-                },
+                Assets =
+                [
+                    new RelayAsset
+                    {
+                        FieldName = "AudioFile",
+                        FileName  = "episode-1.mp3",
+                        Base64    = Convert.ToBase64String(File.ReadAllBytes("episode-1.mp3")),
+                    },
+                ],
             },
         });
 
@@ -222,12 +225,14 @@ reflection-based invocation in `RelayDispatcher.InvokeHandlerAsync` would need a
 dimension) for no benefit a caller couldn't get more simply by deserializing `Data` into the DTO
 they expect for the command they called.
 
-**Why `create-content-item` sends binary files as Base64.** All relay commands travel as plain JSON
+**Why asset commands send binary files as Base64.** All relay commands travel as plain JSON
 inside `RelayCommandEnvelope.Parameters`. Rather than designing a separate multipart upload path
 just for asset-bearing commands, the asset bytes are Base64-encoded in `RelayAsset.Base64` and
-decoded server-side to a temp file. The handler writes the bytes to a temp path, wraps it in
-Kentico's `ContentItemAssetMetadataWithSource`, and deletes the temp file in a `finally` block
-regardless of outcome.
+decoded server-side to temp files. The handler writes each asset to a temp path, wraps it in
+Kentico's `ContentItemAssetMetadataWithSource`, and deletes all temp files in a `finally` block
+regardless of outcome. `create-content-item`, `create-web-page`, `update-content-item`, and
+`update-web-page` all support an `Assets` list so multiple asset fields can be populated in a
+single command.
 
 **Why `update-web-page` reads `ContentItemCommonDataVersionStatus` before writing.** The handler
 needs to know whether to re-publish after the update. It reads `VersionStatus` from the content

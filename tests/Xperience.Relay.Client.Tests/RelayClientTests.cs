@@ -112,6 +112,39 @@ public class RelayClientTests
         Assert.Equal("move-web-page", discovery.Verbs.Single().Verb);
     }
 
+    [Fact]
+    public async Task ExecuteAsync_SerializesAssetsListInEnvelope()
+    {
+        var handler = new StubHttpMessageHandler(HttpStatusCode.OK, """{"success":true}""");
+        var client = BuildClient(handler);
+
+        await client.ExecuteAsync(new CreateContentItemCommand
+        {
+            ContentTypeName = "My.Type",
+            DisplayName = "Test",
+            Assets =
+            [
+                new RelayAsset { FieldName = "Image", FileName = "photo.jpg", Base64 = "abc" },
+                new RelayAsset { FieldName = "Thumb", FileName = "thumb.jpg", Base64 = "xyz" },
+            ],
+        });
+
+        using var sentBody = JsonDocument.Parse(handler.LastRequestBody!);
+        var assets = sentBody.RootElement.GetProperty("parameters").GetProperty("assets");
+        Assert.Equal(2, assets.GetArrayLength());
+        Assert.Equal("Image", assets[0].GetProperty("fieldName").GetString());
+        Assert.Equal("Thumb", assets[1].GetProperty("fieldName").GetString());
+    }
+
+    [Fact]
+    public void RelayAsset_IsValid_ReturnsFalse_WhenAnyRequiredFieldMissing()
+    {
+        Assert.False(new RelayAsset { FieldName = "", FileName = "f.jpg", Base64 = "abc" }.IsValid());
+        Assert.False(new RelayAsset { FieldName = "F", FileName = "", Base64 = "abc" }.IsValid());
+        Assert.False(new RelayAsset { FieldName = "F", FileName = "f.jpg", Base64 = "" }.IsValid());
+        Assert.True(new RelayAsset { FieldName = "F", FileName = "f.jpg", Base64 = "abc" }.IsValid());
+    }
+
     private class UndecoratedCommand : IRelayCommand
     {
     }

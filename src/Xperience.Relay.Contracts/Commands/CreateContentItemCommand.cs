@@ -3,10 +3,10 @@ using System.Text.Json;
 namespace Xperience.Relay.Contracts.Commands;
 
 /// <summary>
-/// Creates a new reusable content item, optionally uploading a binary asset into one of its fields.
-/// The asset is passed as a Base64-encoded string so the command travels as plain JSON. On the
-/// server side the handler decodes it to a temp file, builds the Kentico asset metadata, and
-/// cleans up when done. Returns a <see cref="CreateContentItemResult"/> in
+/// Creates a new reusable content item, optionally uploading one or more binary assets into asset
+/// fields. Each asset is passed as a Base64-encoded string so the command travels as plain JSON. On
+/// the server side each entry is decoded to a temp file, wrapped in Kentico asset metadata, and
+/// cleaned up in a finally block regardless of outcome. Returns a <see cref="CreateContentItemResult"/> in
 /// <see cref="RelayCommandResult.Data"/>.
 /// </summary>
 [RelayCommand("create-content-item")]
@@ -40,8 +40,8 @@ public class CreateContentItemCommand : IRelayCommand
     /// </summary>
     public Dictionary<string, List<Guid>>? TagFields { get; set; }
 
-    /// <summary>Optional binary asset to upload into one of the content item's asset fields.</summary>
-    public RelayAsset? Asset { get; set; }
+    /// <summary>Optional binary assets to upload into asset fields. Each entry maps to one field.</summary>
+    public List<RelayAsset>? Assets { get; set; }
 }
 
 /// <summary>

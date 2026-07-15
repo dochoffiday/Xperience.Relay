@@ -30,7 +30,8 @@ public class UpdateWebPageCommandHandler(
     {
         if ((command.Fields == null || command.Fields.Count == 0)
             && (command.LinkedItemFields == null || command.LinkedItemFields.Count == 0)
-            && (command.TagFields == null || command.TagFields.Count == 0))
+            && (command.TagFields == null || command.TagFields.Count == 0)
+            && (command.Assets == null || command.Assets.Count == 0))
         {
             return RelayCommandResult.Fail("No fields provided — nothing to update.");
         }
@@ -84,17 +85,55 @@ public class UpdateWebPageCommandHandler(
 
         var userId = serviceAccountResolver.ResolveUserId();
         var webPageManager = webPageManagerFactory.Create(webPageItem.WebPageItemWebsiteChannelID, userId);
-        var itemData = new ContentItemData(fieldData);
 
-        await webPageManager.TryCreateDraft(command.WebPageId, languageName);
-        await webPageManager.TryUpdateDraft(command.WebPageId, languageName, new UpdateDraftData(itemData));
-
-        if (isPublished)
+        var tempFiles = new List<string>();
+        try
         {
-            await webPageManager.TryPublish(command.WebPageId, languageName);
-        }
+            if (command.Assets != null)
+            {
+                foreach (var asset in command.Assets.Where(a => a.IsValid()))
+                {
+                    var bytes = Convert.FromBase64String(asset.Base64);
+                    var ext = Path.GetExtension(asset.FileName);
+                    var tempFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ext);
+                    await File.WriteAllBytesAsync(tempFile, bytes, cancellationToken);
+                    tempFiles.Add(tempFile);
 
-        return RelayCommandResult.Ok($"Updated {fieldData.Count} field(s) on web page {command.WebPageId}.");
+                    var file = CMS.IO.FileInfo.New(tempFile);
+                    var assetMetadata = new ContentItemAssetMetadata
+                    {
+                        Extension = file.Extension,
+                        Identifier = Guid.NewGuid(),
+                        LastModified = DateTime.UtcNow,
+                        Name = asset.FileName,
+                        Size = file.Length
+                    };
+
+                    fieldData[asset.FieldName] = new ContentItemAssetMetadataWithSource(
+                        new ContentItemAssetFileSource(file.FullName, false),
+                        assetMetadata);
+                }
+            }
+
+            var itemData = new ContentItemData(fieldData);
+
+            await webPageManager.TryCreateDraft(command.WebPageId, languageName);
+            await webPageManager.TryUpdateDraft(command.WebPageId, languageName, new UpdateDraftData(itemData));
+
+            if (isPublished)
+            {
+                await webPageManager.TryPublish(command.WebPageId, languageName);
+            }
+
+            return RelayCommandResult.Ok($"Updated {fieldData.Count} field(s) on web page {command.WebPageId}.");
+        }
+        finally
+        {
+            foreach (var tempFile in tempFiles)
+            {
+                if (File.Exists(tempFile)) File.Delete(tempFile);
+            }
+        }
     }
 
 }

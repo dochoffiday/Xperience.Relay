@@ -39,4 +39,7 @@ public class CreateWebPageCommand : IRelayCommand
 
     /// <summary>When true, publishes the page immediately after creation. Defaults to false.</summary>
     public bool PublishAfterCreate { get; set; }
+
+    /// <summary>Optional binary assets to upload into asset fields. Each entry maps to one field.</summary>
+    public List<RelayAsset>? Assets { get; set; }
 }

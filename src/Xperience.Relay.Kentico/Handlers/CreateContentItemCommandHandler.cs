@@ -63,29 +63,33 @@ public class CreateContentItemCommandHandler(
             }
         }
 
-        string? tempFile = null;
+        var tempFiles = new List<string>();
         try
         {
-            if (command.Asset is { } asset && asset.IsValid())
+            if (command.Assets != null)
             {
-                var bytes = Convert.FromBase64String(asset.Base64);
-                var ext = Path.GetExtension(asset.FileName);
-                tempFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ext);
-                await File.WriteAllBytesAsync(tempFile, bytes, cancellationToken);
-
-                var file = CMS.IO.FileInfo.New(tempFile);
-                var assetMetadata = new ContentItemAssetMetadata
+                foreach (var asset in command.Assets.Where(a => a.IsValid()))
                 {
-                    Extension = file.Extension,
-                    Identifier = Guid.NewGuid(),
-                    LastModified = DateTime.UtcNow,
-                    Name = asset.FileName,
-                    Size = file.Length
-                };
+                    var bytes = Convert.FromBase64String(asset.Base64);
+                    var ext = Path.GetExtension(asset.FileName);
+                    var tempFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ext);
+                    await File.WriteAllBytesAsync(tempFile, bytes, cancellationToken);
+                    tempFiles.Add(tempFile);
 
-                fieldData[asset.FieldName] = new ContentItemAssetMetadataWithSource(
-                    new ContentItemAssetFileSource(file.FullName, false),
-                    assetMetadata);
+                    var file = CMS.IO.FileInfo.New(tempFile);
+                    var assetMetadata = new ContentItemAssetMetadata
+                    {
+                        Extension = file.Extension,
+                        Identifier = Guid.NewGuid(),
+                        LastModified = DateTime.UtcNow,
+                        Name = asset.FileName,
+                        Size = file.Length
+                    };
+
+                    fieldData[asset.FieldName] = new ContentItemAssetMetadataWithSource(
+                        new ContentItemAssetFileSource(file.FullName, false),
+                        assetMetadata);
+                }
             }
 
             var createParams = new CreateContentItemParameters(
@@ -119,9 +123,9 @@ public class CreateContentItemCommandHandler(
         }
         finally
         {
-            if (tempFile != null && File.Exists(tempFile))
+            foreach (var tempFile in tempFiles)
             {
-                File.Delete(tempFile);
+                if (File.Exists(tempFile)) File.Delete(tempFile);
             }
         }
     }

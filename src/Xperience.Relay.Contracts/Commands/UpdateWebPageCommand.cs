@@ -29,4 +29,7 @@ public class UpdateWebPageCommand : IRelayCommand
     /// An empty list clears the field.
     /// </summary>
     public Dictionary<string, List<Guid>>? TagFields { get; set; }
+
+    /// <summary>Optional binary assets to upload into asset fields. Each entry maps to one field.</summary>
+    public List<RelayAsset>? Assets { get; set; }
 }

@@ -100,7 +100,8 @@ public class ReoptimizeAssetCommandHandler(
             Identifier = Guid.NewGuid(),
             Name = assetMetadata.Metadata.Name,
             Extension = assetMetadata.Metadata.Extension,
-            Size = assetMetadata.Metadata.Size
+            Size = assetMetadata.Metadata.Size,
+            LastModified = DateTime.UtcNow
         };
 
         var fieldData = new Dictionary<string, object?>

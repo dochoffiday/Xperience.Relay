@@ -68,6 +68,7 @@ last resort.
 | `delete-web-page` | `WebPageId`, `LanguageName?`, `Permanently?`, `RedirectToWebPageId?` | — |
 | `delete-content-item` | `ContentItemId`, `LanguageName?` | — |
 | `reoptimize-asset` | `ContentItemId`, `FieldName`, `LanguageName?` | — |
+| `rename-asset` | `ContentItemId`, `FieldName`, `AssetName`, `LanguageName?` | — |
 | `query-sql` | `Query` | `QuerySqlResult` |
 
 **Notes:**
@@ -86,6 +87,7 @@ last resort.
 - `delete-web-page` deletes a language variant of a web page. When `Permanently` is false the page goes to the recycle bin; set it to true to bypass the recycle bin. `RedirectToWebPageId` optionally creates a redirect to another page after deletion.
 - `delete-content-item` deletes a language variant of a reusable content item. If it's the last variant the parent content item is also removed.
 - `reoptimize-asset` re-triggers Kentico's asset optimization pipeline for an existing asset field without transferring any binary data over the wire. The file already lives on the server; the handler looks up its current metadata and physical path, then re-submits it through `ContentItemAssetMetadataWithSource` so Kentico processes it identically to the initial upload. Preserves the item's published/draft state.
+- `rename-asset` renames an existing asset field without transferring any binary data over the wire. Same server-side lookup pattern as `reoptimize-asset` — the file is re-submitted with a fresh identifier and the new name in the metadata. `AssetName` should include the extension (e.g. `"report-2024.pdf"`). Preserves the item's published/draft state.
 - `query-sql` executes a read-only SQL query against the Xperience database. Only `SELECT` and `WITH...SELECT` statements are permitted; DML/DDL keywords are rejected before execution. `QuerySqlResult` contains `Columns: string[]` and `Rows: string?[][]`. This is an application-level guard — configure a read-only DB login at the database level as the primary control.
 
 ## Usage

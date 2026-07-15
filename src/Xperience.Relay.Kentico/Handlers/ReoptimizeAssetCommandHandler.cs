@@ -21,7 +21,6 @@ namespace Xperience.Relay.Kentico.Handlers;
 public class ReoptimizeAssetCommandHandler(
     IContentItemManagerFactory contentItemManagerFactory,
     IInfoProvider<ContentItemInfo> contentItemInfoProvider,
-    IInfoProvider<DataClassInfo> dataClassInfoProvider,
     IInfoProvider<ContentItemCommonDataInfo> contentItemCommonDataInfoProvider,
     IInfoProvider<ContentLanguageInfo> contentLanguageInfoProvider,
     IContentItemAssetMetadataItemProvider contentItemAssetMetadataItemProvider,
@@ -44,7 +43,8 @@ public class ReoptimizeAssetCommandHandler(
             return RelayCommandResult.Fail($"Content item {command.ContentItemId} was not found.");
         }
 
-        var dataClass = dataClassInfoProvider.Get()
+        var dataClass = DataClassInfoProvider
+            .GetClasses()
             .WhereEquals(nameof(DataClassInfo.ClassID), contentItem.ContentItemContentTypeID)
             .FirstOrDefault();
 

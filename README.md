@@ -67,6 +67,7 @@ last resort.
 | `unpublish-content-item` | `ContentItemId`, `LanguageName?` | — |
 | `delete-web-page` | `WebPageId`, `LanguageName?`, `Permanently?`, `RedirectToWebPageId?` | — |
 | `delete-content-item` | `ContentItemId`, `LanguageName?` | — |
+| `reoptimize-asset` | `ContentItemId`, `FieldName`, `LanguageName?` | — |
 | `query-sql` | `Query` | `QuerySqlResult` |
 
 **Notes:**
@@ -84,6 +85,7 @@ last resort.
 - `create-web-page` creates a new web page as an `InitialDraft`. Set `PublishAfterCreate: true` to publish immediately. `WebsiteChannelName` is matched against the channel code name (not the display name). `ParentWebPageItemId` is required (use the target parent's `WebPageItemID`).
 - `delete-web-page` deletes a language variant of a web page. When `Permanently` is false the page goes to the recycle bin; set it to true to bypass the recycle bin. `RedirectToWebPageId` optionally creates a redirect to another page after deletion.
 - `delete-content-item` deletes a language variant of a reusable content item. If it's the last variant the parent content item is also removed.
+- `reoptimize-asset` re-triggers Kentico's asset optimization pipeline for an existing asset field without transferring any binary data over the wire. The file already lives on the server; the handler looks up its current metadata and physical path, then re-submits it through `ContentItemAssetMetadataWithSource` so Kentico processes it identically to the initial upload. Preserves the item's published/draft state.
 - `query-sql` executes a read-only SQL query against the Xperience database. Only `SELECT` and `WITH...SELECT` statements are permitted; DML/DDL keywords are rejected before execution. `QuerySqlResult` contains `Columns: string[]` and `Rows: string?[][]`. This is an application-level guard — configure a read-only DB login at the database level as the primary control.
 
 ## Usage

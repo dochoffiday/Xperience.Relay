@@ -44,6 +44,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRelayCommandHandler<PublishContentItemCommand>, PublishContentItemCommandHandler>();
         services.AddScoped<IRelayCommandHandler<UnpublishContentItemCommand>, UnpublishContentItemCommandHandler>();
         services.AddScoped<IRelayCommandHandler<UpdateSlugCommand>, UpdateSlugCommandHandler>();
+        services.AddScoped<IRelayCommandHandler<ReoptimizeAssetCommand>, ReoptimizeAssetCommandHandler>();
 
         return services;
     }

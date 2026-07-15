@@ -79,6 +79,7 @@ public class RelayDispatcherTests
     [InlineData("delete-web-page", typeof(DeleteWebPageCommand))]
     [InlineData("delete-content-item", typeof(DeleteContentItemCommand))]
     [InlineData("update-slug", typeof(UpdateSlugCommand))]
+    [InlineData("reoptimize-asset", typeof(ReoptimizeAssetCommand))]
     [InlineData("query-sql", typeof(QuerySqlCommand))]
     public void RelayVerbRegistry_DiscoversCommandsFromContractsAssembly(string verb, Type expectedType)
     {

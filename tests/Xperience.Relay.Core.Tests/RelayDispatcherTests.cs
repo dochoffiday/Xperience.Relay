@@ -90,6 +90,7 @@ public class RelayDispatcherTests
     [InlineData("update-tag", typeof(UpdateTagCommand))]
     [InlineData("move-tag", typeof(MoveTagCommand))]
     [InlineData("delete-tag", typeof(DeleteTagCommand))]
+    [InlineData("search-content", typeof(SearchContentCommand))]
     [InlineData("query-sql", typeof(QuerySqlCommand))]
     public void RelayVerbRegistry_DiscoversCommandsFromContractsAssembly(string verb, Type expectedType)
     {

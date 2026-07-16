@@ -55,6 +55,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRelayCommandHandler<UpdateTagCommand>, UpdateTagCommandHandler>();
         services.AddScoped<IRelayCommandHandler<MoveTagCommand>, MoveTagCommandHandler>();
         services.AddScoped<IRelayCommandHandler<DeleteTagCommand>, DeleteTagCommandHandler>();
+        services.AddScoped<IRelayCommandHandler<SearchContentCommand>, SearchContentCommandHandler>();
 
         return services;
     }

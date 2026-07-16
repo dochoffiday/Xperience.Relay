@@ -69,6 +69,15 @@ last resort.
 | `delete-content-item` | `ContentItemId`, `LanguageName?` | — |
 | `reoptimize-asset` | `ContentItemId`, `FieldName`, `LanguageName?` | — |
 | `rename-asset` | `ContentItemId`, `FieldName`, `AssetName`, `LanguageName?` | — |
+| `get-taxonomies` | — | `GetTaxonomiesResult` |
+| `create-taxonomy` | `Title`, `Description?`, `CodeName?` | `CreateTaxonomyResult` |
+| `update-taxonomy` | `TaxonomyId`, `Title?`, `Description?` | — |
+| `delete-taxonomy` | `TaxonomyId` | — |
+| `get-tags` | `TaxonomyId?`, `TaxonomyName?`, `TagId?`, `TagName?` | `GetTagsResult` |
+| `create-tag` | `TaxonomyId?`, `TaxonomyName?`, `Title`, `Description?`, `CodeName?`, `ParentTagId?`, `Order?` | `CreateTagResult` |
+| `update-tag` | `TagId`, `Title?`, `Description?` | — |
+| `move-tag` | `TagId`, `TargetParentTagId`, `Order` | — |
+| `delete-tag` | `TagId` | — |
 | `query-sql` | `Query` | `QuerySqlResult` |
 
 **Notes:**
@@ -87,7 +96,12 @@ last resort.
 - `delete-web-page` deletes a language variant of a web page. When `Permanently` is false the page goes to the recycle bin; set it to true to bypass the recycle bin. `RedirectToWebPageId` optionally creates a redirect to another page after deletion.
 - `delete-content-item` deletes a language variant of a reusable content item. If it's the last variant the parent content item is also removed.
 - `reoptimize-asset` re-triggers Kentico's asset optimization pipeline for an existing asset field without transferring any binary data over the wire. The file already lives on the server; the handler looks up its current metadata and physical path, then re-submits it through `ContentItemAssetMetadataWithSource` so Kentico processes it identically to the initial upload. Preserves the item's published/draft state.
-- `rename-asset` renames an existing asset field without transferring any binary data over the wire. Same server-side lookup pattern as `reoptimize-asset` — the file is re-submitted with a fresh identifier and the new name in the metadata. `AssetName` should include the extension (e.g. `"report-2024.pdf"`). Preserves the item's published/draft state.
+- `rename-asset` renames an existing asset field without transferring any binary data over the wire.
+- `get-taxonomies` returns all taxonomies with their ID, GUID, code name, title, and description.
+- `create-taxonomy` / `update-taxonomy` / `delete-taxonomy` manage taxonomy records. `update-taxonomy` only allows changing `Title` and `Description`. `delete-taxonomy` cascades — all child tags are deleted. `CodeName` is auto-generated from `Title` when omitted.
+- `get-tags` requires at least one filter. `TaxonomyId`/`TaxonomyName` returns all tags in a taxonomy; `TagId`/`TagName` returns the specific matching tag(s). Filters are applied in priority order: `TagId` → `TagName` → `TaxonomyId` → `TaxonomyName`.
+- `create-tag` / `update-tag` / `delete-tag` manage tag records. `update-tag` only allows changing `Title` and `Description`. `delete-tag` cascades — all child tags are deleted. `CodeName` is auto-generated from `Title` when omitted. `ParentTagId` of 0 or omitted creates a root-level tag.
+- `move-tag` moves a tag to a new parent and position. Set `TargetParentTagId` to 0 to move to the taxonomy root. Same server-side lookup pattern as `reoptimize-asset` — the file is re-submitted with a fresh identifier and the new name in the metadata. `AssetName` should include the extension (e.g. `"report-2024.pdf"`). Preserves the item's published/draft state.
 - `query-sql` executes a read-only SQL query against the Xperience database. Only `SELECT` and `WITH...SELECT` statements are permitted; DML/DDL keywords are rejected before execution. `QuerySqlResult` contains `Columns: string[]` and `Rows: string?[][]`. This is an application-level guard — configure a read-only DB login at the database level as the primary control.
 
 ## Usage

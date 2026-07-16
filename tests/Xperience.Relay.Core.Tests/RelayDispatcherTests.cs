@@ -81,6 +81,15 @@ public class RelayDispatcherTests
     [InlineData("update-slug", typeof(UpdateSlugCommand))]
     [InlineData("reoptimize-asset", typeof(ReoptimizeAssetCommand))]
     [InlineData("rename-asset", typeof(RenameAssetCommand))]
+    [InlineData("get-taxonomies", typeof(GetTaxonomiesCommand))]
+    [InlineData("create-taxonomy", typeof(CreateTaxonomyCommand))]
+    [InlineData("update-taxonomy", typeof(UpdateTaxonomyCommand))]
+    [InlineData("delete-taxonomy", typeof(DeleteTaxonomyCommand))]
+    [InlineData("get-tags", typeof(GetTagsCommand))]
+    [InlineData("create-tag", typeof(CreateTagCommand))]
+    [InlineData("update-tag", typeof(UpdateTagCommand))]
+    [InlineData("move-tag", typeof(MoveTagCommand))]
+    [InlineData("delete-tag", typeof(DeleteTagCommand))]
     [InlineData("query-sql", typeof(QuerySqlCommand))]
     public void RelayVerbRegistry_DiscoversCommandsFromContractsAssembly(string verb, Type expectedType)
     {

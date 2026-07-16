@@ -46,6 +46,15 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRelayCommandHandler<UpdateSlugCommand>, UpdateSlugCommandHandler>();
         services.AddScoped<IRelayCommandHandler<ReoptimizeAssetCommand>, ReoptimizeAssetCommandHandler>();
         services.AddScoped<IRelayCommandHandler<RenameAssetCommand>, RenameAssetCommandHandler>();
+        services.AddScoped<IRelayCommandHandler<GetTaxonomiesCommand>, GetTaxonomiesCommandHandler>();
+        services.AddScoped<IRelayCommandHandler<CreateTaxonomyCommand>, CreateTaxonomyCommandHandler>();
+        services.AddScoped<IRelayCommandHandler<UpdateTaxonomyCommand>, UpdateTaxonomyCommandHandler>();
+        services.AddScoped<IRelayCommandHandler<DeleteTaxonomyCommand>, DeleteTaxonomyCommandHandler>();
+        services.AddScoped<IRelayCommandHandler<GetTagsCommand>, GetTagsCommandHandler>();
+        services.AddScoped<IRelayCommandHandler<CreateTagCommand>, CreateTagCommandHandler>();
+        services.AddScoped<IRelayCommandHandler<UpdateTagCommand>, UpdateTagCommandHandler>();
+        services.AddScoped<IRelayCommandHandler<MoveTagCommand>, MoveTagCommandHandler>();
+        services.AddScoped<IRelayCommandHandler<DeleteTagCommand>, DeleteTagCommandHandler>();
 
         return services;
     }

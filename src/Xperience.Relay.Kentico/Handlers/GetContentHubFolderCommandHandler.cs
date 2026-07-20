@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using CMS.ContentEngine;
 using CMS.DataEngine;
 using Microsoft.Extensions.Options;
@@ -121,6 +123,16 @@ public class GetContentHubFolderCommandHandler(
             .TrimStart('/')
             .Replace('/', '_');
 
-        return Strings.ToCodeName(folderPath);
+        var codeName = Strings.ToCodeName(folderPath);
+
+        if (codeName.Length <= 49)
+        {
+            return codeName;
+        }
+
+        // ContentFolderName has a 50-char limit; stay under it at 49. Keep the first 40
+        // chars of the slug and append an 8-char MD5 hash to preserve uniqueness.
+        var hash = Convert.ToHexString(MD5.HashData(Encoding.UTF8.GetBytes(codeName)))[..8].ToLowerInvariant();
+        return codeName[..40] + "_" + hash;
     }
 }

@@ -83,6 +83,7 @@ last resort.
 | `create-custom-object` | `ObjectTypeName`, `Fields` | `CreateCustomObjectResult` |
 | `update-custom-object` | `ObjectTypeName`, `Id`, `Fields` | — |
 | `delete-custom-object` | `ObjectTypeName`, `Id` | — |
+| `get-content-item-usage` | `ContentItemId`, `LanguageName` | `GetContentItemUsageResult` |
 | `query-sql` | `Query` | `QuerySqlResult` |
 
 **Notes:**
@@ -109,6 +110,7 @@ last resort.
 - `move-tag` moves a tag to a new parent and position. Set `TargetParentTagId` to 0 to move to the taxonomy root. Same server-side lookup pattern as `reoptimize-asset` — the file is re-submitted with a fresh identifier and the new name in the metadata. `AssetName` should include the extension (e.g. `"report-2024.pdf"`). Preserves the item's published/draft state.
 - `query-custom-objects` / `create-custom-object` / `update-custom-object` / `delete-custom-object` provide generic CRUD for any Kentico custom module object. `ObjectTypeName` is the registered object type string (e.g. `"custom.redirect"`). `query-custom-objects` returns `QueryCustomObjectsResult { Items: List<Dictionary<string,string?>> }` where each item maps column name to its string value; omit `Columns` to get all columns. `create-custom-object` inserts a new object with the given `Fields` and returns `CreateCustomObjectResult { Id }`. `update-custom-object` patches only the supplied `Fields` on the existing object. Mutations go through Kentico's `BaseInfo.Insert/Update/Delete` so events and cache invalidation fire normally.
 - `search-content` searches all published items of a single content type for a case-insensitive text match across every `Text`, `LongText`, and `RichTextHTML` field. `ContentTypeName` and `Filter` are both required. For web page content types, `WebsiteChannelName` is also required (falls back to `DefaultWebsiteChannelName`). Results in `SearchContentResult` include `ContentItemId`, `ContentItemName`, `ContentTypeName`, `Location` (tree path, web pages only), and `MatchedFields` (field name → matched value). The search is done in-process after fetching published items — avoid calling it on very large content types.
+- `get-content-item-usage` wraps `IContentItemUsageRetriever.Retrieve` to find all content items that directly reference a given content item language variant. `ContentItemId` and `LanguageName` are both required. Returns `GetContentItemUsageResult { Items: List<ContentItemUsageEntry> }` where each entry exposes `ContentItemId`, `LanguageName`, `DisplayName`, `LatestVersionStatus`, `CreatedWhen`, `ModifiedWhen`, `HasImageAsset`, `ScheduledPublishWhen`, and `ScheduledUnpublishWhen`.
 - `query-sql` executes a read-only SQL query against the Xperience database. Only `SELECT` and `WITH...SELECT` statements are permitted; DML/DDL keywords are rejected before execution. `QuerySqlResult` contains `Columns: string[]` and `Rows: string?[][]`. This is an application-level guard — configure a read-only DB login at the database level as the primary control.
 
 ## Usage

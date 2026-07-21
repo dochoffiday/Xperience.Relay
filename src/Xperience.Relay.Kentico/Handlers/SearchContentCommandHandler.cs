@@ -71,10 +71,15 @@ public class SearchContentCommandHandler(
                 return RelayCommandResult.Fail("WebsiteChannelName is required for web page content types. Set it on the command or configure RelayKenticoOptions.DefaultWebsiteChannelName.");
             }
 
+            var allColumns = textColumns
+                .Concat([nameof(IWebPageContentQueryDataContainer.WebPageItemContentItemID), nameof(IWebPageContentQueryDataContainer.WebPageItemName), nameof(IWebPageContentQueryDataContainer.WebPageItemTreePath)])
+                .Distinct()
+                .ToArray();
+
             var builder = new ContentItemQueryBuilder()
                 .ForContentType(command.ContentTypeName, q =>
                 {
-                    q.Columns(textColumns.ToArray());
+                    q.Columns(allColumns);
                     q.ForWebsite(channelName, PathMatch.Section("/"), false);
                 })
                 .InLanguage(languageName);
@@ -113,8 +118,13 @@ public class SearchContentCommandHandler(
         }
         else
         {
+            var allColumns = textColumns
+                .Concat([nameof(IContentQueryDataContainer.ContentItemID), nameof(IContentQueryDataContainer.ContentItemName)])
+                .Distinct()
+                .ToArray();
+
             var builder = new ContentItemQueryBuilder()
-                .ForContentType(command.ContentTypeName, q => q.Columns(textColumns.ToArray()))
+                .ForContentType(command.ContentTypeName, q => q.Columns(allColumns))
                 .InLanguage(languageName);
 
             var filter = command.Filter;

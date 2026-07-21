@@ -30,6 +30,14 @@ public class ReoptimizeAssetCommandHandler(
 {
     private readonly RelayKenticoOptions _options = options.Value;
 
+    // Formats that cause ImageMagick to throw MagickMissingDelegateErrorException during
+    // Kentico's TryGetImageDimensions call. Re-optimizing these produces event log errors
+    // without any benefit, so we skip them instead.
+    private static readonly HashSet<string> UnsupportedFormats = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "ico",
+    };
+
     public async Task<RelayCommandResult> HandleAsync(ReoptimizeAssetCommand command, CancellationToken cancellationToken = default)
     {
         var languageName = command.LanguageName ?? _options.DefaultLanguageName;
@@ -81,6 +89,12 @@ public class ReoptimizeAssetCommandHandler(
         if (assetMetadata is null || assetMetadata.Metadata is null)
         {
             return RelayCommandResult.Fail($"No asset found for field '{command.FieldName}' on content item {command.ContentItemId} in language '{languageName}'.");
+        }
+
+        var extension = (assetMetadata.Metadata.Extension ?? string.Empty).TrimStart('.');
+        if (UnsupportedFormats.Contains(extension))
+        {
+            return RelayCommandResult.Ok($"Skipped re-optimization of '{command.FieldName}' on content item {command.ContentItemId} — format '.{extension}' is not supported by the image optimization pipeline.");
         }
 
         var filePath = contentItemAssetPathProvider.GetFileLocation(

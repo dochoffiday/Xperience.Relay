@@ -23,7 +23,7 @@ it, so a remote caller's client library never needs it.
 |---|---|---|
 | `Xperience.Relay.Contracts` | No | Command/result/envelope types shared by every other package. |
 | `Xperience.Relay.Core` | No | Command dispatch (`IRelayDispatcher`), pipeline behaviors, verb registry. Self-rolled, no MediatR dependency. |
-| `Xperience.Relay.Kentico` | Yes (`Kentico.Xperience.Core` >= 30.12.2) | Handlers that actually call Kentico APIs (`IWebPageManager`, `IContentItemManager`, ...). Deployed as part of the live Xperience app. |
+| `Xperience.Relay.Kentico` | Yes (`Kentico.Xperience.Core` >= 31.6.3) | Handlers that actually call Kentico APIs (`IWebPageManager`, `IContentItemManager`, ...). Deployed as part of the live Xperience app. |
 | `Xperience.Relay.Hosting` | No | ASP.NET Core endpoints (`/commands`, `/batch`, `/verbs`) exposing the dispatcher over HTTP, with API-key auth. |
 | `Xperience.Relay.Client` | No | Lightweight remote caller (`RelayClient`) -- no Kentico SDK dependency, just HTTP + the `Contracts` types. Resolves each command's verb from its `[RelayCommand]` attribute and posts to `/commands`/`/batch`, or reads `/verbs`. |
 
@@ -233,7 +233,7 @@ placement order.
 
 **Why `ContentInfo.WorkspaceName` holds a numeric ID, not a friendly name.** `ContentItemMetadata`
 exposes `WorkspaceId`, but no public API surface for resolving a workspace's display name was found
-in `Kentico.Xperience.Core` 31.5.4 (confirmed by reflecting over every type containing "Workspace" in
+in `Kentico.Xperience.Core` 31.6.3 (confirmed by reflecting over every type containing "Workspace" in
 the compiled assemblies -- none exist in the public API at this SDK version). If a later SDK version
 adds one, `GetContentInfoCommandHandler.FetchContentInfoAsync` is the place to use it.
 
@@ -278,7 +278,7 @@ or special characters that aren't valid code name characters.
 ## What's not built yet
 
 - **Integration/live testing** -- everything here is compile-verified against the real
-  `Kentico.Xperience.Core` 31.5.4 assembly (via a throwaway reflection probe used while building this,
+  `Kentico.Xperience.Core` 31.6.3 assembly (via a throwaway reflection probe used while building this,
   not checked in), but none of it has run against an actual Xperience database. Treat the Kentico
   handlers as "should work per the documented API," not "verified."
 - **`sort` command** -- explicitly deferred; `move` always appends last.

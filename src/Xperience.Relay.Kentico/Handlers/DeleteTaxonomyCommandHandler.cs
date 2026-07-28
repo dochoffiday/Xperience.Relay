@@ -1,5 +1,4 @@
 using CMS.ContentEngine;
-using CMS.ContentEngine.Internal;
 using CMS.DataEngine;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
@@ -20,7 +19,7 @@ public class DeleteTaxonomyCommandHandler(
             return RelayCommandResult.Fail($"Taxonomy {command.TaxonomyId} was not found.");
         }
 
-        taxonomyManager.DeleteTaxonomy(taxonomy);
+        await taxonomyManager.DeleteTaxonomy(command.TaxonomyId, cancellationToken);
 
         return RelayCommandResult.Ok($"Deleted taxonomy {command.TaxonomyId}.");
     }

@@ -1,4 +1,4 @@
-using CMS.ContentEngine.Internal;
+using CMS.ContentEngine;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
 using Xperience.Relay.Core;

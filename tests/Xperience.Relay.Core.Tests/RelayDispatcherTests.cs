@@ -98,6 +98,7 @@ public class RelayDispatcherTests
     [InlineData("get-content-item-usage", typeof(GetContentItemUsageCommand))]
     [InlineData("delete-contacts", typeof(DeleteContactsCommand))]
     [InlineData("query-sql", typeof(QuerySqlCommand))]
+    [InlineData("execute-sql", typeof(ExecuteSqlCommand))]
     public void RelayVerbRegistry_DiscoversCommandsFromContractsAssembly(string verb, Type expectedType)
     {
         var registry = new RelayVerbRegistry(new[] { typeof(MoveWebPageCommand).Assembly });

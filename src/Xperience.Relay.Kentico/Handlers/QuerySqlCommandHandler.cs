@@ -1,29 +1,25 @@
 using System.Data;
-using System.Text.RegularExpressions;
 using CMS.DataEngine;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
 using Xperience.Relay.Core;
+using Xperience.Relay.Kentico.Internal;
 
 namespace Xperience.Relay.Kentico.Handlers;
 
 /// <summary>
-/// Executes a read-only SQL query and returns columns + rows. Guards are application-level;
-/// configuring a read-only DB login at the database level is strongly recommended as the
-/// primary control.
+/// Executes a read-only SQL query (SELECT/DECLARE) and returns columns + rows.
+/// Validation uses the ScriptDom AST parser — regex bypasses via string literals
+/// or comments are not possible. Guards are still application-level; a read-only
+/// DB login at the database level is strongly recommended as the primary control.
 /// </summary>
 public class QuerySqlCommandHandler(
     ILogger<QuerySqlCommandHandler> logger,
     IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<QuerySqlCommand>
 {
     private readonly RelayKenticoOptions _options = options.Value;
-
-    // Blunt app-side guard — not the primary control, just a backstop.
-    private static readonly Regex ForbiddenPattern = new(
-        @"\b(INSERT|UPDATE|DELETE|RENAME|DROP|ALTER|EXEC|EXECUTE|TRUNCATE|MERGE|GRANT|REVOKE|CREATE|COMMIT|ROLLBACK|CALL|LOCK|SAVEPOINT|TRANSACTION|SET)\b",
-        RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     public Task<RelayCommandResult> HandleAsync(QuerySqlCommand command, CancellationToken cancellationToken = default)
     {
@@ -34,16 +30,11 @@ public class QuerySqlCommandHandler(
             return Task.FromResult(RelayCommandResult.Fail("Query must not be empty."));
         }
 
-        if (!query.StartsWith("SELECT", StringComparison.OrdinalIgnoreCase) &&
-            !query.StartsWith("WITH", StringComparison.OrdinalIgnoreCase))
-        {
-            return Task.FromResult(RelayCommandResult.Fail("Only SELECT or WITH...SELECT statements are allowed."));
-        }
+        var analysis = SqlStatementAnalyzer.Analyze(query, readOnly: true);
 
-        if (ForbiddenPattern.IsMatch(query))
+        if (!analysis.IsValid)
         {
-            return Task.FromResult(RelayCommandResult.Fail(
-                "Query contains a disallowed keyword (INSERT/UPDATE/DELETE/RENAME/DROP/ALTER/EXEC/TRUNCATE/MERGE/GRANT/REVOKE/CREATE/COMMIT/ROLLBACK/CALL/LOCK/SAVEPOINT/TRANSACTION/SET)."));
+            return Task.FromResult(RelayCommandResult.Fail(analysis.ErrorMessage!));
         }
 
         logger.LogInformation("query-sql executing: {Query}", query);
@@ -51,7 +42,7 @@ public class QuerySqlCommandHandler(
         try
         {
             DataSet dataSet;
-            using (var scope = new CMSConnectionScope { CommandTimeout = _options.SqlQueryTimeoutSeconds })
+            using (new CMSConnectionScope { CommandTimeout = _options.SqlQueryTimeoutSeconds })
             {
                 dataSet = ConnectionHelper.ExecuteQuery(query, null, QueryTypeEnum.SQLQuery);
             }

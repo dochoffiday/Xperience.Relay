@@ -62,6 +62,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRelayCommandHandler<DeleteCustomObjectCommand>, DeleteCustomObjectCommandHandler>();
         services.AddScoped<IRelayCommandHandler<GetContentItemUsageCommand>, GetContentItemUsageCommandHandler>();
         services.AddScoped<IRelayCommandHandler<DeleteContactsCommand>, DeleteContactsCommandHandler>();
+        services.AddScoped<IRelayCommandHandler<ExecuteSqlCommand>, ExecuteSqlCommandHandler>();
 
         return services;
     }

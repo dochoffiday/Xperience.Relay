@@ -11,4 +11,10 @@ public class QueryWebPageItemsCommand : QueryItemsCommandBase
     /// Required. Defaults to <c>RelayKenticoOptions.DefaultWebsiteChannelName</c> when null.
     /// </summary>
     public string? WebsiteChannelName { get; set; }
+
+    /// <summary>
+    /// When true, each item also gets <c>WebPageRelativeUrl</c> and <c>WebPageAbsoluteUrl</c>
+    /// (empty strings for pages with no URL path). Defaults to false.
+    /// </summary>
+    public bool IncludeUrls { get; set; }
 }

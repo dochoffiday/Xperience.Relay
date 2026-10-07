@@ -32,15 +32,15 @@ public class RelayClient
         CancellationToken cancellationToken = default)
     {
         var envelope = ToEnvelope(command, @as);
-        using var response = await _httpClient.PostAsJsonAsync("commands", envelope, JsonOptions, cancellationToken);
+        using var response = await _httpClient.PostAsJsonAsync("commands", envelope, JsonOptions, cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {
-            var body = await response.Content.ReadAsStringAsync(cancellationToken);
+            var body = await ReadBodyAsync(response.Content, cancellationToken).ConfigureAwait(false);
             return RelayCommandResult.Fail($"Relay endpoint returned {(int)response.StatusCode}: {body}");
         }
 
-        var result = await response.Content.ReadFromJsonAsync<RelayCommandResult>(JsonOptions, cancellationToken);
+        var result = await response.Content.ReadFromJsonAsync<RelayCommandResult>(JsonOptions, cancellationToken).ConfigureAwait(false);
         return result ?? RelayCommandResult.Fail("Relay endpoint returned an empty response.");
     }
 
@@ -53,23 +53,35 @@ public class RelayClient
             Commands = commands.Select(command => ToEnvelope(command, @as: null)).ToList(),
         };
 
-        using var response = await _httpClient.PostAsJsonAsync("batch", request, JsonOptions, cancellationToken);
+        using var response = await _httpClient.PostAsJsonAsync("batch", request, JsonOptions, cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {
-            var body = await response.Content.ReadAsStringAsync(cancellationToken);
-            throw new HttpRequestException($"Relay batch endpoint returned {(int)response.StatusCode}: {body}", null, response.StatusCode);
+            var body = await ReadBodyAsync(response.Content, cancellationToken).ConfigureAwait(false);
+            var message = $"Relay batch endpoint returned {(int)response.StatusCode}: {body}";
+#if NET5_0_OR_GREATER
+            throw new HttpRequestException(message, null, response.StatusCode);
+#else
+            throw new HttpRequestException(message);
+#endif
         }
 
-        var result = await response.Content.ReadFromJsonAsync<RelayBatchResponse>(JsonOptions, cancellationToken);
+        var result = await response.Content.ReadFromJsonAsync<RelayBatchResponse>(JsonOptions, cancellationToken).ConfigureAwait(false);
         return result ?? new RelayBatchResponse();
     }
 
     public async Task<RelayDiscoveryResponse> GetDiscoveryAsync(CancellationToken cancellationToken = default)
     {
-        var result = await _httpClient.GetFromJsonAsync<RelayDiscoveryResponse>("verbs", JsonOptions, cancellationToken);
+        var result = await _httpClient.GetFromJsonAsync<RelayDiscoveryResponse>("verbs", JsonOptions, cancellationToken).ConfigureAwait(false);
         return result ?? new RelayDiscoveryResponse();
     }
+
+    private static Task<string> ReadBodyAsync(HttpContent content, CancellationToken cancellationToken) =>
+#if NET5_0_OR_GREATER
+        content.ReadAsStringAsync(cancellationToken);
+#else
+        content.ReadAsStringAsync();
+#endif
 
     private static RelayCommandEnvelope ToEnvelope(IRelayCommand command, string? @as)
     {

@@ -27,6 +27,11 @@ it, so a remote caller's client library never needs it.
 | `Xperience.Relay.Hosting` | No | ASP.NET Core endpoints (`/commands`, `/batch`, `/verbs`) exposing the dispatcher over HTTP, with API-key auth. |
 | `Xperience.Relay.Client` | No | Lightweight remote caller (`RelayClient`) -- no Kentico SDK dependency, just HTTP + the `Contracts` types. Resolves each command's verb from its `[RelayCommand]` attribute and posts to `/commands`/`/batch`, or reads `/verbs`. |
 
+`Xperience.Relay.Contracts` and `Xperience.Relay.Client` multi-target `net8.0` and `netstandard2.0`, so
+remote callers can also be .NET Framework 4.7.2+ apps (e.g. classic ASP.NET WebForms) -- see
+[.NET Framework callers](#net-framework-callers-eg-classic-aspnet-webforms). `Core`, `Hosting`, and
+`Kentico` are `net8.0` only.
+
 ## Command model
 
 Each command is a plain class implementing `IRelayCommand`, tagged with `[RelayCommand("verb-name")]`
@@ -211,6 +216,30 @@ public class MyService(RelayClient relay)
     }
 }
 ```
+
+#### .NET Framework callers (e.g. classic ASP.NET WebForms)
+
+A .NET Framework 4.7.2+ app (tested on 4.8) can install `Xperience.Relay.Client` from NuGet. There's
+no DI container to call `AddRelayClient` on in a WebForms app, but `RelayClient` only needs an
+`HttpClient`, so build one yourself and keep it in a `static` field so it's created once for the
+lifetime of the app:
+
+```csharp
+private static readonly RelayClient Relay = CreateRelayClient();
+
+private static RelayClient CreateRelayClient()
+{
+    // Trailing slash is required so relative paths resolve correctly
+    var http = new HttpClient { BaseAddress = new Uri("https://your-xperience-site.com/api/relay/") };
+    http.DefaultRequestHeaders.Add("X-Relay-Api-Key", "your-secret-key");
+    return new RelayClient(http);
+}
+```
+
+`RelayClient` uses `ConfigureAwait(false)` throughout, so it's safe to block on from a non-async
+handler (`.GetAwaiter().GetResult()`) without deadlocking classic ASP.NET's synchronization context.
+An async page (`<%@ Page Async="true" %>` with `Page.RegisterAsyncTask`) is still preferable, since it
+frees the request thread while waiting on the relay.
 
 ## Non-obvious implementation decisions
 

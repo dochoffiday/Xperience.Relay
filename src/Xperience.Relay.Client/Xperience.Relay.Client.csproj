@@ -1,6 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!-- Directory.Build.props sets a single TargetFramework; clear it so multi-targeting takes effect. -->
+    <TargetFramework></TargetFramework>
+    <TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>
     <PackageId>Xperience.Relay.Client</PackageId>
     <Description>Lightweight HTTP client for calling a deployed Xperience.Relay endpoint remotely. Has no dependency on the Kentico SDK -- just HTTP and Xperience.Relay.Contracts.</Description>
   </PropertyGroup>
@@ -12,6 +15,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Net.Http.Json" Version="8.0.1" />
   </ItemGroup>
 
 </Project>

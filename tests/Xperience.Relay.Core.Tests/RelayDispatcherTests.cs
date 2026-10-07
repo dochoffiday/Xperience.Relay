@@ -97,6 +97,7 @@ public class RelayDispatcherTests
     [InlineData("delete-custom-object", typeof(DeleteCustomObjectCommand))]
     [InlineData("get-content-item-usage", typeof(GetContentItemUsageCommand))]
     [InlineData("delete-contacts", typeof(DeleteContactsCommand))]
+    [InlineData("get-form-submissions", typeof(GetFormSubmissionsCommand))]
     [InlineData("query-sql", typeof(QuerySqlCommand))]
     [InlineData("execute-sql", typeof(ExecuteSqlCommand))]
     public void RelayVerbRegistry_DiscoversCommandsFromContractsAssembly(string verb, Type expectedType)

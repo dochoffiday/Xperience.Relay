@@ -1,0 +1,17 @@
+{
+  "title": "Unpublish an item that is already unpublished",
+  "order": 1025,
+  "status": 200,
+  "request": {
+    "verb": "unpublish-content-item",
+    "parameters": {
+      "contentItemId": 184
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Content item 184 (en) is already unpublished.",
+    "error": null,
+    "data": null
+  }
+}

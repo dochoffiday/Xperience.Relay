@@ -1,0 +1,35 @@
+{
+  "title": "Filter by a column value",
+  "order": 1020,
+  "status": 200,
+  "request": {
+    "verb": "query-reusable-items",
+    "parameters": {
+      "contentTypeNames": [
+        "DancingGoat.Cafe"
+      ],
+      "columns": [
+        "ContentItemID",
+        "CafeName",
+        "CafeCity"
+      ],
+      "whereEquals": {
+        "CafeCity": "Seattle"
+      }
+    }
+  },
+  "response": {
+    "success": true,
+    "message": null,
+    "error": null,
+    "data": {
+      "items": [
+        {
+          "ContentItemID": 185,
+          "CafeName": "Seattle Coffee Place",
+          "CafeCity": "Seattle"
+        }
+      ]
+    }
+  }
+}

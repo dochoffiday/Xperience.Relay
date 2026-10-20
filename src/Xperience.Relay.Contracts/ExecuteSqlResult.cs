@@ -1,5 +1,9 @@
 namespace Xperience.Relay.Contracts;
 
+/// <summary>
+/// Returned in <see cref="RelayCommandResult.Data"/> after a successful "execute-sql" command: the preview of what would run
+/// (<see cref="Confirmed"/> is false), or the outcome of running it.
+/// </summary>
 public class ExecuteSqlResult
 {
     /// <summary>True when the query was actually executed; false when this is a preview.</summary>

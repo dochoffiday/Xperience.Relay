@@ -1,0 +1,25 @@
+{
+  "title": "Look up a content item",
+  "order": 1012,
+  "status": 200,
+  "request": {
+    "verb": "get-content-info",
+    "parameters": {
+      "contentItemId": 184
+    }
+  },
+  "response": {
+    "success": true,
+    "message": null,
+    "error": null,
+    "data": {
+      "contentItemId": 184,
+      "contentItemGuid": "a244387c-f5fc-4fe2-861c-d33832e7b90d",
+      "name": "ColdBrewWorkshop-23s43e2s",
+      "contentType": "DancingGoat.Event",
+      "languageName": "",
+      "workspaceName": "2",
+      "contentFolderPath": null
+    }
+  }
+}

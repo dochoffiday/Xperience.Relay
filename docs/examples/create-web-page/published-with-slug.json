@@ -1,0 +1,29 @@
+{
+  "title": "Create a page, set its URL slug and publish it straight away",
+  "order": 2,
+  "status": 200,
+  "request": {
+    "verb": "create-web-page",
+    "parameters": {
+      "websiteChannelName": "DancingGoatPages",
+      "parentWebPageItemId": 1,
+      "contentTypeName": "DancingGoat.ArticlePage",
+      "displayName": "Brewing methods compared",
+      "urlSlug": "brewing-methods-compared",
+      "publishAfterCreate": true,
+      "fields": {
+        "ArticleTitle": "Brewing methods compared",
+        "ArticlePageSummary": "Pour-over, French press or AeroPress? What each one does to the cup."
+      }
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Created web page 'Brewing methods compared' (ID=69), published.",
+    "error": null,
+    "data": {
+      "webPageItemId": 69,
+      "webPageItemGuid": "41dca4c0-2931-4949-b905-c5def7b31a8c"
+    }
+  }
+}

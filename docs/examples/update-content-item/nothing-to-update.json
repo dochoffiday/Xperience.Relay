@@ -1,0 +1,18 @@
+{
+  "title": "Nothing to update",
+  "kind": "error",
+  "order": 1018,
+  "status": 200,
+  "request": {
+    "verb": "update-content-item",
+    "parameters": {
+      "contentItemId": 184
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "No fields provided — nothing to update.",
+    "data": null
+  }
+}

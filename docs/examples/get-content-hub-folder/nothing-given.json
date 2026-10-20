@@ -1,0 +1,16 @@
+{
+  "title": "No way of identifying the folder",
+  "kind": "error",
+  "order": 1004,
+  "status": 200,
+  "request": {
+    "verb": "get-content-hub-folder",
+    "parameters": {}
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "One of ContentFolderId, CodeName, or FolderPath must be provided.",
+    "data": null
+  }
+}

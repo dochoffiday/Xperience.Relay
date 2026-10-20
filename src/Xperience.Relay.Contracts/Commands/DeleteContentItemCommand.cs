@@ -8,6 +8,7 @@ namespace Xperience.Relay.Contracts.Commands;
 [RelayCommand("delete-content-item", Access = RelayAccess.Write)]
 public class DeleteContentItemCommand : IRelayCommand
 {
+    /// <summary>ID of the reusable content item. Required.</summary>
     public int ContentItemId { get; set; }
 
     /// <summary>Defaults to <c>RelayKenticoOptions.DefaultLanguageName</c> when null.</summary>

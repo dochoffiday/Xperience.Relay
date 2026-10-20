@@ -1,0 +1,21 @@
+{
+  "title": "No columns named",
+  "kind": "error",
+  "order": 18,
+  "status": 200,
+  "request": {
+    "verb": "query-web-page-items",
+    "parameters": {
+      "websiteChannelName": "DancingGoatPages",
+      "contentTypeNames": [
+        "DancingGoat.ArticlePage"
+      ]
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Columns must list at least one column.",
+    "data": null
+  }
+}

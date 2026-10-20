@@ -8,7 +8,7 @@ public class RelayClientOptions
 {
     /// <summary>
     /// Base address of the deployed relay's endpoints (i.e. the address
-    /// <see cref="Xperience.Relay.Hosting.RelayHostingOptions.BasePath"/> was mapped under on the host),
+    /// <c>RelayHostingOptions.BasePath</c> was mapped under on the host),
     /// e.g. <c>https://example.com/api/relay/</c>. Must end with a trailing slash -- <see cref="RelayClient"/>
     /// resolves "commands", "batch", and "verbs" relative to it, and a missing slash would otherwise
     /// silently replace the last path segment instead of appending.

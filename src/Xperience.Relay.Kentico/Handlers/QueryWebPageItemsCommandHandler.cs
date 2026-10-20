@@ -46,6 +46,16 @@ public class QueryWebPageItemsCommandHandler(
             return RelayCommandResult.Fail("WebsiteChannelName is required. Set it on the command or configure RelayKenticoOptions.DefaultWebsiteChannelName.");
         }
 
+        if (command.ContentTypeNames is not { Count: > 0 })
+        {
+            return RelayCommandResult.Fail("ContentTypeNames must list at least one content type.");
+        }
+
+        if (command.Columns is not { Count: > 0 })
+        {
+            return RelayCommandResult.Fail("Columns must list at least one column.");
+        }
+
         var languageName = command.LanguageName ?? _options.DefaultLanguageName;
 
         var columns = Combine(

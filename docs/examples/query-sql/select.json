@@ -1,0 +1,40 @@
+{
+  "title": "Read from the database",
+  "order": 2043,
+  "status": 200,
+  "request": {
+    "verb": "query-sql",
+    "parameters": {
+      "query": "SELECT TOP 3 TagID, TagName, TagTitle FROM CMS_Tag ORDER BY TagID"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Query returned 3 row(s).",
+    "error": null,
+    "data": {
+      "columns": [
+        "TagID",
+        "TagName",
+        "TagTitle"
+      ],
+      "rows": [
+        [
+          "1",
+          "Accessories",
+          "Accessories"
+        ],
+        [
+          "2",
+          "Aerobie",
+          "Aerobie"
+        ],
+        [
+          "3",
+          "Bestsellers",
+          "Bestsellers"
+        ]
+      ]
+    }
+  }
+}

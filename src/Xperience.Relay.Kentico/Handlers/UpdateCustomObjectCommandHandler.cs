@@ -44,6 +44,13 @@ public class UpdateCustomObjectCommandHandler : IRelayCommandHandler<UpdateCusto
             return Task.FromResult(RelayCommandResult.Fail($"'{command.ObjectTypeName}' with ID {command.Id} was not found."));
         }
 
+        var problem = ObjectColumnChecker.Check(command.ObjectTypeName, info.ColumnNames, command.Fields.Keys);
+
+        if (problem is not null)
+        {
+            return Task.FromResult(RelayCommandResult.Fail(problem));
+        }
+
         foreach (var (col, val) in command.Fields)
         {
             info.SetValue(col, QueryItemsHelpers.GetScalarValue(val));

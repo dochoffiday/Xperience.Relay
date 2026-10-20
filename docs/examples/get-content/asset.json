@@ -1,0 +1,30 @@
+{
+  "title": "Read an item with an asset field",
+  "note": "`ImageFile` comes back as the JSON text Kentico stores for the asset.",
+  "order": 1035,
+  "status": 200,
+  "request": {
+    "verb": "get-content",
+    "parameters": {
+      "contentItemId": 186
+    }
+  },
+  "response": {
+    "success": true,
+    "message": null,
+    "error": null,
+    "data": {
+      "fields": {
+        "ImageFile": "{\"Original\":{\"Identifier\":\"b73333e9-7170-40e0-bd10-21f8052d8d1c\",\"Name\":\"cold-brew.png\",\"Extension\":\".png\",\"Size\":70,\"Width\":1,\"Height\":1,\"LastModified\":\"2026-10-20T17:52:04.4989026Z\"},\"OptimizationParameters\":{\"OutputExtension\":\"webp\",\"Quality\":70,\"WidthLimit\":null,\"HeightLimit\":null},\"Variants\":{},\"FocalPoint\":{\"X\":0,\"Y\":0},\"Identifier\":\"94464018-4b98-48a3-9622-d3de3eea2556\",\"Name\":\"cold-brew.webp\",\"Extension\":\".webp\",\"Size\":96,\"Width\":1,\"Height\":1,\"LastModified\":\"2026-10-20T17:52:04.6628406Z\"}",
+        "ImageShortDescription": "How cold brew is made"
+      },
+      "contentItemId": 186,
+      "contentItemGuid": "86c59020-2715-4c87-8bc3-5b29ecabaf62",
+      "name": "ColdBrewDiagram-edivq6ya",
+      "contentType": "DancingGoat.Image",
+      "languageName": "en",
+      "workspaceName": "3",
+      "contentFolderPath": null
+    }
+  }
+}

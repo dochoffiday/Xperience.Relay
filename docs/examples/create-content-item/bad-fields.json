@@ -1,0 +1,30 @@
+{
+  "title": "Fields the content type does not have, or values that do not fit",
+  "kind": "error",
+  "order": 1010,
+  "status": 200,
+  "request": {
+    "verb": "create-content-item",
+    "parameters": {
+      "contentTypeName": "DancingGoat.Event",
+      "displayName": "Cold brew workshop",
+      "workspaceName": "DancingGoat.DancingGoatEvents",
+      "fields": {
+        "EventTitle": "Cold brew workshop",
+        "EventLocation": "Boston",
+        "EventDate": "next Friday"
+      },
+      "linkedItemFields": {
+        "EventTitle": [
+          "4c84719d-689e-460e-8cc1-5495c367b249"
+        ]
+      }
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Field 'EventLocation' was not found on content type 'DancingGoat.Event'. Field 'EventDate' expects a date, but got 'next Friday'. Field 'EventTitle' is not a content item reference field (it is text), so it can't be set from LinkedItemFields.",
+    "data": null
+  }
+}

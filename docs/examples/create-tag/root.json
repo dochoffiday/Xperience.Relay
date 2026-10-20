@@ -1,0 +1,24 @@
+{
+  "title": "Create a tag at the root of a taxonomy",
+  "order": 2006,
+  "status": 200,
+  "request": {
+    "verb": "create-tag",
+    "parameters": {
+      "taxonomyId": 7,
+      "title": "Spring",
+      "description": "March to May"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Created tag 'Spring' (ID=25) in taxonomy 'seasons'.",
+    "error": null,
+    "data": {
+      "tagId": 25,
+      "tagGuid": "562fbc6d-61b3-471e-84ae-ff133abeeb1e",
+      "tagName": "spring",
+      "tagTitle": "Spring"
+    }
+  }
+}

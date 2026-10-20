@@ -1,0 +1,19 @@
+{
+  "title": "A taxonomy that does not exist",
+  "kind": "error",
+  "order": 2009,
+  "status": 200,
+  "request": {
+    "verb": "create-tag",
+    "parameters": {
+      "taxonomyName": "no-such-taxonomy",
+      "title": "Autumn"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Taxonomy 'no-such-taxonomy' was not found.",
+    "data": null
+  }
+}

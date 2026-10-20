@@ -1,0 +1,19 @@
+{
+  "title": "Find a folder by its code name",
+  "order": 1003,
+  "status": 200,
+  "request": {
+    "verb": "get-content-hub-folder",
+    "parameters": {
+      "codeName": "Events_2026"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Found folder '2026' (ID=5).",
+    "error": null,
+    "data": {
+      "contentFolderId": 5
+    }
+  }
+}

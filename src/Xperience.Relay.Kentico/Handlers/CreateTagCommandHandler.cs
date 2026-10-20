@@ -37,7 +37,24 @@ public class CreateTagCommandHandler(
 
         if (taxonomy is null)
         {
-            return RelayCommandResult.Fail($"Taxonomy was not found.");
+            var which = command.TaxonomyId.HasValue ? command.TaxonomyId.Value.ToString() : $"'{command.TaxonomyName}'";
+
+            return RelayCommandResult.Fail($"Taxonomy {which} was not found.");
+        }
+
+        if (command.ParentTagId is > 0)
+        {
+            var parent = await tagInfoProvider.GetAsync(command.ParentTagId.Value, cancellationToken);
+
+            if (parent is null)
+            {
+                return RelayCommandResult.Fail($"Parent tag {command.ParentTagId} was not found.");
+            }
+
+            if (parent.TagTaxonomyID != taxonomy.TaxonomyID)
+            {
+                return RelayCommandResult.Fail($"Parent tag {command.ParentTagId} belongs to a different taxonomy than '{taxonomy.TaxonomyName}'.");
+            }
         }
 
         var codeName = string.IsNullOrWhiteSpace(command.CodeName)

@@ -1,0 +1,47 @@
+{
+  "title": "List the cafes",
+  "order": 1019,
+  "status": 200,
+  "request": {
+    "verb": "query-reusable-items",
+    "parameters": {
+      "contentTypeNames": [
+        "DancingGoat.Cafe"
+      ],
+      "columns": [
+        "ContentItemID",
+        "CafeName",
+        "CafeCity"
+      ]
+    }
+  },
+  "response": {
+    "success": true,
+    "message": null,
+    "error": null,
+    "data": {
+      "items": [
+        {
+          "ContentItemID": 19,
+          "CafeName": "Boston coffee place",
+          "CafeCity": "Boston"
+        },
+        {
+          "ContentItemID": 30,
+          "CafeName": "Chicago",
+          "CafeCity": "Chicago"
+        },
+        {
+          "ContentItemID": 81,
+          "CafeName": "New York",
+          "CafeCity": "New York"
+        },
+        {
+          "ContentItemID": 185,
+          "CafeName": "Seattle Coffee Place",
+          "CafeCity": "Seattle"
+        }
+      ]
+    }
+  }
+}

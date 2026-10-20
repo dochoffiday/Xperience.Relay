@@ -1,0 +1,18 @@
+{
+  "title": "Publish a page that was unpublished",
+  "note": "An unpublished page gets a draft first, then that draft is published.",
+  "order": 21,
+  "status": 200,
+  "request": {
+    "verb": "publish-web-page",
+    "parameters": {
+      "webPageId": 68
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Published web page 68 (en).",
+    "error": null,
+    "data": null
+  }
+}

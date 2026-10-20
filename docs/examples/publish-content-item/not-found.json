@@ -1,0 +1,18 @@
+{
+  "title": "An item that does not exist",
+  "kind": "error",
+  "order": 1028,
+  "status": 200,
+  "request": {
+    "verb": "publish-content-item",
+    "parameters": {
+      "contentItemId": 99999
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Content item 99999 was not found.",
+    "data": null
+  }
+}

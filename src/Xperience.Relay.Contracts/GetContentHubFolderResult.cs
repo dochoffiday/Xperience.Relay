@@ -5,5 +5,6 @@ namespace Xperience.Relay.Contracts;
 /// </summary>
 public class GetContentHubFolderResult
 {
+    /// <summary>ID of the folder that was found or created, for "create-content-item" and "move-content-item".</summary>
     public int ContentFolderId { get; set; }
 }

@@ -18,6 +18,9 @@ public static class RelayEndpointRouteBuilderExtensions
         Converters = { new JsonStringEnumConverter() }
     };
 
+    // What a command without a "parameters" property is deserialized from, so one that takes no parameters can be sent bare.
+    private static readonly JsonElement NoParameters = JsonDocument.Parse("{}").RootElement.Clone();
+
     /// <summary>
     /// Maps the relay's three HTTP endpoints under <see cref="RelayHostingOptions.BasePath"/>:
     /// POST {basePath}/commands (single command), POST {basePath}/batch (ordered list of commands),
@@ -80,7 +83,8 @@ public static class RelayEndpointRouteBuilderExtensions
         IRelayCommand? command;
         try
         {
-            command = (IRelayCommand?)envelope.Parameters.Deserialize(commandType, DeserializeOptions);
+            var parameters = envelope.Parameters.ValueKind == JsonValueKind.Undefined ? NoParameters : envelope.Parameters;
+            command = (IRelayCommand?)parameters.Deserialize(commandType, DeserializeOptions);
         }
         catch (JsonException ex)
         {

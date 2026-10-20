@@ -1,0 +1,18 @@
+{
+  "title": "Publish a page that is already published",
+  "note": "Asking for a state the page is already in succeeds without changing anything, so the command is safe to repeat.",
+  "order": 12,
+  "status": 200,
+  "request": {
+    "verb": "publish-web-page",
+    "parameters": {
+      "webPageId": 68
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Web page 68 (en) is already published.",
+    "error": null,
+    "data": null
+  }
+}

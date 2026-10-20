@@ -1,0 +1,18 @@
+{
+  "title": "A statement that changes data",
+  "kind": "error",
+  "order": 2044,
+  "status": 200,
+  "request": {
+    "verb": "query-sql",
+    "parameters": {
+      "query": "DELETE FROM CMS_Tag WHERE TagID = 1"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "'DELETE' statements are not allowed in this context.",
+    "data": null
+  }
+}

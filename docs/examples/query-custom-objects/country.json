@@ -1,0 +1,35 @@
+{
+  "title": "Find a country by its two-letter code",
+  "order": 2025,
+  "status": 200,
+  "request": {
+    "verb": "query-custom-objects",
+    "parameters": {
+      "objectTypeName": "cms.country",
+      "columns": [
+        "CountryID",
+        "CountryName",
+        "CountryDisplayName",
+        "CountryTwoLetterCode"
+      ],
+      "whereEquals": {
+        "CountryTwoLetterCode": "US"
+      }
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Found 1 object(s) of type 'cms.country'.",
+    "error": null,
+    "data": {
+      "items": [
+        {
+          "CountryID": "271",
+          "CountryName": "USA",
+          "CountryDisplayName": "USA",
+          "CountryTwoLetterCode": "US"
+        }
+      ]
+    }
+  }
+}

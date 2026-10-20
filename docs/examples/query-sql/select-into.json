@@ -1,0 +1,18 @@
+{
+  "title": "A SELECT that creates a table",
+  "kind": "error",
+  "order": 2048,
+  "status": 200,
+  "request": {
+    "verb": "query-sql",
+    "parameters": {
+      "query": "SELECT TagID, TagName INTO Tag_Copy FROM CMS_Tag"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "'SELECT ... INTO' creates a table, so it is not allowed here (a temporary #table is fine).",
+    "data": null
+  }
+}

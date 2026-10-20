@@ -1,0 +1,19 @@
+{
+  "title": "A parent that does not exist",
+  "kind": "error",
+  "order": 24,
+  "status": 200,
+  "request": {
+    "verb": "move-web-page",
+    "parameters": {
+      "webPageId": 68,
+      "parentWebPageId": 99999
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Web page 99999 (the new parent) was not found.",
+    "data": null
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "title": "A statement that returns rows",
+  "order": 2052,
+  "status": 200,
+  "request": {
+    "verb": "execute-sql",
+    "parameters": {
+      "query": "UPDATE CMS_Tag SET TagDescription = N'' OUTPUT inserted.TagID, inserted.TagName WHERE TagName = N'HappyHour'",
+      "confirm": true
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Query returned 1 row(s).",
+    "error": null,
+    "data": {
+      "confirmed": true,
+      "statementSummaries": [
+        "UPDATE [CMS_Tag]"
+      ],
+      "columns": [
+        "TagID",
+        "TagName"
+      ],
+      "rows": [
+        [
+          "11",
+          "HappyHour"
+        ]
+      ]
+    }
+  }
+}

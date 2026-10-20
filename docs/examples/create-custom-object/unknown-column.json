@@ -1,0 +1,22 @@
+{
+  "title": "A column the object type does not have",
+  "kind": "error",
+  "order": 2032,
+  "status": 200,
+  "request": {
+    "verb": "create-custom-object",
+    "parameters": {
+      "objectTypeName": "cms.country",
+      "fields": {
+        "CountryName": "Elbonia",
+        "CountryFlag": "blue"
+      }
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Column 'CountryFlag' was not found on object type 'cms.country'.",
+    "data": null
+  }
+}

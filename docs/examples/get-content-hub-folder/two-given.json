@@ -1,0 +1,19 @@
+{
+  "title": "More than one way of identifying the folder",
+  "kind": "error",
+  "order": 1005,
+  "status": 200,
+  "request": {
+    "verb": "get-content-hub-folder",
+    "parameters": {
+      "contentFolderId": 5,
+      "folderPath": "Events/2026"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Only one of ContentFolderId, CodeName, or FolderPath may be provided.",
+    "data": null
+  }
+}

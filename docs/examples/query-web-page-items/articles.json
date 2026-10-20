@@ -1,0 +1,63 @@
+{
+  "title": "List the article pages and their titles",
+  "order": 15,
+  "status": 200,
+  "request": {
+    "verb": "query-web-page-items",
+    "parameters": {
+      "websiteChannelName": "DancingGoatPages",
+      "contentTypeNames": [
+        "DancingGoat.ArticlePage"
+      ],
+      "columns": [
+        "WebPageItemID",
+        "ArticleTitle"
+      ]
+    }
+  },
+  "response": {
+    "success": true,
+    "message": null,
+    "error": null,
+    "data": {
+      "items": [
+        {
+          "WebPageItemID": 9,
+          "ArticleTitle": "Coffee Beverages Explained"
+        },
+        {
+          "WebPageItemID": 10,
+          "ArticleTitle": "Coffee processing techniques"
+        },
+        {
+          "WebPageItemID": 11,
+          "ArticleTitle": "Donate with us"
+        },
+        {
+          "WebPageItemID": 12,
+          "ArticleTitle": "On Roasts"
+        },
+        {
+          "WebPageItemID": 13,
+          "ArticleTitle": "Origins of Arabica Bourbon"
+        },
+        {
+          "WebPageItemID": 14,
+          "ArticleTitle": "The Resilient Robusta: A Coffee with Character"
+        },
+        {
+          "WebPageItemID": 15,
+          "ArticleTitle": "Which brewing fits you?"
+        },
+        {
+          "WebPageItemID": 68,
+          "ArticleTitle": "Cold brew at home: a beginner's guide"
+        },
+        {
+          "WebPageItemID": 69,
+          "ArticleTitle": "Brewing methods compared"
+        }
+      ]
+    }
+  }
+}

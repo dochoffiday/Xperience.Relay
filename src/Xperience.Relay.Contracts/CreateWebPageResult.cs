@@ -5,6 +5,9 @@ namespace Xperience.Relay.Contracts;
 /// </summary>
 public class CreateWebPageResult
 {
+    /// <summary>ID of the new page, for the other page commands.</summary>
     public int WebPageItemId { get; set; }
+
+    /// <summary>GUID of the new page.</summary>
     public Guid WebPageItemGuid { get; set; }
 }

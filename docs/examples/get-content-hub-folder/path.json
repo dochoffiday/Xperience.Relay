@@ -1,0 +1,21 @@
+{
+  "title": "Find a folder by path, creating the folders that are missing",
+  "note": "Neither folder existed, so both were created. Running the same command again finds them and changes nothing.",
+  "order": 1001,
+  "status": 200,
+  "request": {
+    "verb": "get-content-hub-folder",
+    "parameters": {
+      "folderPath": "Events/2026",
+      "workspaceName": "DancingGoat.DancingGoatEvents"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Folder 'Events/2026' is ready (ID=5).",
+    "error": null,
+    "data": {
+      "contentFolderId": 5
+    }
+  }
+}

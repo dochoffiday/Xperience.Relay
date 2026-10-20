@@ -1,0 +1,25 @@
+{
+  "title": "Preview a statement (nothing is run)",
+  "note": "Without `confirm: true` the statements are only checked and described.",
+  "order": 2050,
+  "status": 200,
+  "request": {
+    "verb": "execute-sql",
+    "parameters": {
+      "query": "UPDATE CMS_Tag SET TagDescription = N'Warm-weather drinks' WHERE TagName = N'happyhour'"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Preview only — set Confirm: true to execute.",
+    "error": null,
+    "data": {
+      "confirmed": false,
+      "statementSummaries": [
+        "UPDATE [CMS_Tag]"
+      ],
+      "columns": null,
+      "rows": null
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "title": "Update an item that is published",
+  "order": 1017,
+  "status": 200,
+  "request": {
+    "verb": "update-content-item",
+    "parameters": {
+      "contentItemId": 184,
+      "fields": {
+        "EventPromoText": "Learn to make cold brew at home - bring your own jar.",
+        "EventDate": "2026-11-21T10:00:00"
+      }
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Updated 2 field(s) on content item 184.",
+    "error": null,
+    "data": null
+  }
+}

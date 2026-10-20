@@ -19,8 +19,9 @@ public class RelayKenticoOptions
     public string DefaultWorkspaceName { get; set; } = string.Empty;
 
     /// <summary>
-    /// Website channel name used by <c>query-content-items</c> when <c>ContentKind</c> is
-    /// <c>WebPage</c> and the command doesn't specify one explicitly.
+    /// Code name of the website channel used by <c>create-web-page</c>, <c>query-web-page-items</c> and
+    /// <c>search-content</c> (for web page content types) when the command doesn't name one. Leave empty to
+    /// make those commands require an explicit <c>WebsiteChannelName</c>.
     /// </summary>
     public string DefaultWebsiteChannelName { get; set; } = string.Empty;
 

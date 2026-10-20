@@ -50,7 +50,7 @@ public sealed class ContentFieldChecker(IInfoProvider<ContentItemInfo> contentIt
 
         if (form is null)
         {
-            return null;
+            return $"Content type '{contentTypeName}' was not found.";
         }
 
         var rules = form

@@ -1,0 +1,19 @@
+{
+  "title": "Move a tag to the root of its taxonomy",
+  "order": 2016,
+  "status": 200,
+  "request": {
+    "verb": "move-tag",
+    "parameters": {
+      "tagId": 27,
+      "targetParentTagId": 0,
+      "order": 2
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Moved tag 27 to parent 0 at order 2.",
+    "error": null,
+    "data": null
+  }
+}

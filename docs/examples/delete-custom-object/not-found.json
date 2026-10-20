@@ -1,0 +1,19 @@
+{
+  "title": "An object that does not exist",
+  "kind": "error",
+  "order": 2031,
+  "status": 200,
+  "request": {
+    "verb": "delete-custom-object",
+    "parameters": {
+      "objectTypeName": "cms.country",
+      "id": 99999
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "'cms.country' with ID 99999 was not found.",
+    "data": null
+  }
+}

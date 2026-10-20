@@ -1,3 +1,5 @@
+using System.Reflection;
+using System.Runtime.ExceptionServices;
 using Xperience.Relay.Contracts;
 
 namespace Xperience.Relay.Core;
@@ -34,6 +36,16 @@ public class RelayDispatcher : IRelayDispatcher
             ?? throw new InvalidOperationException($"No {handlerType.Name} registered for command type '{command.GetType().Name}'.");
 
         var handleMethod = handlerType.GetMethod(nameof(IRelayCommandHandler<IRelayCommand>.HandleAsync))!;
-        return (Task<RelayCommandResult>)handleMethod.Invoke(handler, new object[] { command, cancellationToken })!;
+
+        try
+        {
+            return (Task<RelayCommandResult>)handleMethod.Invoke(handler, new object[] { command, cancellationToken })!;
+        }
+        catch (TargetInvocationException ex) when (ex.InnerException is not null)
+        {
+            // Reflection wraps what a handler throws before its first await; the caller wants the real exception.
+            ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
+            throw;
+        }
     }
 }

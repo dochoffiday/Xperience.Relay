@@ -1,0 +1,25 @@
+{
+  "title": "Several statements",
+  "order": 2053,
+  "status": 200,
+  "request": {
+    "verb": "execute-sql",
+    "parameters": {
+      "query": "INSERT INTO CMS_Tag (TagName) VALUES (N'x'); DELETE FROM CMS_Tag WHERE TagName = N'x'"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Preview only — set Confirm: true to execute.",
+    "error": null,
+    "data": {
+      "confirmed": false,
+      "statementSummaries": [
+        "INSERT [CMS_Tag]",
+        "DELETE [CMS_Tag]"
+      ],
+      "columns": null,
+      "rows": null
+    }
+  }
+}

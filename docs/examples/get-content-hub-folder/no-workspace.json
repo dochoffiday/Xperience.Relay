@@ -1,0 +1,18 @@
+{
+  "title": "A path without a workspace",
+  "kind": "error",
+  "order": 1006,
+  "status": 200,
+  "request": {
+    "verb": "get-content-hub-folder",
+    "parameters": {
+      "folderPath": "Events/2026"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "WorkspaceName is required when using FolderPath. Set it on the command or configure RelayKenticoOptions.DefaultWorkspaceName.",
+    "data": null
+  }
+}

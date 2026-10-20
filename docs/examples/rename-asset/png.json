@@ -1,0 +1,19 @@
+{
+  "title": "Rename the file in an asset field",
+  "order": 1036,
+  "status": 200,
+  "request": {
+    "verb": "rename-asset",
+    "parameters": {
+      "contentItemId": 186,
+      "fieldName": "ImageFile",
+      "assetName": "cold-brew-diagram.png"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Renamed asset 'ImageFile' on content item 186 to 'cold-brew-diagram.png'.",
+    "error": null,
+    "data": null
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "title": "A tag that does not exist",
+  "kind": "error",
+  "order": 2017,
+  "status": 200,
+  "request": {
+    "verb": "move-tag",
+    "parameters": {
+      "tagId": 99999,
+      "targetParentTagId": 0,
+      "order": 1
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Tag 99999 was not found.",
+    "data": null
+  }
+}

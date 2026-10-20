@@ -1,0 +1,18 @@
+{
+  "title": "Change a taxonomy's title",
+  "order": 2004,
+  "status": 200,
+  "request": {
+    "verb": "update-taxonomy",
+    "parameters": {
+      "taxonomyId": 7,
+      "title": "Seasonal themes"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Updated taxonomy 7.",
+    "error": null,
+    "data": null
+  }
+}

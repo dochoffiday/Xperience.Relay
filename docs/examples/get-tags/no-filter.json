@@ -1,0 +1,16 @@
+{
+  "title": "No filter given",
+  "kind": "error",
+  "order": 2012,
+  "status": 200,
+  "request": {
+    "verb": "get-tags",
+    "parameters": {}
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "At least one filter (TaxonomyId, TaxonomyName, TagId, or TagName) is required.",
+    "data": null
+  }
+}

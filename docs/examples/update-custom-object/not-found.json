@@ -1,0 +1,22 @@
+{
+  "title": "An object that does not exist",
+  "kind": "error",
+  "order": 2029,
+  "status": 200,
+  "request": {
+    "verb": "update-custom-object",
+    "parameters": {
+      "objectTypeName": "cms.country",
+      "id": 99999,
+      "fields": {
+        "CountryDisplayName": "Nowhere"
+      }
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "'cms.country' with ID 99999 was not found.",
+    "data": null
+  }
+}

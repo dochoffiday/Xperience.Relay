@@ -7,16 +7,19 @@ namespace Xperience.Relay.Contracts.Commands;
 /// </summary>
 public abstract class QueryItemsCommandBase : IRelayCommand
 {
-    /// <summary>Content types to include. At least one entry is required.</summary>
+    /// <summary>Code names of the content types to include, e.g. <c>DancingGoat.ArticlePage</c>. Required; at least one.</summary>
     public List<string> ContentTypeNames { get; set; } = [];
 
     /// <summary>Defaults to <c>RelayKenticoOptions.DefaultLanguageName</c> when null.</summary>
     public string? LanguageName { get; set; }
 
-    /// <summary>Columns to fetch and return. At least one entry is required.</summary>
+    /// <summary>Columns to fetch and return. Required; at least one.</summary>
     public List<string> Columns { get; set; } = [];
 
-    /// <summary>Optional column-equality filters. All conditions are ANDed together.</summary>
+    /// <summary>
+    /// Optional column-equality filters. All conditions are ANDed together. Each column must also be listed in
+    /// <see cref="Columns"/>.
+    /// </summary>
     public Dictionary<string, JsonElement>? WhereEquals { get; set; }
 
     /// <summary>

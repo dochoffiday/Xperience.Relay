@@ -1,0 +1,18 @@
+{
+  "title": "No taxonomy named",
+  "kind": "error",
+  "order": 2008,
+  "status": 200,
+  "request": {
+    "verb": "create-tag",
+    "parameters": {
+      "title": "Autumn"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Either TaxonomyId or TaxonomyName is required.",
+    "data": null
+  }
+}

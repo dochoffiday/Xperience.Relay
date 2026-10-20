@@ -20,7 +20,7 @@ public class DeleteContactsCommandHandler(
 
         await contactsDeletionService.BulkDelete(condition, command.BatchSize ?? 0, cancellationToken);
 
-        var batchNote = command.BatchSize.HasValue
+        var batchNote = command.BatchSize is > 0
             ? $" in a single batch of {command.BatchSize}"
             : " across all batches";
 

@@ -1,0 +1,19 @@
+{
+  "title": "A parent that does not allow the page's content type",
+  "kind": "error",
+  "order": 23,
+  "status": 200,
+  "request": {
+    "verb": "move-web-page",
+    "parameters": {
+      "webPageId": 68,
+      "parentWebPageId": 69
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Unhandled exception executing verb 'move-web-page': [InvalidOperationException] Content type with ID 5665 is not allowed as a child of web page with ID 69.",
+    "data": null
+  }
+}

@@ -1,3 +1,4 @@
+using CMS.DataEngine;
 using CMS.OnlineForms;
 using Microsoft.Extensions.Logging;
 using Xperience.Relay.Contracts;
@@ -13,6 +14,13 @@ public class GetFormSubmissionsCommandHandler(
     {
         if (string.IsNullOrWhiteSpace(command.FormClassName))
             return Task.FromResult(RelayCommandResult.Fail("FormClassName is required."));
+
+        var formClass = DataClassInfoProvider.GetDataClassInfo(command.FormClassName);
+        if (formClass is null || !string.Equals(formClass.ClassType, ClassType.FORM, StringComparison.OrdinalIgnoreCase))
+        {
+            return Task.FromResult(RelayCommandResult.Fail(
+                $"Form '{command.FormClassName}' was not found. Use the form's class name, shown in the admin under the form's properties (for example BizForm.ContactUs)."));
+        }
 
         try
         {

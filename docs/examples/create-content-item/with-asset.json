@@ -1,0 +1,33 @@
+{
+  "title": "Create an item with an uploaded file",
+  "note": "The file travels as Base64 text inside the JSON. This one is a 1 x 1 pixel PNG.",
+  "order": 1034,
+  "status": 200,
+  "request": {
+    "verb": "create-content-item",
+    "parameters": {
+      "contentTypeName": "DancingGoat.Image",
+      "displayName": "Cold brew diagram",
+      "workspaceName": "DancingGoat.DancingGoatLtd",
+      "fields": {
+        "ImageShortDescription": "How cold brew is made"
+      },
+      "assets": [
+        {
+          "fieldName": "ImageFile",
+          "fileName": "cold-brew.png",
+          "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+        }
+      ]
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Created and published 'Cold brew diagram' (ID=186).",
+    "error": null,
+    "data": {
+      "contentItemGuid": "86c59020-2715-4c87-8bc3-5b29ecabaf62",
+      "contentItemId": 186
+    }
+  }
+}

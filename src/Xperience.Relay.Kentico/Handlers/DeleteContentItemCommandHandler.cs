@@ -13,6 +13,7 @@ namespace Xperience.Relay.Kentico.Handlers;
 /// </summary>
 public class DeleteContentItemCommandHandler(
     IContentItemManagerFactory contentItemManagerFactory,
+    ContentVersionReader versionReader,
     ServiceAccountResolver serviceAccountResolver,
     IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<DeleteContentItemCommand>
 {
@@ -20,7 +21,19 @@ public class DeleteContentItemCommandHandler(
 
     public async Task<RelayCommandResult> HandleAsync(DeleteContentItemCommand command, CancellationToken cancellationToken = default)
     {
+        // Kentico deletes nothing, and says nothing, for an item or language variant that isn't there.
+        var problem = versionReader.CheckReusable(command.ContentItemId, "delete-web-page");
+        if (problem is not null)
+        {
+            return RelayCommandResult.Fail(problem);
+        }
+
         var languageName = command.LanguageName ?? _options.DefaultLanguageName;
+
+        if (versionReader.Read(command.ContentItemId, languageName) is null)
+        {
+            return DraftEditFlow.NotFound($"content item {command.ContentItemId} ({languageName})");
+        }
 
         var userId = serviceAccountResolver.ResolveUserId();
         var contentItemManager = contentItemManagerFactory.Create(userId);

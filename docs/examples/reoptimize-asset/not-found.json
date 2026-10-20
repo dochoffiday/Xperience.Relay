@@ -1,0 +1,19 @@
+{
+  "title": "An item that does not exist",
+  "kind": "error",
+  "order": 1040,
+  "status": 200,
+  "request": {
+    "verb": "reoptimize-asset",
+    "parameters": {
+      "contentItemId": 99999,
+      "fieldName": "ImageFile"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Content item 99999 was not found.",
+    "data": null
+  }
+}

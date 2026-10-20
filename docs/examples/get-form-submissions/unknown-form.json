@@ -1,0 +1,18 @@
+{
+  "title": "A form that does not exist",
+  "kind": "error",
+  "order": 2039,
+  "status": 200,
+  "request": {
+    "verb": "get-form-submissions",
+    "parameters": {
+      "formClassName": "BizForm.NoSuchForm"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Form 'BizForm.NoSuchForm' was not found. Use the form's class name, shown in the admin under the form's properties (for example BizForm.ContactUs).",
+    "data": null
+  }
+}

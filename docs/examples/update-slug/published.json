@@ -1,0 +1,19 @@
+{
+  "title": "Change the URL slug of a published page",
+  "note": "The page was published, so the new slug is published too and goes live immediately.",
+  "order": 13,
+  "status": 200,
+  "request": {
+    "verb": "update-slug",
+    "parameters": {
+      "webPageId": 68,
+      "slug": "cold-brew-guide"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Updated slug on web page 68 to 'cold-brew-guide'.",
+    "error": null,
+    "data": null
+  }
+}

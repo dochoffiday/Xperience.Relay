@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <Description>Keeps the generated parts of the docs site (parameter tables, result types, examples, navigation) in step with the Contracts package.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The compiler's XML docs for Contracts are copied next to its DLL, which is where the generator reads them from. -->
+    <ProjectReference Include="..\..\src\Xperience.Relay.Contracts\Xperience.Relay.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

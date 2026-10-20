@@ -1,0 +1,19 @@
+{
+  "title": "A field that is not an asset field",
+  "kind": "error",
+  "order": 1039,
+  "status": 200,
+  "request": {
+    "verb": "reoptimize-asset",
+    "parameters": {
+      "contentItemId": 186,
+      "fieldName": "ImageShortDescription"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Field 'ImageShortDescription' is not an asset field (it is text).",
+    "data": null
+  }
+}

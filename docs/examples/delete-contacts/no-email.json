@@ -1,0 +1,17 @@
+{
+  "title": "Delete every contact that has no email address",
+  "order": 2041,
+  "status": 200,
+  "request": {
+    "verb": "delete-contacts",
+    "parameters": {
+      "whereClause": "ContactEmail IS NULL"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Deleted contacts matching condition 'ContactEmail IS NULL' across all batches.",
+    "error": null,
+    "data": null
+  }
+}

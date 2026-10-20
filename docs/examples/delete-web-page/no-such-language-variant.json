@@ -1,0 +1,20 @@
+{
+  "title": "A language the page has no variant in",
+  "note": "Page 9 exists, but only in English.",
+  "kind": "error",
+  "order": 28,
+  "status": 200,
+  "request": {
+    "verb": "delete-web-page",
+    "parameters": {
+      "webPageId": 9,
+      "languageName": "es"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Web page 9 (es) was not found in that language.",
+    "data": null
+  }
+}

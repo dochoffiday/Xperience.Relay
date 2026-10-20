@@ -1,0 +1,17 @@
+{
+  "title": "Publish a page that is a draft",
+  "order": 11,
+  "status": 200,
+  "request": {
+    "verb": "publish-web-page",
+    "parameters": {
+      "webPageId": 68
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Published web page 68 (en).",
+    "error": null,
+    "data": null
+  }
+}

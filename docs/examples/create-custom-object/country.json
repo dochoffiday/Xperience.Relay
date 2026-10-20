@@ -1,0 +1,25 @@
+{
+  "title": "Create an object",
+  "order": 2027,
+  "status": 200,
+  "request": {
+    "verb": "create-custom-object",
+    "parameters": {
+      "objectTypeName": "cms.country",
+      "fields": {
+        "CountryName": "Elbonia",
+        "CountryDisplayName": "Elbonia",
+        "CountryTwoLetterCode": "EB",
+        "CountryThreeLetterCode": "ELB"
+      }
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Created 'cms.country' with ID 771.",
+    "error": null,
+    "data": {
+      "id": 771
+    }
+  }
+}

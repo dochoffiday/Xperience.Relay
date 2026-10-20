@@ -1,3 +1,5 @@
+using CMS.ContentEngine;
+using CMS.ContentEngine.Internal;
 using CMS.DataEngine;
 using CMS.Websites;
 using CMS.Websites.Internal;
@@ -11,6 +13,8 @@ namespace Xperience.Relay.Kentico.Handlers;
 public class GetPageInfoCommandHandler(
     IInfoProvider<WebPageItemInfo> webPageItemInfoProvider,
     IInfoProvider<WebsiteChannelInfo> websiteChannelInfoProvider,
+    IInfoProvider<ChannelInfo> channelInfoProvider,
+    IInfoProvider<ContentItemInfo> contentItemInfoProvider,
     IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<GetPageInfoCommand>
 {
     private readonly RelayKenticoOptions _options = options.Value;
@@ -42,14 +46,36 @@ public class GetPageInfoCommandHandler(
             Name = webPageItem.WebPageItemName,
             TreePath = webPageItem.WebPageItemTreePath,
             ParentWebPageId = webPageItem.WebPageItemParentID == 0 ? null : webPageItem.WebPageItemParentID,
-            ContentType = DataClassInfoProvider.GetClassName(webPageItem.WebPageItemContentItemID),
+            ContentType = ResolveContentTypeName(webPageItem.WebPageItemContentItemID),
             LanguageName = languageName,
             ChannelName = ResolveChannelName(webPageItem.WebPageItemWebsiteChannelID),
         };
     }
 
-    private string ResolveChannelName(int channelId) =>
-        websiteChannelInfoProvider.Get()
-            .WhereEquals(nameof(WebsiteChannelInfo.WebsiteChannelID), channelId)
-            .FirstOrDefault()?.WebsiteChannelDomain ?? string.Empty;
+    // A page is a content item; it's the item's content type ID (not the item's own ID) that names its class.
+    private string ResolveContentTypeName(int contentItemId)
+    {
+        var contentItem = contentItemInfoProvider.Get()
+            .WhereEquals(nameof(ContentItemInfo.ContentItemID), contentItemId)
+            .FirstOrDefault();
+
+        return contentItem is null ? string.Empty : DataClassInfoProvider.GetClassName(contentItem.ContentItemContentTypeID) ?? string.Empty;
+    }
+
+    // The channel's code name, e.g. "MyChannel" -- not the website channel's domain.
+    private string ResolveChannelName(int websiteChannelId)
+    {
+        var websiteChannel = websiteChannelInfoProvider.Get()
+            .WhereEquals(nameof(WebsiteChannelInfo.WebsiteChannelID), websiteChannelId)
+            .FirstOrDefault();
+
+        if (websiteChannel is null)
+        {
+            return string.Empty;
+        }
+
+        return channelInfoProvider.Get()
+            .WhereEquals(nameof(ChannelInfo.ChannelID), websiteChannel.WebsiteChannelChannelID)
+            .FirstOrDefault()?.ChannelName ?? string.Empty;
+    }
 }

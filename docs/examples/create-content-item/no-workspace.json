@@ -1,0 +1,19 @@
+{
+  "title": "No workspace named, and no default configured",
+  "kind": "error",
+  "order": 1011,
+  "status": 200,
+  "request": {
+    "verb": "create-content-item",
+    "parameters": {
+      "contentTypeName": "DancingGoat.Event",
+      "displayName": "Cold brew workshop"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "WorkspaceName is required. Set it on the command or configure RelayKenticoOptions.DefaultWorkspaceName.",
+    "data": null
+  }
+}

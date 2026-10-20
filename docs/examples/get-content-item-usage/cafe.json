@@ -1,0 +1,65 @@
+{
+  "title": "Which items reference the Boston cafe?",
+  "order": 1015,
+  "status": 200,
+  "request": {
+    "verb": "get-content-item-usage",
+    "parameters": {
+      "contentItemId": 19,
+      "languageName": "en"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Found 4 usage(s) for content item 19 in language 'en'.",
+    "error": null,
+    "data": {
+      "items": [
+        {
+          "contentItemId": 84,
+          "languageName": "es",
+          "displayName": "¡Nuestra primera cata ha llegado!",
+          "latestVersionStatus": "Published",
+          "createdWhen": "2023-09-07T07:23:55",
+          "modifiedWhen": "2026-10-20T13:08:43.3414616",
+          "hasImageAsset": false,
+          "scheduledPublishWhen": null,
+          "scheduledUnpublishWhen": null
+        },
+        {
+          "contentItemId": 184,
+          "languageName": "en",
+          "displayName": "Cold brew workshop",
+          "latestVersionStatus": "Published",
+          "createdWhen": "2026-10-20T13:52:00.5742065",
+          "modifiedWhen": "2026-10-20T13:52:00.7551969",
+          "hasImageAsset": false,
+          "scheduledPublishWhen": null,
+          "scheduledUnpublishWhen": null
+        },
+        {
+          "contentItemId": 84,
+          "languageName": "en",
+          "displayName": "Our first cupping is here!",
+          "latestVersionStatus": "Published",
+          "createdWhen": "2023-06-13T04:17:44",
+          "modifiedWhen": "2026-10-20T13:08:43.3321995",
+          "hasImageAsset": false,
+          "scheduledPublishWhen": null,
+          "scheduledUnpublishWhen": null
+        },
+        {
+          "contentItemId": 106,
+          "languageName": "en",
+          "displayName": "The art of coffee cupping",
+          "latestVersionStatus": "Published",
+          "createdWhen": "2023-06-13T04:24:41",
+          "modifiedWhen": "2026-10-20T13:08:43.7171427",
+          "hasImageAsset": false,
+          "scheduledPublishWhen": null,
+          "scheduledUnpublishWhen": null
+        }
+      ]
+    }
+  }
+}

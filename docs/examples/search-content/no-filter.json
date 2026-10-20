@@ -1,0 +1,18 @@
+{
+  "title": "No text to look for",
+  "kind": "error",
+  "order": 1023,
+  "status": 200,
+  "request": {
+    "verb": "search-content",
+    "parameters": {
+      "contentTypeName": "DancingGoat.Cafe"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Filter is required.",
+    "data": null
+  }
+}

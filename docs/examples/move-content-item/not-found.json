@@ -1,0 +1,21 @@
+{
+  "title": "An item that does not exist",
+  "kind": "error",
+  "order": 1031,
+  "status": 200,
+  "request": {
+    "verb": "move-content-item",
+    "parameters": {
+      "contentItemIds": [
+        99999
+      ],
+      "contentFolderId": 6
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Content item 99999 was not found.",
+    "data": null
+  }
+}

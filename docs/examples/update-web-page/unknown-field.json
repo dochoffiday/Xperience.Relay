@@ -1,0 +1,22 @@
+{
+  "title": "A field the content type does not have, and a value that does not fit",
+  "kind": "error",
+  "order": 10,
+  "status": 200,
+  "request": {
+    "verb": "update-web-page",
+    "parameters": {
+      "webPageId": 68,
+      "fields": {
+        "ArticleSubtitle": "A field this type does not have",
+        "ArticlePagePublishDate": "last Tuesday"
+      }
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Field 'ArticleSubtitle' was not found on content type 'DancingGoat.ArticlePage'. Field 'ArticlePagePublishDate' expects a date, but got 'last Tuesday'.",
+    "data": null
+  }
+}

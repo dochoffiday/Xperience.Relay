@@ -1,0 +1,33 @@
+{
+  "title": "Search the published article pages for some text",
+  "note": "The search covers published items only and every text, long text and rich text field. `location` is the page's tree path.",
+  "order": 19,
+  "status": 200,
+  "request": {
+    "verb": "search-content",
+    "parameters": {
+      "contentTypeName": "DancingGoat.ArticlePage",
+      "websiteChannelName": "DancingGoatPages",
+      "filter": "cold brew"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Found 1 matching item(s) in 'DancingGoat.ArticlePage'.",
+    "error": null,
+    "data": {
+      "matches": [
+        {
+          "contentItemId": 182,
+          "contentItemName": "ColdBrewAtHome-aqfgqi7s",
+          "contentTypeName": "DancingGoat.ArticlePage",
+          "location": "/Articles/Cold_brew_at_home",
+          "matchedFields": {
+            "ArticleTitle": "Cold brew at home: a beginner's guide",
+            "ArticlePageSummary": "Everything you need to make cold brew with a jar and a sieve - no special equipment."
+          }
+        }
+      ]
+    }
+  }
+}

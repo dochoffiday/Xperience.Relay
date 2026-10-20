@@ -1,0 +1,21 @@
+{
+  "title": "Update fields on a page that has never been published",
+  "order": 9,
+  "status": 200,
+  "request": {
+    "verb": "update-web-page",
+    "parameters": {
+      "webPageId": 68,
+      "fields": {
+        "ArticleTitle": "Cold brew at home: a beginner's guide",
+        "ArticlePageSummary": "Everything you need to make cold brew with a jar and a sieve."
+      }
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Updated 2 field(s) on web page 68. Saved as a draft; it is not published.",
+    "error": null,
+    "data": null
+  }
+}

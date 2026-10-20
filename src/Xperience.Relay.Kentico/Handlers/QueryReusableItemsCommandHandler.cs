@@ -14,6 +14,16 @@ public class QueryReusableItemsCommandHandler(
 
     public async Task<RelayCommandResult> HandleAsync(QueryReusableItemsCommand command, CancellationToken cancellationToken = default)
     {
+        if (command.ContentTypeNames is not { Count: > 0 })
+        {
+            return RelayCommandResult.Fail("ContentTypeNames must list at least one content type.");
+        }
+
+        if (command.Columns is not { Count: > 0 })
+        {
+            return RelayCommandResult.Fail("Columns must list at least one column.");
+        }
+
         var languageName = command.LanguageName ?? _options.DefaultLanguageName;
 
         var builder = new ContentItemQueryBuilder();

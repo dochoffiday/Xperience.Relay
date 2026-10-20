@@ -4,8 +4,15 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>0.5.0</Version>
+    <Version>0.6.0</Version>
     <Authors>AJ Hoffer</Authors>
     <RepositoryUrl>https://github.com/dochoffiday/Xperience.Relay</RepositoryUrl>
+  </PropertyGroup>
+
+  <!-- The packages under src/ ship their XML docs (IntelliSense for consumers; also the source of the generated command reference in docs/). -->
+  <PropertyGroup Condition="$(MSBuildProjectDirectory.StartsWith('$(MSBuildThisFileDirectory)src'))">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- Not every public member needs a comment: only validate the ones that have one. -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
 </Project>

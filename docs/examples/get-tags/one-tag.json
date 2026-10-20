@@ -1,0 +1,30 @@
+{
+  "title": "Find a tag by its code name",
+  "order": 2011,
+  "status": 200,
+  "request": {
+    "verb": "get-tags",
+    "parameters": {
+      "tagName": "HappyHour"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Retrieved 1 tag(s).",
+    "error": null,
+    "data": {
+      "tags": [
+        {
+          "tagId": 11,
+          "tagGuid": "9966ec69-20f5-40f3-9833-9122ea53e416",
+          "tagName": "HappyHour",
+          "tagTitle": "Happy Hour",
+          "tagDescription": "",
+          "taxonomyId": 1,
+          "parentTagId": null,
+          "tagOrder": 1
+        }
+      ]
+    }
+  }
+}

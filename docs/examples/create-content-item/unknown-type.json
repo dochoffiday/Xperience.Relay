@@ -1,0 +1,20 @@
+{
+  "title": "A content type that does not exist",
+  "kind": "error",
+  "order": 1009,
+  "status": 200,
+  "request": {
+    "verb": "create-content-item",
+    "parameters": {
+      "contentTypeName": "DancingGoat.Podcast",
+      "displayName": "Episode 1",
+      "workspaceName": "DancingGoat.DancingGoatLtd"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Content type 'DancingGoat.Podcast' was not found.",
+    "data": null
+  }
+}

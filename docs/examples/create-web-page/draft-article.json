@@ -1,0 +1,30 @@
+{
+  "title": "Create an article as a draft",
+  "note": "The parent (`parentWebPageItemId` 1) is the Articles section of the Dancing Goat sample site. The page starts as an `InitialDraft`.",
+  "order": 1,
+  "status": 200,
+  "request": {
+    "verb": "create-web-page",
+    "parameters": {
+      "websiteChannelName": "DancingGoatPages",
+      "parentWebPageItemId": 1,
+      "contentTypeName": "DancingGoat.ArticlePage",
+      "displayName": "Cold brew at home",
+      "fields": {
+        "ArticleTitle": "Cold brew at home",
+        "ArticlePageSummary": "Steep coarse grounds in cold water overnight for a smooth, low-acid coffee.",
+        "ArticlePageText": "<p>Mix 100 g of coarse grounds with 1 litre of cold water and leave it for 12 hours.</p>",
+        "ArticlePagePublishDate": "2026-10-01"
+      }
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Created web page 'Cold brew at home' (ID=68), draft.",
+    "error": null,
+    "data": {
+      "webPageItemId": 68,
+      "webPageItemGuid": "5b308d07-cbb6-4ccb-8d85-6068cc689e17"
+    }
+  }
+}

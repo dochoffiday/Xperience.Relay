@@ -69,6 +69,11 @@ public class ReoptimizeAssetCommandHandler(
             return RelayCommandResult.Fail($"Field '{command.FieldName}' was not found on content type '{dataClass.ClassName}'.");
         }
 
+        if (!string.Equals(field.DataType, FieldDataType.ContentItemAsset, StringComparison.OrdinalIgnoreCase))
+        {
+            return RelayCommandResult.Fail($"Field '{command.FieldName}' is not an asset field (it is {field.DataType}).");
+        }
+
         var language = contentLanguageInfoProvider.Get()
             .WhereEquals(nameof(ContentLanguageInfo.ContentLanguageName), languageName)
             .FirstOrDefault();

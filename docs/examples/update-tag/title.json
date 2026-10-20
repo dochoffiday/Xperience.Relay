@@ -1,0 +1,20 @@
+{
+  "title": "Change a tag's title and description",
+  "note": "An empty `description` clears it.",
+  "order": 2013,
+  "status": 200,
+  "request": {
+    "verb": "update-tag",
+    "parameters": {
+      "tagId": 25,
+      "title": "Spring (Mar-May)",
+      "description": ""
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Updated tag 25.",
+    "error": null,
+    "data": null
+  }
+}

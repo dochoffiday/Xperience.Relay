@@ -1,0 +1,81 @@
+{
+  "title": "List the tags of a taxonomy",
+  "note": "The sample taxonomy nests tags: `parentTagId` is the ID of the tag a tag sits under, or `null` at the root.",
+  "order": 2010,
+  "status": 200,
+  "request": {
+    "verb": "get-tags",
+    "parameters": {
+      "taxonomyName": "CoffeeTastes"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Retrieved 6 tag(s).",
+    "error": null,
+    "data": {
+      "tags": [
+        {
+          "tagId": 17,
+          "tagGuid": "785839c6-f7c6-4006-b8c8-115fd57864dd",
+          "tagName": "Sour",
+          "tagTitle": "Sour",
+          "tagDescription": "",
+          "taxonomyId": 3,
+          "parentTagId": null,
+          "tagOrder": 2
+        },
+        {
+          "tagId": 19,
+          "tagGuid": "0c877356-23d4-4013-b2b3-e1359e419c70",
+          "tagName": "Sweet",
+          "tagTitle": "Sweet",
+          "tagDescription": "",
+          "taxonomyId": 3,
+          "parentTagId": null,
+          "tagOrder": 1
+        },
+        {
+          "tagId": 21,
+          "tagGuid": "af7934d5-aba8-45ef-ba7b-10f83956ca26",
+          "tagName": "Soury",
+          "tagTitle": "Soury",
+          "tagDescription": "",
+          "taxonomyId": 3,
+          "parentTagId": 17,
+          "tagOrder": 1
+        },
+        {
+          "tagId": 22,
+          "tagGuid": "f2dab53e-dd76-4e3d-a9e4-f86510ff0e42",
+          "tagName": "Winey",
+          "tagTitle": "Winey",
+          "tagDescription": "",
+          "taxonomyId": 3,
+          "parentTagId": 17,
+          "tagOrder": 2
+        },
+        {
+          "tagId": 23,
+          "tagGuid": "b9b0c153-2135-4ac7-a3c6-4b14780548cb",
+          "tagName": "Acidy",
+          "tagTitle": "Acidy",
+          "tagDescription": "",
+          "taxonomyId": 3,
+          "parentTagId": 19,
+          "tagOrder": 1
+        },
+        {
+          "tagId": 24,
+          "tagGuid": "098eee31-e8bb-49b8-b425-f9a72e0e130b",
+          "tagName": "Mellow",
+          "tagTitle": "Mellow",
+          "tagDescription": "",
+          "taxonomyId": 3,
+          "parentTagId": 19,
+          "tagOrder": 2
+        }
+      ]
+    }
+  }
+}

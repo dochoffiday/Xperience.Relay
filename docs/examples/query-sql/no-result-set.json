@@ -1,0 +1,18 @@
+{
+  "title": "A query that returns nothing",
+  "kind": "error",
+  "order": 2049,
+  "status": 200,
+  "request": {
+    "verb": "query-sql",
+    "parameters": {
+      "query": "DECLARE @count int = 3"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "The query returned no result set. End it with a SELECT.",
+    "data": null
+  }
+}

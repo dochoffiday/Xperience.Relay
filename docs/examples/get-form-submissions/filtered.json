@@ -1,0 +1,41 @@
+{
+  "title": "Filter and sort the submissions",
+  "order": 2038,
+  "status": 200,
+  "request": {
+    "verb": "get-form-submissions",
+    "parameters": {
+      "formClassName": "BizForm.DancingGoatContactUs",
+      "whereClause": "UserEmail LIKE 'grace@%'",
+      "orderBy": "FormInserted ASC"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Retrieved 1 submission(s) for 'BizForm.DancingGoatContactUs'.",
+    "error": null,
+    "data": {
+      "formClassName": "BizForm.DancingGoatContactUs",
+      "columns": [
+        "Form_2023_09_12_17_45ID",
+        "FormInserted",
+        "FormUpdated",
+        "UserFirstName",
+        "UserLastName",
+        "UserEmail",
+        "UserMessage"
+      ],
+      "rows": [
+        [
+          "2",
+          "10/19/2026 2:05:00 PM",
+          "10/19/2026 2:05:00 PM",
+          "Grace",
+          "Hopper",
+          "grace@example.com",
+          "Can I book the cupping room for a team event?"
+        ]
+      ]
+    }
+  }
+}

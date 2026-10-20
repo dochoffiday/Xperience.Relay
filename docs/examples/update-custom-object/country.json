@@ -1,0 +1,21 @@
+{
+  "title": "Change some of an object's columns",
+  "order": 2028,
+  "status": 200,
+  "request": {
+    "verb": "update-custom-object",
+    "parameters": {
+      "objectTypeName": "cms.country",
+      "id": 771,
+      "fields": {
+        "CountryDisplayName": "Elbonia (Republic of)"
+      }
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Updated 'cms.country' with ID 771.",
+    "error": null,
+    "data": null
+  }
+}

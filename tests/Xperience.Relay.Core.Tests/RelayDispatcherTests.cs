@@ -12,6 +12,13 @@ public class RelayDispatcherTests
             Task.FromResult(RelayCommandResult.Ok($"moved {command.WebPageId} to {command.ParentWebPageId}"));
     }
 
+    private class ThrowingHandler : IRelayCommandHandler<GetTaxonomiesCommand>
+    {
+        // Not async: the exception is thrown by the call itself, which is how reflection wraps it.
+        public Task<RelayCommandResult> HandleAsync(GetTaxonomiesCommand command, CancellationToken cancellationToken = default) =>
+            throw new InvalidOperationException("boom");
+    }
+
     private class RecordingBehavior : IRelayPipelineBehavior
     {
         public List<string> CallOrder { get; } = new();
@@ -56,6 +63,17 @@ public class RelayDispatcherTests
         await dispatcher.DispatchAsync(new MoveWebPageCommand { WebPageId = 1, ParentWebPageId = 0 });
 
         Assert.Equal(new[] { "before", "after" }, behavior.CallOrder);
+    }
+
+    [Fact]
+    public async Task DispatchAsync_AHandlerThatThrowsAtOnce_FailsWithItsOwnException()
+    {
+        var provider = BuildServices(services => services.AddScoped<IRelayCommandHandler<GetTaxonomiesCommand>, ThrowingHandler>());
+        var dispatcher = provider.GetRequiredService<IRelayDispatcher>();
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => dispatcher.DispatchAsync(new GetTaxonomiesCommand()));
+
+        Assert.Equal("boom", exception.Message);
     }
 
     [Theory]

@@ -45,10 +45,11 @@ public class GetPageCommandHandler : IRelayCommandHandler<GetPageCommand>
             .Where(name => !SystemColumnPrefixes.Any(prefix => name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)))
             .ToList();
 
+        // A web page content type can only be queried through its website channel; the tree path narrows it to this page.
         var builder = new ContentItemQueryBuilder()
-            .ForContentType(info.ContentType, _ => { })
+            .ForContentType(info.ContentType, q => q.ForWebsite(info.ChannelName, PathMatch.Single(info.TreePath)))
             .InLanguage(languageName)
-            .Parameters(p => p.Where(w => w.WhereEquals("WebPageItemID", command.WebPageId)));
+            .Parameters(p => p.Where(w => w.WhereEquals(nameof(IWebPageContentQueryDataContainer.WebPageItemID), command.WebPageId)));
 
         var rows = await _contentQueryExecutor.GetWebPageResult(
             builder,
@@ -61,7 +62,8 @@ public class GetPageCommandHandler : IRelayCommandHandler<GetPageCommand>
                 }
                 return fields;
             },
-            cancellationToken: cancellationToken);
+            new ContentQueryExecutionOptions { ForPreview = true, IncludeSecuredItems = true },
+            cancellationToken);
 
         var fieldData = rows.FirstOrDefault() ?? new Dictionary<string, object?>();
 

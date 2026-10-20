@@ -16,6 +16,7 @@ namespace Xperience.Relay.Kentico.Handlers;
 public class DeleteWebPageCommandHandler(
     IWebPageManagerFactory webPageManagerFactory,
     IInfoProvider<WebPageItemInfo> webPageItemInfoProvider,
+    ContentVersionReader versionReader,
     ServiceAccountResolver serviceAccountResolver,
     IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<DeleteWebPageCommand>
 {
@@ -33,6 +34,12 @@ public class DeleteWebPageCommandHandler(
         }
 
         var languageName = command.LanguageName ?? _options.DefaultLanguageName;
+
+        // Kentico deletes nothing, and says nothing, for a language variant that isn't there.
+        if (versionReader.Read(webPageItem.WebPageItemContentItemID, languageName) is null)
+        {
+            return DraftEditFlow.NotFound($"web page {command.WebPageId} ({languageName})");
+        }
 
         var userId = serviceAccountResolver.ResolveUserId();
         var webPageManager = webPageManagerFactory.Create(webPageItem.WebPageItemWebsiteChannelID, userId);

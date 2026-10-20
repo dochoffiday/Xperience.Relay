@@ -1,0 +1,164 @@
+site_name: Xperience.Relay
+site_description: Drive Xperience by Kentico SaaS remotely, over HTTP, with commands that run inside the live site.
+site_url: https://dochoffiday.github.io/Xperience.Relay/
+repo_url: https://github.com/dochoffiday/Xperience.Relay
+repo_name: dochoffiday/Xperience.Relay
+edit_uri: edit/master/docs/
+copyright: Xperience.Relay is released under the MIT license.
+
+docs_dir: docs
+extra_css:
+  - stylesheets/extra.css
+# The captured examples are read by the docs generator; the pages show them, so they don't need to be published as files too.
+exclude_docs: |
+  examples/
+  requirements.txt
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - navigation.tracking
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+    - content.action.edit
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: brown
+      accent: deep orange
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: brown
+      accent: deep orange
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+plugins:
+  - search
+
+# Anything that points nowhere fails the build (mkdocs build --strict).
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - Concepts:
+    - How Relay works: concepts/how-it-works.md
+    - Commands and results: concepts/commands-and-results.md
+    - Access tiers and API keys: concepts/access-tiers.md
+    - Drafts and publishing: concepts/drafts-and-publishing.md
+    - Defaults and languages: concepts/defaults-and-languages.md
+    - Guardrails: concepts/guardrails.md
+  - Guides:
+    - Call Relay from .NET: guides/dotnet-client.md
+    - Create, edit and publish a page: guides/page-lifecycle.md
+    - Query content: guides/querying.md
+    - Upload files: guides/uploading-assets.md
+    - Run several commands at once: guides/batches.md
+  - Commands:
+    # relay:begin nav-commands
+    - commands/index.md
+    - Web pages:
+      - commands/web-pages/index.md
+      - commands/web-pages/create-web-page.md
+      - commands/web-pages/update-web-page.md
+      - commands/web-pages/update-slug.md
+      - commands/web-pages/move-web-page.md
+      - commands/web-pages/publish-web-page.md
+      - commands/web-pages/unpublish-web-page.md
+      - commands/web-pages/delete-web-page.md
+      - commands/web-pages/get-page-info.md
+      - commands/web-pages/get-page.md
+      - commands/web-pages/query-web-page-items.md
+    - Content items:
+      - commands/content-items/index.md
+      - commands/content-items/create-content-item.md
+      - commands/content-items/update-content-item.md
+      - commands/content-items/move-content-item.md
+      - commands/content-items/publish-content-item.md
+      - commands/content-items/unpublish-content-item.md
+      - commands/content-items/delete-content-item.md
+      - commands/content-items/get-content-info.md
+      - commands/content-items/get-content.md
+      - commands/content-items/get-content-item-usage.md
+      - commands/content-items/get-content-hub-folder.md
+      - commands/content-items/query-reusable-items.md
+      - commands/content-items/search-content.md
+    - Assets:
+      - commands/assets/index.md
+      - commands/assets/rename-asset.md
+      - commands/assets/reoptimize-asset.md
+    - Taxonomies and tags:
+      - commands/taxonomies/index.md
+      - commands/taxonomies/create-taxonomy.md
+      - commands/taxonomies/update-taxonomy.md
+      - commands/taxonomies/delete-taxonomy.md
+      - commands/taxonomies/get-taxonomies.md
+      - commands/taxonomies/create-tag.md
+      - commands/taxonomies/update-tag.md
+      - commands/taxonomies/move-tag.md
+      - commands/taxonomies/delete-tag.md
+      - commands/taxonomies/get-tags.md
+    - Custom objects:
+      - commands/custom-objects/index.md
+      - commands/custom-objects/create-custom-object.md
+      - commands/custom-objects/update-custom-object.md
+      - commands/custom-objects/delete-custom-object.md
+      - commands/custom-objects/query-custom-objects.md
+    - Forms and contacts:
+      - commands/forms-and-contacts/index.md
+      - commands/forms-and-contacts/get-form-submissions.md
+      - commands/forms-and-contacts/delete-contacts.md
+    - SQL:
+      - commands/sql/index.md
+      - commands/sql/query-sql.md
+      - commands/sql/execute-sql.md
+    # relay:end nav-commands
+  - Reference:
+    - HTTP API: reference/http-api.md
+    - Configuration: configuration.md
+    - Types: reference/types.md
+    - Errors: reference/errors.md
+  - Project:
+    - Security: security.md
+    - Design notes: design-notes.md
+    - Changelog: changelog.md
+    - Contributing: contributing.md

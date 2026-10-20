@@ -1,0 +1,34 @@
+{
+  "title": "Create an event in a content hub folder",
+  "note": "The item is published as soon as it is created. `EventCafe` is a content item reference field, so it takes the GUID of the Boston cafe item.",
+  "order": 1007,
+  "status": 200,
+  "request": {
+    "verb": "create-content-item",
+    "parameters": {
+      "contentTypeName": "DancingGoat.Event",
+      "displayName": "Cold brew workshop",
+      "workspaceName": "DancingGoat.DancingGoatEvents",
+      "contentFolderId": 5,
+      "fields": {
+        "EventTitle": "Cold brew workshop",
+        "EventPromoText": "Learn to make cold brew at home.",
+        "EventDate": "2026-11-14T10:00:00"
+      },
+      "linkedItemFields": {
+        "EventCafe": [
+          "4c84719d-689e-460e-8cc1-5495c367b249"
+        ]
+      }
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Created and published 'Cold brew workshop' (ID=184).",
+    "error": null,
+    "data": {
+      "contentItemGuid": "a244387c-f5fc-4fe2-861c-d33832e7b90d",
+      "contentItemId": 184
+    }
+  }
+}

@@ -1,0 +1,91 @@
+name: Docs
+
+# Builds the documentation site on every change that could affect it, and publishes it to GitHub Pages from master.
+# One-time setup in the repository: Settings > Pages > Build and deployment > Source: GitHub Actions.
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - 'src/**'
+      - 'tools/**'
+      - 'Directory.Build.props'
+      - '.github/workflows/docs.yml'
+  pull_request:
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - 'src/**'
+      - 'tools/**'
+      - 'Directory.Build.props'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      # The parameter tables, results and examples of the command pages are generated from the code.
+      # This fails when one of them is out of date, or when a command has no page.
+      - name: Check the generated docs are up to date
+        run: |
+          dotnet build tools/Xperience.Relay.Docs --configuration Release
+          dotnet run --project tools/Xperience.Relay.Docs --configuration Release --no-build -- --check
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: docs/requirements.txt
+
+      - name: Install MkDocs
+        run: pip install -r docs/requirements.txt
+
+      # --strict turns every warning, such as a broken link or anchor, into a failure.
+      # NO_MKDOCS_2_WARNING silences Material's banner about MkDocs 2, which this site doesn't use.
+      - name: Build the site
+        run: mkdocs build --strict
+        env:
+          NO_MKDOCS_2_WARNING: 'true'
+
+      - name: Upload the site
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

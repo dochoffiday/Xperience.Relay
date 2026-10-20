@@ -1,0 +1,17 @@
+{
+  "title": "Publish an item that is already published",
+  "order": 1027,
+  "status": 200,
+  "request": {
+    "verb": "publish-content-item",
+    "parameters": {
+      "contentItemId": 184
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Content item 184 (en) is already published.",
+    "error": null,
+    "data": null
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "title": "Add each page's URL and publication status",
+  "order": 16,
+  "status": 200,
+  "request": {
+    "verb": "query-web-page-items",
+    "parameters": {
+      "websiteChannelName": "DancingGoatPages",
+      "contentTypeNames": [
+        "DancingGoat.ArticlePage"
+      ],
+      "columns": [
+        "WebPageItemID",
+        "ArticleTitle"
+      ],
+      "whereEquals": {
+        "WebPageItemID": 68
+      },
+      "includeUrls": true,
+      "includeStatus": true
+    }
+  },
+  "response": {
+    "success": true,
+    "message": null,
+    "error": null,
+    "data": {
+      "items": [
+        {
+          "WebPageItemID": 68,
+          "ArticleTitle": "Cold brew at home: a beginner's guide",
+          "WebPageStatus": "Published",
+          "WebPageIsPublished": true,
+          "WebPageRelativeUrl": "~/articles/cold-brew-guide",
+          "WebPageAbsoluteUrl": "https://localhost/articles/cold-brew-guide"
+        }
+      ]
+    }
+  }
+}

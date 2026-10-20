@@ -51,6 +51,24 @@ public class SqlStatementAnalyzerTests
         Assert.True(SqlStatementAnalyzer.Analyze(sql, readOnly: false).IsValid);
     }
 
+    [Theory]
+    [InlineData("SELECT TagID INTO Docs_Copy FROM CMS_Tag")]
+    [InlineData("SELECT * INTO [dbo].[Docs_Copy] FROM CMS_Tag")]
+    public void SelectInto_CreatesATable_SoItIsNotReadOnly(string sql)
+    {
+        var readOnly = SqlStatementAnalyzer.Analyze(sql, readOnly: true);
+
+        Assert.False(readOnly.IsValid);
+        Assert.Contains("INTO", readOnly.ErrorMessage);
+        Assert.True(SqlStatementAnalyzer.Analyze(sql, readOnly: false).IsValid);
+    }
+
+    [Fact]
+    public void SelectInto_ATemporaryTable_IsStillFine()
+    {
+        Assert.True(SqlStatementAnalyzer.Analyze("SELECT TagID INTO #tags FROM CMS_Tag; SELECT * FROM #tags", readOnly: true).IsValid);
+    }
+
     [Fact]
     public void DangerousFunctions_AreBlockedInBothModes()
     {

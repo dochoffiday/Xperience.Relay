@@ -1,0 +1,18 @@
+{
+  "title": "An object type that is not registered",
+  "kind": "error",
+  "order": 2035,
+  "status": 200,
+  "request": {
+    "verb": "query-custom-objects",
+    "parameters": {
+      "objectTypeName": "custom.redirect"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Object type 'custom.redirect' was not found.",
+    "data": null
+  }
+}

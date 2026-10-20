@@ -9,10 +9,9 @@ using Xperience.Relay.Kentico.Internal;
 namespace Xperience.Relay.Kentico.Handlers;
 
 /// <summary>
-/// Moves a web page under a new parent, appending it as the last child. The target parent's
-/// website channel isn't known up front, so it's resolved from the moved page itself via a
-/// direct WebPageItemInfo lookup before a channel-scoped <see cref="IWebPageManager"/> can
-/// be created.
+/// Moves a web page under a new parent (0 is the root of the channel). Kentico puts the moved page first among its new
+/// siblings. The target parent's website channel isn't known up front, so it's resolved from the moved page itself via
+/// a direct WebPageItemInfo lookup before a channel-scoped <see cref="IWebPageManager"/> can be created.
 /// </summary>
 public class MoveWebPageCommandHandler(
     IWebPageManagerFactory webPageManagerFactory,
@@ -28,6 +27,13 @@ public class MoveWebPageCommandHandler(
         if (webPageItem is null)
         {
             return RelayCommandResult.Fail($"Web page {command.WebPageId} was not found.");
+        }
+
+        // Kentico fails with a NullReferenceException for a parent that doesn't exist.
+        if (command.ParentWebPageId != 0
+            && webPageItemInfoProvider.Get().WhereEquals(nameof(WebPageItemInfo.WebPageItemID), command.ParentWebPageId).FirstOrDefault() is null)
+        {
+            return RelayCommandResult.Fail($"Web page {command.ParentWebPageId} (the new parent) was not found.");
         }
 
         var userId = serviceAccountResolver.ResolveUserId();

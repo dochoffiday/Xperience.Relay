@@ -1,0 +1,17 @@
+{
+  "title": "Take a published item offline",
+  "order": 1024,
+  "status": 200,
+  "request": {
+    "verb": "unpublish-content-item",
+    "parameters": {
+      "contentItemId": 184
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Unpublished content item 184 (en).",
+    "error": null,
+    "data": null
+  }
+}

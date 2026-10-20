@@ -1,0 +1,18 @@
+{
+  "title": "SQL that does not parse",
+  "kind": "error",
+  "order": 2047,
+  "status": 200,
+  "request": {
+    "verb": "query-sql",
+    "parameters": {
+      "query": "SELECT FROM WHERE"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "SQL parsing error: Incorrect syntax near 'FROM'.",
+    "data": null
+  }
+}

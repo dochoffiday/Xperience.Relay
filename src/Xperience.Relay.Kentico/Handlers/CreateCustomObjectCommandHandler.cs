@@ -15,6 +15,11 @@ public class CreateCustomObjectCommandHandler : IRelayCommandHandler<CreateCusto
             return Task.FromResult(RelayCommandResult.Fail("ObjectTypeName is required."));
         }
 
+        if (command.Fields.Count == 0)
+        {
+            return Task.FromResult(RelayCommandResult.Fail("Fields must not be empty."));
+        }
+
         if (ProtectedObjects.IsProtectedObjectType(command.ObjectTypeName))
         {
             return Task.FromResult(RelayCommandResult.Fail($"Object type '{command.ObjectTypeName}' is protected."));
@@ -32,6 +37,13 @@ public class CreateCustomObjectCommandHandler : IRelayCommandHandler<CreateCusto
         if (info is null)
         {
             return Task.FromResult(RelayCommandResult.Fail($"Could not instantiate object of type '{command.ObjectTypeName}'."));
+        }
+
+        var problem = ObjectColumnChecker.Check(command.ObjectTypeName, info.ColumnNames, command.Fields.Keys);
+
+        if (problem is not null)
+        {
+            return Task.FromResult(RelayCommandResult.Fail(problem));
         }
 
         foreach (var (col, val) in command.Fields)

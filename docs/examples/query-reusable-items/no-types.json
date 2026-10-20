@@ -1,0 +1,20 @@
+{
+  "title": "No content types named",
+  "kind": "error",
+  "order": 1021,
+  "status": 200,
+  "request": {
+    "verb": "query-reusable-items",
+    "parameters": {
+      "columns": [
+        "ContentItemID"
+      ]
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "ContentTypeNames must list at least one content type.",
+    "data": null
+  }
+}

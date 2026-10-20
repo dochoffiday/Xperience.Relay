@@ -1,0 +1,22 @@
+{
+  "title": "The content item behind a web page",
+  "note": "Content item 132 belongs to the page \"Coffee Beverages Explained\". Pages are moved with `move-web-page`.",
+  "kind": "error",
+  "order": 1032,
+  "status": 200,
+  "request": {
+    "verb": "move-content-item",
+    "parameters": {
+      "contentItemIds": [
+        132
+      ],
+      "contentFolderId": 6
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Content item 132 is not a reusable content item. Use move-web-page for web pages.",
+    "data": null
+  }
+}

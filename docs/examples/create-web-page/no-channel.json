@@ -1,0 +1,20 @@
+{
+  "title": "No website channel named, and no default configured",
+  "kind": "error",
+  "order": 5,
+  "status": 200,
+  "request": {
+    "verb": "create-web-page",
+    "parameters": {
+      "parentWebPageItemId": 1,
+      "contentTypeName": "DancingGoat.ArticlePage",
+      "displayName": "Cold brew at home"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "WebsiteChannelName is required. Set it on the command or configure RelayKenticoOptions.DefaultWebsiteChannelName.",
+    "data": null
+  }
+}

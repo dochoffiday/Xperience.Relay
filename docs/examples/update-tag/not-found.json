@@ -1,0 +1,19 @@
+{
+  "title": "A tag that does not exist",
+  "kind": "error",
+  "order": 2014,
+  "status": 200,
+  "request": {
+    "verb": "update-tag",
+    "parameters": {
+      "tagId": 99999,
+      "title": "Autumn"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Tag 99999 was not found.",
+    "data": null
+  }
+}

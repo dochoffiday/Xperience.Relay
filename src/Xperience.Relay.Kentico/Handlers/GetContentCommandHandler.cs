@@ -60,7 +60,8 @@ public class GetContentCommandHandler : IRelayCommandHandler<GetContentCommand>
                 }
                 return fields;
             },
-            cancellationToken: cancellationToken);
+            new ContentQueryExecutionOptions { ForPreview = true, IncludeSecuredItems = true },
+            cancellationToken);
 
         var fieldData = rows.FirstOrDefault() ?? new Dictionary<string, object?>();
 

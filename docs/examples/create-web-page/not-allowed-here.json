@@ -1,0 +1,22 @@
+{
+  "title": "A content type that is not allowed under the parent",
+  "note": "The root of the channel only allows the content types the channel permits there; an article page is not one of them.",
+  "kind": "error",
+  "order": 3,
+  "status": 200,
+  "request": {
+    "verb": "create-web-page",
+    "parameters": {
+      "websiteChannelName": "DancingGoatPages",
+      "parentWebPageItemId": 0,
+      "contentTypeName": "DancingGoat.ArticlePage",
+      "displayName": "Cold brew at the root"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Unhandled exception executing verb 'create-web-page': [InvalidOperationException] Content type with ID 5665 is not allowed as a child of web page with ID 0.",
+    "data": null
+  }
+}

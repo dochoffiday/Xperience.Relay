@@ -1,0 +1,25 @@
+{
+  "title": "Create a tag under another tag, by taxonomy code name",
+  "order": 2007,
+  "status": 200,
+  "request": {
+    "verb": "create-tag",
+    "parameters": {
+      "taxonomyName": "seasons",
+      "title": "Early spring",
+      "parentTagId": 25,
+      "order": 1
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Created tag 'Early spring' (ID=26) in taxonomy 'seasons'.",
+    "error": null,
+    "data": {
+      "tagId": 26,
+      "tagGuid": "ed37d5b6-af83-4fc7-989d-ee23de2bcbce",
+      "tagName": "early-spring",
+      "tagTitle": "Early spring"
+    }
+  }
+}

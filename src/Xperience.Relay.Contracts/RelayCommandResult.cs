@@ -9,11 +9,19 @@ public class RelayCommandResult
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
+    /// <summary>True when the command was carried out. False when it wasn't; <see cref="Error"/> says why.</summary>
     public bool Success { get; set; }
+
+    /// <summary>A sentence about what was done, for commands that report one. Null when the command failed.</summary>
     public string? Message { get; set; }
+
+    /// <summary>Why the command couldn't be carried out. Null when it succeeded.</summary>
     public string? Error { get; set; }
 
-    /// <summary>Verb-specific payload (e.g. a <see cref="WebPageInfo"/> for "get-page-info"). Travels as JSON.</summary>
+    /// <summary>
+    /// Verb-specific payload (e.g. a <see cref="WebPageInfo"/> for "get-page-info"). Null when the command failed or has
+    /// nothing to return. Travels as JSON; <see cref="GetData{T}"/> reads it as the type the command returns.
+    /// </summary>
     public object? Data { get; set; }
 
     /// <summary>

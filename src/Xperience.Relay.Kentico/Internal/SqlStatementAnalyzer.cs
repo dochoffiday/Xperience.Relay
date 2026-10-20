@@ -60,6 +60,12 @@ internal static class SqlStatementAnalyzer
         {
             foreach (var statement in batch.Statements)
             {
+                // SELECT ... INTO is a SELECT that creates a table, which a read-only query must not do.
+                if (readOnly && statement is SelectStatement { Into.BaseIdentifier.Value: { } target } && !target.StartsWith('#'))
+                {
+                    return Fail("'SELECT ... INTO' creates a table, so it is not allowed here (a temporary #table is fine).");
+                }
+
                 if (!IsAllowed(statement, readOnly))
                 {
                     return Fail($"'{GetVerb(statement)}' statements are not allowed in this context.");

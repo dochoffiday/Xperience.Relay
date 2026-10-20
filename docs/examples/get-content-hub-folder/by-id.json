@@ -1,0 +1,19 @@
+{
+  "title": "Find a folder by its ID",
+  "order": 1002,
+  "status": 200,
+  "request": {
+    "verb": "get-content-hub-folder",
+    "parameters": {
+      "contentFolderId": 5
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Found folder '2026' (ID=5).",
+    "error": null,
+    "data": {
+      "contentFolderId": 5
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "title": "Delete a page (it goes to the recycle bin)",
+  "order": 25,
+  "status": 200,
+  "request": {
+    "verb": "delete-web-page",
+    "parameters": {
+      "webPageId": 68,
+      "languageName": "en"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Deleted web page 68 (en).",
+    "error": null,
+    "data": null
+  }
+}

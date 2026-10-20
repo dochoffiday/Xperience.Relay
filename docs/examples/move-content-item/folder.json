@@ -1,0 +1,20 @@
+{
+  "title": "Move an item to another folder",
+  "order": 1029,
+  "status": 200,
+  "request": {
+    "verb": "move-content-item",
+    "parameters": {
+      "contentItemIds": [
+        184
+      ],
+      "contentFolderId": 6
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Moved 1 content item(s) to folder 6.",
+    "error": null,
+    "data": null
+  }
+}

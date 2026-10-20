@@ -1,14 +1,15 @@
 namespace Xperience.Relay.Contracts.Commands;
 
 /// <summary>
-/// Fetches a web page's system fields plus its content-type-specific field data.
-/// Result payload is a <see cref="WebPageData"/>.
+/// Fetches a web page's system fields plus the field values of its latest version (drafts included).
+/// Returns a <see cref="WebPageData"/> in <see cref="RelayCommandResult.Data"/>.
 /// </summary>
 [RelayCommand("get-page", Access = RelayAccess.Read)]
 public class GetPageCommand : IRelayCommand
 {
+    /// <summary>ID of the web page. Required.</summary>
     public int WebPageId { get; set; }
 
-    /// <summary>Defaults to the handler's configured default language when null.</summary>
+    /// <summary>Defaults to <c>RelayKenticoOptions.DefaultLanguageName</c> when null.</summary>
     public string? LanguageName { get; set; }
 }

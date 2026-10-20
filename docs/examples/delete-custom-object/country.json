@@ -1,0 +1,18 @@
+{
+  "title": "Delete an object",
+  "order": 2030,
+  "status": 200,
+  "request": {
+    "verb": "delete-custom-object",
+    "parameters": {
+      "objectTypeName": "cms.country",
+      "id": 771
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Deleted 'cms.country' with ID 771.",
+    "error": null,
+    "data": null
+  }
+}

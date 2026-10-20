@@ -1,0 +1,21 @@
+{
+  "title": "Update a published page",
+  "note": "The page was published, so Relay makes a draft, saves the change and publishes it again.",
+  "order": 14,
+  "status": 200,
+  "request": {
+    "verb": "update-web-page",
+    "parameters": {
+      "webPageId": 68,
+      "fields": {
+        "ArticlePageSummary": "Everything you need to make cold brew with a jar and a sieve - no special equipment."
+      }
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Updated 1 field(s) on web page 68.",
+    "error": null,
+    "data": null
+  }
+}

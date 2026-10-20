@@ -1,0 +1,21 @@
+{
+  "title": "A required column left out",
+  "kind": "error",
+  "order": 2033,
+  "status": 200,
+  "request": {
+    "verb": "create-custom-object",
+    "parameters": {
+      "objectTypeName": "cms.country",
+      "fields": {
+        "CountryTwoLetterCode": "EB"
+      }
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Unhandled exception executing verb 'create-custom-object': [CodeNameNotValidException] The object code name '' is not valid. The code name can contain only alphanumeric characters, some special characters (_, -, .) and cannot start or end with '.'.",
+    "data": null
+  }
+}

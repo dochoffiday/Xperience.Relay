@@ -1,0 +1,19 @@
+{
+  "title": "Delete one batch only",
+  "note": "Three contacts have no email address; one batch of one contact was deleted.",
+  "order": 2040,
+  "status": 200,
+  "request": {
+    "verb": "delete-contacts",
+    "parameters": {
+      "whereClause": "ContactEmail IS NULL",
+      "batchSize": 1
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Deleted contacts matching condition 'ContactEmail IS NULL' in a single batch of 1.",
+    "error": null,
+    "data": null
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "title": "Create a taxonomy",
+  "note": "No `codeName` was given, so Kentico made one from the title.",
+  "order": 2002,
+  "status": 200,
+  "request": {
+    "verb": "create-taxonomy",
+    "parameters": {
+      "title": "Seasons",
+      "description": "Seasonal menu themes"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Created taxonomy 'Seasons' (ID=7).",
+    "error": null,
+    "data": {
+      "taxonomyId": 7,
+      "taxonomyGuid": "877667ca-3a01-49c3-bd01-e541b61675fd",
+      "taxonomyName": "seasons",
+      "taxonomyTitle": "Seasons"
+    }
+  }
+}

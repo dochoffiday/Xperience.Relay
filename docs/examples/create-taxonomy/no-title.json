@@ -1,0 +1,18 @@
+{
+  "title": "No title",
+  "kind": "error",
+  "order": 2003,
+  "status": 200,
+  "request": {
+    "verb": "create-taxonomy",
+    "parameters": {
+      "description": "Seasonal menu themes"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Title is required.",
+    "data": null
+  }
+}

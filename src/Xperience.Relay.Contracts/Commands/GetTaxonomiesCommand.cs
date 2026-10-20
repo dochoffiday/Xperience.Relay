@@ -1,5 +1,5 @@
 namespace Xperience.Relay.Contracts.Commands;
 
-/// <summary>Returns all taxonomies. Results are in <see cref="GetTaxonomiesResult"/>.</summary>
+/// <summary>Lists all taxonomies. Returns a <see cref="GetTaxonomiesResult"/> in <see cref="RelayCommandResult.Data"/>.</summary>
 [RelayCommand("get-taxonomies", Access = RelayAccess.Read)]
 public class GetTaxonomiesCommand : IRelayCommand { }

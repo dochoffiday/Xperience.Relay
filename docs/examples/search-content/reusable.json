@@ -1,0 +1,31 @@
+{
+  "title": "Search the published cafes for some text",
+  "order": 1022,
+  "status": 200,
+  "request": {
+    "verb": "search-content",
+    "parameters": {
+      "contentTypeName": "DancingGoat.Cafe",
+      "filter": "seattle"
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Found 1 matching item(s) in 'DancingGoat.Cafe'.",
+    "error": null,
+    "data": {
+      "matches": [
+        {
+          "contentItemId": 185,
+          "contentItemName": "SeattleCoffeePlace-0fxj79os",
+          "contentTypeName": "DancingGoat.Cafe",
+          "location": null,
+          "matchedFields": {
+            "CafeName": "Seattle Coffee Place",
+            "CafeCity": "Seattle"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "title": "Delete a taxonomy",
+  "note": "Every tag in the taxonomy is deleted with it.",
+  "order": 2023,
+  "status": 200,
+  "request": {
+    "verb": "delete-taxonomy",
+    "parameters": {
+      "taxonomyId": 7
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Deleted taxonomy 7.",
+    "error": null,
+    "data": null
+  }
+}

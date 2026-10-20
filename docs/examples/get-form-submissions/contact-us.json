@@ -1,0 +1,50 @@
+{
+  "title": "Read the newest submissions of a form",
+  "note": "Without `orderBy`, the newest submission comes first.",
+  "order": 2037,
+  "status": 200,
+  "request": {
+    "verb": "get-form-submissions",
+    "parameters": {
+      "formClassName": "BizForm.DancingGoatContactUs",
+      "top": 10
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Retrieved 2 submission(s) for 'BizForm.DancingGoatContactUs'.",
+    "error": null,
+    "data": {
+      "formClassName": "BizForm.DancingGoatContactUs",
+      "columns": [
+        "Form_2023_09_12_17_45ID",
+        "FormInserted",
+        "FormUpdated",
+        "UserFirstName",
+        "UserLastName",
+        "UserEmail",
+        "UserMessage"
+      ],
+      "rows": [
+        [
+          "2",
+          "10/19/2026 2:05:00 PM",
+          "10/19/2026 2:05:00 PM",
+          "Grace",
+          "Hopper",
+          "grace@example.com",
+          "Can I book the cupping room for a team event?"
+        ],
+        [
+          "1",
+          "10/18/2026 9:30:00 AM",
+          "10/18/2026 9:30:00 AM",
+          "Ada",
+          "Lovelace",
+          "ada@example.com",
+          "Do you ship cold brew kits?"
+        ]
+      ]
+    }
+  }
+}

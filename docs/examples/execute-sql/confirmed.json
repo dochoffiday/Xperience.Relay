@@ -1,0 +1,25 @@
+{
+  "title": "Run it",
+  "order": 2051,
+  "status": 200,
+  "request": {
+    "verb": "execute-sql",
+    "parameters": {
+      "query": "UPDATE CMS_Tag SET TagDescription = N'Warm-weather drinks' WHERE TagName = N'HappyHour'",
+      "confirm": true
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Command executed successfully.",
+    "error": null,
+    "data": {
+      "confirmed": true,
+      "statementSummaries": [
+        "UPDATE [CMS_Tag]"
+      ],
+      "columns": null,
+      "rows": null
+    }
+  }
+}

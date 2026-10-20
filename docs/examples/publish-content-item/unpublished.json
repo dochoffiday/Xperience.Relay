@@ -1,0 +1,18 @@
+{
+  "title": "Publish an item that was unpublished",
+  "note": "An unpublished item gets a draft first, then that draft is published.",
+  "order": 1026,
+  "status": 200,
+  "request": {
+    "verb": "publish-content-item",
+    "parameters": {
+      "contentItemId": 184
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Published content item 184 (en).",
+    "error": null,
+    "data": null
+  }
+}

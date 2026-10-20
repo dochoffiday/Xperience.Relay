@@ -1,0 +1,26 @@
+{
+  "title": "Look up a page",
+  "order": 6,
+  "status": 200,
+  "request": {
+    "verb": "get-page-info",
+    "parameters": {
+      "webPageId": 68
+    }
+  },
+  "response": {
+    "success": true,
+    "message": null,
+    "error": null,
+    "data": {
+      "webPageId": 68,
+      "webPageGuid": "5b308d07-cbb6-4ccb-8d85-6068cc689e17",
+      "name": "ColdBrewAtHome-aqfgqi7s",
+      "contentType": "DancingGoat.ArticlePage",
+      "treePath": "/Articles/Cold_brew_at_home",
+      "parentWebPageId": 1,
+      "languageName": "en",
+      "channelName": "DancingGoatPages"
+    }
+  }
+}

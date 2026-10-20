@@ -1,0 +1,21 @@
+{
+  "title": "A tag moved under one of its own child tags",
+  "note": "Tag 17 (\"Sour\") has the child tag 21 (\"Soury\") in the sample taxonomy.",
+  "kind": "error",
+  "order": 2018,
+  "status": 200,
+  "request": {
+    "verb": "move-tag",
+    "parameters": {
+      "tagId": 17,
+      "targetParentTagId": 21,
+      "order": 1
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "A tag can't be moved under itself or under one of its own child tags.",
+    "data": null
+  }
+}

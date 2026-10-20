@@ -1,0 +1,19 @@
+{
+  "title": "No items named",
+  "kind": "error",
+  "order": 1030,
+  "status": 200,
+  "request": {
+    "verb": "move-content-item",
+    "parameters": {
+      "contentItemIds": [],
+      "contentFolderId": 6
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "ContentItemIds must not be empty.",
+    "data": null
+  }
+}

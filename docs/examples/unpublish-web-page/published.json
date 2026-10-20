@@ -1,0 +1,17 @@
+{
+  "title": "Take a published page offline",
+  "order": 20,
+  "status": 200,
+  "request": {
+    "verb": "unpublish-web-page",
+    "parameters": {
+      "webPageId": 68
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Unpublished web page 68 (en).",
+    "error": null,
+    "data": null
+  }
+}

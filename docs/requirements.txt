@@ -1,0 +1,33 @@
+# Python packages that build the docs site (mkdocs build). Pinned so the build is repeatable; update them together.
+# MkDocs 2 is a different, incompatible tool: stay on 1.x until the site is moved on purpose.
+mkdocs==1.6.1
+mkdocs-material==9.7.7
+mkdocs-material-extensions==1.3.1
+pymdown-extensions==10.21.3
+Markdown==3.9
+Pygments==2.21.0
+Jinja2==3.1.6
+MarkupSafe==3.0.4
+PyYAML==6.0.3
+pyyaml_env_tag==1.1
+Babel==2.18.0
+backrefs==6.2
+click==8.1.8
+colorama==0.4.6
+ghp-import==2.1.0
+mergedeep==1.3.4
+mkdocs-get-deps==0.2.2
+packaging==26.3
+paginate==0.5.7
+pathspec==1.1.1
+platformdirs==4.4.0
+python-dateutil==2.9.0.post0
+requests==2.32.5
+six==1.17.0
+watchdog==6.0.0
+certifi==2026.10.19
+charset-normalizer==3.5.2
+idna==3.20
+urllib3==2.6.3
+importlib_metadata==8.7.1
+zipp==3.23.1

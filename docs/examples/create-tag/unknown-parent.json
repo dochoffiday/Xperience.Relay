@@ -1,0 +1,20 @@
+{
+  "title": "A parent tag that does not exist",
+  "kind": "error",
+  "order": 2020,
+  "status": 200,
+  "request": {
+    "verb": "create-tag",
+    "parameters": {
+      "taxonomyId": 7,
+      "title": "Autumn",
+      "parentTagId": 99999
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Parent tag 99999 was not found.",
+    "data": null
+  }
+}

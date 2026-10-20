@@ -8,6 +8,7 @@ namespace Xperience.Relay.Contracts.Commands;
 [RelayCommand("delete-web-page", Access = RelayAccess.Write)]
 public class DeleteWebPageCommand : IRelayCommand
 {
+    /// <summary>ID of the web page. Required.</summary>
     public int WebPageId { get; set; }
 
     /// <summary>Defaults to <c>RelayKenticoOptions.DefaultLanguageName</c> when null.</summary>

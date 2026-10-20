@@ -9,5 +9,6 @@ namespace Xperience.Relay.Contracts;
 /// </summary>
 public class QueryItemsResult
 {
+    /// <summary>One entry per item, mapping each requested column to its value.</summary>
     public List<Dictionary<string, JsonElement>> Items { get; set; } = [];
 }

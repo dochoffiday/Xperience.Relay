@@ -14,6 +14,11 @@ public class GetContentItemUsageCommandHandler(IContentItemUsageRetriever usageR
             return RelayCommandResult.Fail("ContentItemId must be a positive integer.");
         }
 
+        if (string.IsNullOrWhiteSpace(command.LanguageName))
+        {
+            return RelayCommandResult.Fail("LanguageName is required.");
+        }
+
         var items = await usageRetriever.Retrieve(command.ContentItemId, command.LanguageName, cancellationToken);
 
         var entries = items.Select(m => new ContentItemUsageEntry

@@ -1,0 +1,35 @@
+{
+  "title": "Only the published version of each page",
+  "order": 17,
+  "status": 200,
+  "request": {
+    "verb": "query-web-page-items",
+    "parameters": {
+      "websiteChannelName": "DancingGoatPages",
+      "contentTypeNames": [
+        "DancingGoat.ArticlePage"
+      ],
+      "columns": [
+        "WebPageItemID",
+        "ArticleTitle"
+      ],
+      "whereEquals": {
+        "WebPageItemID": 68
+      },
+      "publishedOnly": true
+    }
+  },
+  "response": {
+    "success": true,
+    "message": null,
+    "error": null,
+    "data": {
+      "items": [
+        {
+          "WebPageItemID": 68,
+          "ArticleTitle": "Cold brew at home: a beginner's guide"
+        }
+      ]
+    }
+  }
+}

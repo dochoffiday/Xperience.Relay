@@ -1,0 +1,19 @@
+{
+  "title": "The type that holds the API keys",
+  "note": "Relay refuses to read or write its own API key objects through the generic commands.",
+  "kind": "error",
+  "order": 2036,
+  "status": 200,
+  "request": {
+    "verb": "query-custom-objects",
+    "parameters": {
+      "objectTypeName": "relay.apikey"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Object type 'relay.apikey' is protected.",
+    "data": null
+  }
+}

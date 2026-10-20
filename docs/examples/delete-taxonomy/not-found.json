@@ -1,0 +1,18 @@
+{
+  "title": "A taxonomy that does not exist",
+  "kind": "error",
+  "order": 2024,
+  "status": 200,
+  "request": {
+    "verb": "delete-taxonomy",
+    "parameters": {
+      "taxonomyId": 99999
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Taxonomy 99999 was not found.",
+    "data": null
+  }
+}

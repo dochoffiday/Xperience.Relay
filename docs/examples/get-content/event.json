@@ -1,0 +1,32 @@
+{
+  "title": "Read an item with its field values",
+  "order": 1014,
+  "status": 200,
+  "request": {
+    "verb": "get-content",
+    "parameters": {
+      "contentItemId": 184
+    }
+  },
+  "response": {
+    "success": true,
+    "message": null,
+    "error": null,
+    "data": {
+      "fields": {
+        "EventTitle": "Cold brew workshop",
+        "EventHeroBannerImage": null,
+        "EventPromoText": "Learn to make cold brew at home.",
+        "EventDate": "2026-11-14T10:00:00",
+        "EventCafe": "[{\"Identifier\":\"4c84719d-689e-460e-8cc1-5495c367b249\"}]"
+      },
+      "contentItemId": 184,
+      "contentItemGuid": "a244387c-f5fc-4fe2-861c-d33832e7b90d",
+      "name": "ColdBrewWorkshop-23s43e2s",
+      "contentType": "DancingGoat.Event",
+      "languageName": "en",
+      "workspaceName": "2",
+      "contentFolderPath": null
+    }
+  }
+}

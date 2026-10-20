@@ -12,6 +12,7 @@ namespace Xperience.Relay.Kentico.Handlers;
 /// </summary>
 public class MoveContentItemCommandHandler(
     IContentFolderManagerFactory contentFolderManagerFactory,
+    ContentVersionReader versionReader,
     ServiceAccountResolver serviceAccountResolver) : IRelayCommandHandler<MoveContentItemCommand>
 {
     public async Task<RelayCommandResult> HandleAsync(MoveContentItemCommand command, CancellationToken cancellationToken = default)
@@ -19,6 +20,18 @@ public class MoveContentItemCommandHandler(
         if (command.ContentItemIds.Count == 0)
         {
             return RelayCommandResult.Fail("ContentItemIds must not be empty.");
+        }
+
+        // Kentico skips an id that isn't there, and moves a page's content item like a reusable one, and reports success either way.
+        var problems = command.ContentItemIds
+            .Distinct()
+            .Select(id => versionReader.CheckReusable(id, "move-web-page"))
+            .OfType<string>()
+            .ToList();
+
+        if (problems.Count > 0)
+        {
+            return RelayCommandResult.Fail(string.Join(" ", problems));
         }
 
         var userId = serviceAccountResolver.ResolveUserId();

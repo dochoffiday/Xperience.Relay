@@ -7,9 +7,9 @@ namespace Xperience.Relay.Contracts.Commands;
 [RelayCommand("move-content-item", Access = RelayAccess.Write)]
 public class MoveContentItemCommand : IRelayCommand
 {
-    /// <summary>IDs of the content items to move.</summary>
+    /// <summary>IDs of the content items to move. Required; at least one.</summary>
     public List<int> ContentItemIds { get; set; } = [];
 
-    /// <summary>ID of the destination content hub folder.</summary>
+    /// <summary>ID of the destination content hub folder. Required.</summary>
     public int ContentFolderId { get; set; }
 }

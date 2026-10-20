@@ -1,0 +1,19 @@
+{
+  "title": "Move a navigation item out of the Store menu",
+  "note": "Page 25 is `/Navigation_menu/Store/Merchandise` and page 5 is `/Navigation_menu`. Kentico puts the moved page first among its new siblings.",
+  "order": 22,
+  "status": 200,
+  "request": {
+    "verb": "move-web-page",
+    "parameters": {
+      "webPageId": 25,
+      "parentWebPageId": 5
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Moved web page 25 under parent 5.",
+    "error": null,
+    "data": null
+  }
+}

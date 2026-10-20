@@ -1,0 +1,33 @@
+{
+  "title": "No columns named: every column comes back",
+  "note": "Every value is text, formatted the way the server formats it: that includes `CountryLastModified`.",
+  "order": 2026,
+  "status": 200,
+  "request": {
+    "verb": "query-custom-objects",
+    "parameters": {
+      "objectTypeName": "cms.country",
+      "whereEquals": {
+        "CountryTwoLetterCode": "US"
+      }
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Found 1 object(s) of type 'cms.country'.",
+    "error": null,
+    "data": {
+      "items": [
+        {
+          "CountryID": "271",
+          "CountryDisplayName": "USA",
+          "CountryName": "USA",
+          "CountryGUID": "e431b7e6-9e6c-409d-a1d9-748cbf51b5d6",
+          "CountryLastModified": "10/18/2024 5:06:33 AM",
+          "CountryTwoLetterCode": "US",
+          "CountryThreeLetterCode": "USA"
+        }
+      ]
+    }
+  }
+}

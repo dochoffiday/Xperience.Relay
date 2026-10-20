@@ -11,8 +11,8 @@ namespace Xperience.Relay.Kentico.Handlers;
 /// Creates a new reusable content item, optionally writing a Base64-encoded binary into an asset
 /// field. The file is decoded to a temp path on disk, wrapped in Kentico asset metadata, and the
 /// temp file is deleted in a finally block regardless of outcome. After creation the item is
-/// published and, if <see cref="CreateContentItemCommand.FolderPath"/> is set, moved to that
-/// content hub folder (creating any missing segments along the way).
+/// published and, if <see cref="CreateContentItemCommand.ContentFolderId"/> is set, moved to that
+/// content hub folder.
 /// </summary>
 public class CreateContentItemCommandHandler(
     IContentItemManagerFactory contentItemManagerFactory,

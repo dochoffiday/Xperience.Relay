@@ -1,0 +1,18 @@
+{
+  "title": "Delete a tag that has child tags",
+  "note": "The child tag \"Early spring\" went with it.",
+  "order": 2021,
+  "status": 200,
+  "request": {
+    "verb": "delete-tag",
+    "parameters": {
+      "tagId": 25
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Deleted tag 25.",
+    "error": null,
+    "data": null
+  }
+}

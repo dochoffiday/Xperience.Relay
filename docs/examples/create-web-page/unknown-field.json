@@ -1,0 +1,25 @@
+{
+  "title": "Fields the content type does not have, or values that do not fit",
+  "kind": "error",
+  "order": 4,
+  "status": 200,
+  "request": {
+    "verb": "create-web-page",
+    "parameters": {
+      "websiteChannelName": "DancingGoatPages",
+      "parentWebPageItemId": 1,
+      "contentTypeName": "DancingGoat.ArticlePage",
+      "displayName": "Cold brew at home",
+      "fields": {
+        "ArticleSubtitle": "A field this type does not have",
+        "ArticlePagePublishDate": "last Tuesday"
+      }
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Field 'ArticleSubtitle' was not found on content type 'DancingGoat.ArticlePage'. Field 'ArticlePagePublishDate' expects a date, but got 'last Tuesday'.",
+    "data": null
+  }
+}

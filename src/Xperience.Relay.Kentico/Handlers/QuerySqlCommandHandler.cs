@@ -47,6 +47,11 @@ public class QuerySqlCommandHandler(
                 dataSet = ConnectionHelper.ExecuteQuery(query, null, QueryTypeEnum.SQLQuery);
             }
 
+            if (dataSet.Tables.Count == 0)
+            {
+                return Task.FromResult(RelayCommandResult.Fail("The query returned no result set. End it with a SELECT."));
+            }
+
             var table = dataSet.Tables[0];
             var result = new QuerySqlResult
             {

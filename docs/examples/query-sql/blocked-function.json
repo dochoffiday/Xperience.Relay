@@ -1,0 +1,18 @@
+{
+  "title": "A function that is blocked",
+  "kind": "error",
+  "order": 2045,
+  "status": 200,
+  "request": {
+    "verb": "query-sql",
+    "parameters": {
+      "query": "SELECT * FROM OPENROWSET('SQLNCLI', 'Server=x;', 'SELECT 1')"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "'OPENROWSET' is not allowed.",
+    "data": null
+  }
+}

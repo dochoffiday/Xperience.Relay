@@ -8,7 +8,8 @@ namespace Xperience.Relay.Contracts.Commands;
 public class QueryWebPageItemsCommand : QueryItemsCommandBase
 {
     /// <summary>
-    /// Required. Defaults to <c>RelayKenticoOptions.DefaultWebsiteChannelName</c> when null.
+    /// Code name of the website channel to query. Defaults to <c>RelayKenticoOptions.DefaultWebsiteChannelName</c> when
+    /// null; the command fails if neither is set.
     /// </summary>
     public string? WebsiteChannelName { get; set; }
 

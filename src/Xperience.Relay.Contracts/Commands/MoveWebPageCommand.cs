@@ -1,15 +1,17 @@
 namespace Xperience.Relay.Contracts.Commands;
 
 /// <summary>
-/// Moves an existing web page under a different parent. Assumes <see cref="ParentWebPageId"/>
-/// already exists -- this command does not create folders along the way, and the caller is
-/// expected to have already resolved the target parent's ID (e.g. via "get-page-info"). Does not
-/// specify an explicit sibling order; the moved page is appended as the last child. Use a separate
-/// sort command afterward if a specific order is required.
+/// Moves an existing web page under a different parent, or to the root of its channel. The parent has to exist already:
+/// the command doesn't create pages along the way, so the caller resolves the target parent's ID first (e.g. with
+/// "get-page-info"). The command doesn't set a sibling order -- Kentico puts the moved page first among its new
+/// siblings -- and the parent's content type must allow the page's content type as a child.
 /// </summary>
 [RelayCommand("move-web-page", Access = RelayAccess.Write)]
 public class MoveWebPageCommand : IRelayCommand
 {
+    /// <summary>ID of the page to move. Required.</summary>
     public int WebPageId { get; set; }
+
+    /// <summary>ID of the new parent page, or 0 for the root of the channel. Required.</summary>
     public int ParentWebPageId { get; set; }
 }

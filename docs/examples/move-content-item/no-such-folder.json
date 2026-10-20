@@ -1,0 +1,21 @@
+{
+  "title": "A folder that does not exist",
+  "kind": "error",
+  "order": 1033,
+  "status": 200,
+  "request": {
+    "verb": "move-content-item",
+    "parameters": {
+      "contentItemIds": [
+        184
+      ],
+      "contentFolderId": 99999
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Unhandled exception executing verb 'move-content-item': [ContentFolderNotFoundException] The content folder with ID 99999 does not exist.",
+    "data": null
+  }
+}

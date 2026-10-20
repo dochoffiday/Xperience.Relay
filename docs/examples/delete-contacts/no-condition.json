@@ -1,0 +1,16 @@
+{
+  "title": "No condition given",
+  "kind": "error",
+  "order": 2042,
+  "status": 200,
+  "request": {
+    "verb": "delete-contacts",
+    "parameters": {}
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "WhereClause is required.",
+    "data": null
+  }
+}

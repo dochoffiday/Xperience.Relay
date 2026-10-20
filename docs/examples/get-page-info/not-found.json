@@ -1,0 +1,18 @@
+{
+  "title": "A page that does not exist",
+  "kind": "error",
+  "order": 7,
+  "status": 200,
+  "request": {
+    "verb": "get-page-info",
+    "parameters": {
+      "webPageId": 99999
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Web page 99999 was not found.",
+    "data": null
+  }
+}

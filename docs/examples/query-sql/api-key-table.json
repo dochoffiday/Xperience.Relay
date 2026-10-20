@@ -1,0 +1,18 @@
+{
+  "title": "The table that holds the API keys",
+  "kind": "error",
+  "order": 2046,
+  "status": 200,
+  "request": {
+    "verb": "query-sql",
+    "parameters": {
+      "query": "SELECT * FROM Relay_ApiKey"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "The relay API key table is protected and can't be queried or changed through relay.",
+    "data": null
+  }
+}

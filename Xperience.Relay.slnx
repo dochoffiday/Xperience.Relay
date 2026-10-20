@@ -12,4 +12,7 @@
     <Project Path="tests/Xperience.Relay.Hosting.Tests/Xperience.Relay.Hosting.Tests.csproj" />
     <Project Path="tests/Xperience.Relay.Kentico.Tests/Xperience.Relay.Kentico.Tests.csproj" />
   </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/Xperience.Relay.Docs/Xperience.Relay.Docs.csproj" />
+  </Folder>
 </Solution>

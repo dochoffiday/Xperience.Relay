@@ -26,6 +26,14 @@ public class RelayClient
         _httpClient = httpClient;
     }
 
+    /// <summary>Sends one command to the relay and returns its result.</summary>
+    /// <param name="command">Any command type from <c>Xperience.Relay.Contracts</c>; its verb comes from its <c>[RelayCommand]</c> attribute.</param>
+    /// <param name="as">Reserved (see <see cref="RelayCommandEnvelope.As"/>); the relay doesn't use it yet.</param>
+    /// <param name="cancellationToken">Cancels the HTTP request.</param>
+    /// <returns>
+    /// The relay's result. A non-2xx HTTP response (401 invalid API key, 403 key's tier too low, ...) doesn't throw:
+    /// it comes back as a failed result whose message holds the status code and body.
+    /// </returns>
     public async Task<RelayCommandResult> ExecuteAsync(
         IRelayCommand command,
         string? @as = null,
@@ -44,6 +52,12 @@ public class RelayClient
         return result ?? RelayCommandResult.Fail("Relay endpoint returned an empty response.");
     }
 
+    /// <summary>
+    /// Sends several commands in one request. They run in order and one failing doesn't stop the rest: the
+    /// response has one result per command, in the same order. The batch is authorized as a whole, so the API
+    /// key's tier must cover the most privileged command in it.
+    /// </summary>
+    /// <exception cref="HttpRequestException">The relay answered with a non-2xx status (e.g. 401 or 403), which rejects the whole batch.</exception>
     public async Task<RelayBatchResponse> ExecuteBatchAsync(
         IEnumerable<IRelayCommand> commands,
         CancellationToken cancellationToken = default)
@@ -70,6 +84,10 @@ public class RelayClient
         return result ?? new RelayBatchResponse();
     }
 
+    /// <summary>
+    /// Lists the verbs the relay accepts, each with its parameter names and their CLR type names, plus the relay's
+    /// version, as "GET /verbs" returns them. Useful to check that a deployed relay supports a verb before using it.
+    /// </summary>
     public async Task<RelayDiscoveryResponse> GetDiscoveryAsync(CancellationToken cancellationToken = default)
     {
         var result = await _httpClient.GetFromJsonAsync<RelayDiscoveryResponse>("verbs", JsonOptions, cancellationToken).ConfigureAwait(false);

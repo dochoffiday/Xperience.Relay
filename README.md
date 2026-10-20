@@ -50,49 +50,51 @@ last resort.
 
 ## Commands
 
-| Command | Parameters | Returns |
-|---|---|---|
-| `move-web-page` | `WebPageId`, `ParentWebPageId` | — |
-| `move-content-item` | `ContentItemIds`, `ContentFolderId` | — |
-| `get-page-info` | `WebPageId`, `LanguageName?` | `WebPageInfo` |
-| `get-page` | `WebPageId`, `LanguageName?` | `WebPageData` |
-| `get-content-info` | `ContentItemId` | `ContentInfo` |
-| `get-content` | `ContentItemId`, `LanguageName?` | `ContentData` |
-| `get-content-hub-folder` | `ContentFolderId?`, `CodeName?`, `FolderPath?`, `WorkspaceName?` | `GetContentHubFolderResult` |
-| `create-content-item` | `ContentTypeName`, `DisplayName`, `LanguageName?`, `WorkspaceName?`, `ContentFolderId?`, `Fields?`, `LinkedItemFields?`, `TagFields?`, `Assets?` | `CreateContentItemResult` |
-| `create-web-page` | `WebsiteChannelName?`, `ParentWebPageItemId`, `ContentTypeName`, `DisplayName`, `LanguageName?`, `UrlSlug?`, `Fields?`, `LinkedItemFields?`, `TagFields?`, `Assets?`, `PublishAfterCreate?` | `CreateWebPageResult` |
-| `query-web-page-items` | `ContentTypeNames?`, `WebsiteChannelName?`, `LanguageName?`, `Columns?`, `WhereEquals?`, `IncludeUrls?`, `IncludeStatus?`, `PublishedOnly?` | `QueryItemsResult` |
-| `query-reusable-items` | `ContentTypeNames?`, `LanguageName?`, `Columns?`, `WhereEquals?`, `PublishedOnly?` | `QueryItemsResult` |
-| `update-web-page` | `WebPageId`, `LanguageName?`, `Fields?`, `LinkedItemFields?`, `TagFields?`, `Assets?` | — |
-| `update-content-item` | `ContentItemId`, `LanguageName?`, `Fields?`, `LinkedItemFields?`, `TagFields?`, `Assets?` | — |
-| `update-slug` | `WebPageId`, `LanguageName?`, `Slug` | — |
-| `publish-web-page` | `WebPageId`, `LanguageName?` | — |
-| `unpublish-web-page` | `WebPageId`, `LanguageName?` | — |
-| `publish-content-item` | `ContentItemId`, `LanguageName?` | — |
-| `unpublish-content-item` | `ContentItemId`, `LanguageName?` | — |
-| `delete-web-page` | `WebPageId`, `LanguageName?`, `Permanently?`, `RedirectToWebPageId?` | — |
-| `delete-content-item` | `ContentItemId`, `LanguageName?` | — |
-| `reoptimize-asset` | `ContentItemId`, `FieldName`, `LanguageName?` | — |
-| `rename-asset` | `ContentItemId`, `FieldName`, `AssetName`, `LanguageName?` | — |
-| `get-taxonomies` | — | `GetTaxonomiesResult` |
-| `create-taxonomy` | `Title`, `Description?`, `CodeName?` | `CreateTaxonomyResult` |
-| `update-taxonomy` | `TaxonomyId`, `Title?`, `Description?` | — |
-| `delete-taxonomy` | `TaxonomyId` | — |
-| `get-tags` | `TaxonomyId?`, `TaxonomyName?`, `TagId?`, `TagName?` | `GetTagsResult` |
-| `create-tag` | `TaxonomyId?`, `TaxonomyName?`, `Title`, `Description?`, `CodeName?`, `ParentTagId?`, `Order?` | `CreateTagResult` |
-| `update-tag` | `TagId`, `Title?`, `Description?` | — |
-| `move-tag` | `TagId`, `TargetParentTagId`, `Order` | — |
-| `delete-tag` | `TagId` | — |
-| `search-content` | `ContentTypeName`, `Filter`, `LanguageName?`, `WebsiteChannelName?` | `SearchContentResult` |
-| `query-custom-objects` | `ObjectTypeName`, `Columns?`, `WhereEquals?` | `QueryCustomObjectsResult` |
-| `create-custom-object` | `ObjectTypeName`, `Fields` | `CreateCustomObjectResult` |
-| `update-custom-object` | `ObjectTypeName`, `Id`, `Fields` | — |
-| `delete-custom-object` | `ObjectTypeName`, `Id` | — |
-| `get-content-item-usage` | `ContentItemId`, `LanguageName` | `GetContentItemUsageResult` |
-| `delete-contacts` | `WhereClause`, `BatchSize?` | — |
-| `get-form-submissions` | `FormClassName`, `Top?`, `WhereClause?`, `OrderBy?` | `GetFormSubmissionsResult` |
-| `query-sql` | `Query` | `QuerySqlResult` |
-| `execute-sql` | `Query`, `Confirm` | `ExecuteSqlResult` |
+| Command | Access | Parameters | Returns |
+|---|---|---|---|
+| `move-web-page` | Write | `WebPageId`, `ParentWebPageId` | — |
+| `move-content-item` | Write | `ContentItemIds`, `ContentFolderId` | — |
+| `get-page-info` | Read | `WebPageId`, `LanguageName?` | `WebPageInfo` |
+| `get-page` | Read | `WebPageId`, `LanguageName?` | `WebPageData` |
+| `get-content-info` | Read | `ContentItemId` | `ContentInfo` |
+| `get-content` | Read | `ContentItemId`, `LanguageName?` | `ContentData` |
+| `get-content-hub-folder` | Write | `ContentFolderId?`, `CodeName?`, `FolderPath?`, `WorkspaceName?` | `GetContentHubFolderResult` |
+| `create-content-item` | Write | `ContentTypeName`, `DisplayName`, `LanguageName?`, `WorkspaceName?`, `ContentFolderId?`, `Fields?`, `LinkedItemFields?`, `TagFields?`, `Assets?` | `CreateContentItemResult` |
+| `create-web-page` | Write | `WebsiteChannelName?`, `ParentWebPageItemId`, `ContentTypeName`, `DisplayName`, `LanguageName?`, `UrlSlug?`, `Fields?`, `LinkedItemFields?`, `TagFields?`, `Assets?`, `PublishAfterCreate?` | `CreateWebPageResult` |
+| `query-web-page-items` | Read | `ContentTypeNames?`, `WebsiteChannelName?`, `LanguageName?`, `Columns?`, `WhereEquals?`, `IncludeUrls?`, `IncludeStatus?`, `PublishedOnly?` | `QueryItemsResult` |
+| `query-reusable-items` | Read | `ContentTypeNames?`, `LanguageName?`, `Columns?`, `WhereEquals?`, `PublishedOnly?` | `QueryItemsResult` |
+| `update-web-page` | Write | `WebPageId`, `LanguageName?`, `Fields?`, `LinkedItemFields?`, `TagFields?`, `Assets?` | — |
+| `update-content-item` | Write | `ContentItemId`, `LanguageName?`, `Fields?`, `LinkedItemFields?`, `TagFields?`, `Assets?` | — |
+| `update-slug` | Write | `WebPageId`, `LanguageName?`, `Slug` | — |
+| `publish-web-page` | Write | `WebPageId`, `LanguageName?` | — |
+| `unpublish-web-page` | Write | `WebPageId`, `LanguageName?` | — |
+| `publish-content-item` | Write | `ContentItemId`, `LanguageName?` | — |
+| `unpublish-content-item` | Write | `ContentItemId`, `LanguageName?` | — |
+| `delete-web-page` | Write | `WebPageId`, `LanguageName?`, `Permanently?`, `RedirectToWebPageId?` | — |
+| `delete-content-item` | Write | `ContentItemId`, `LanguageName?` | — |
+| `reoptimize-asset` | Write | `ContentItemId`, `FieldName`, `LanguageName?` | — |
+| `rename-asset` | Write | `ContentItemId`, `FieldName`, `AssetName`, `LanguageName?` | — |
+| `get-taxonomies` | Read | — | `GetTaxonomiesResult` |
+| `create-taxonomy` | Write | `Title`, `Description?`, `CodeName?` | `CreateTaxonomyResult` |
+| `update-taxonomy` | Write | `TaxonomyId`, `Title?`, `Description?` | — |
+| `delete-taxonomy` | Write | `TaxonomyId` | — |
+| `get-tags` | Read | `TaxonomyId?`, `TaxonomyName?`, `TagId?`, `TagName?` | `GetTagsResult` |
+| `create-tag` | Write | `TaxonomyId?`, `TaxonomyName?`, `Title`, `Description?`, `CodeName?`, `ParentTagId?`, `Order?` | `CreateTagResult` |
+| `update-tag` | Write | `TagId`, `Title?`, `Description?` | — |
+| `move-tag` | Write | `TagId`, `TargetParentTagId`, `Order` | — |
+| `delete-tag` | Write | `TagId` | — |
+| `search-content` | Read | `ContentTypeName`, `Filter`, `LanguageName?`, `WebsiteChannelName?` | `SearchContentResult` |
+| `query-custom-objects` | Admin | `ObjectTypeName`, `Columns?`, `WhereEquals?` | `QueryCustomObjectsResult` |
+| `create-custom-object` | Admin | `ObjectTypeName`, `Fields` | `CreateCustomObjectResult` |
+| `update-custom-object` | Admin | `ObjectTypeName`, `Id`, `Fields` | — |
+| `delete-custom-object` | Admin | `ObjectTypeName`, `Id` | — |
+| `get-content-item-usage` | Read | `ContentItemId`, `LanguageName` | `GetContentItemUsageResult` |
+| `delete-contacts` | Admin | `WhereClause`, `BatchSize?` | — |
+| `get-form-submissions` | Read | `FormClassName`, `Top?`, `WhereClause?`, `OrderBy?` | `GetFormSubmissionsResult` |
+| `query-sql` | Admin | `Query` | `QuerySqlResult` |
+| `execute-sql` | Admin | `Query`, `Confirm` | `ExecuteSqlResult` |
+
+**Access** is the lowest API key tier that may run the verb: Read, Write or Admin, each including the tiers below it (see [API keys and access tiers](#api-keys-and-access-tiers)).
 
 **Notes:**
 - `LanguageName` defaults to `RelayKenticoOptions.DefaultLanguageName` when omitted.

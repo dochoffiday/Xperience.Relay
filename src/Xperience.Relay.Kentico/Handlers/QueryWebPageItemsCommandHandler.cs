@@ -15,6 +15,8 @@ public class QueryWebPageItemsCommandHandler(
 {
     private const string RelativeUrlKey = "WebPageRelativeUrl";
     private const string AbsoluteUrlKey = "WebPageAbsoluteUrl";
+    private const string StatusKey = "WebPageStatus";
+    private const string IsPublishedKey = "WebPageIsPublished";
 
     // Not UrlPathColumns(): it adds its columns without deduping against the caller's own Columns.
     private static readonly string[] UrlColumns =
@@ -24,9 +26,16 @@ public class QueryWebPageItemsCommandHandler(
         nameof(IWebPageContentQueryDataContainer.WebPageItemWebsiteChannelID),
     ];
 
+    private static readonly string[] StatusColumns =
+    [
+        nameof(IWebPageContentQueryDataContainer.ContentItemCommonDataVersionStatus),
+    ];
+
     private readonly RelayKenticoOptions _options = options.Value;
 
-    private sealed record PageRow(Dictionary<string, JsonElement> Values, string? UrlPath, string? TreePath, int ChannelId);
+    private readonly record struct UrlData(string? UrlPath, string? TreePath, int ChannelId);
+
+    private sealed record PageRow(Dictionary<string, JsonElement> Values, VersionStatus Status, UrlData Url);
 
     public async Task<RelayCommandResult> HandleAsync(QueryWebPageItemsCommand command, CancellationToken cancellationToken = default)
     {
@@ -39,11 +48,59 @@ public class QueryWebPageItemsCommandHandler(
 
         var languageName = command.LanguageName ?? _options.DefaultLanguageName;
 
-        var builder = new ContentItemQueryBuilder();
+        var columns = Combine(
+            command.Columns,
+            command.IncludeUrls ? UrlColumns : [],
+            command.IncludeStatus ? StatusColumns : []);
 
-        var columns = command.IncludeUrls
-            ? command.Columns.Concat(UrlColumns).Distinct(StringComparer.OrdinalIgnoreCase).ToArray()
-            : command.Columns.ToArray();
+        var pages = (await executor.GetWebPageResult(
+            BuildQuery(command, websiteChannelName, languageName, columns),
+            container => new PageRow(
+                QueryItemsHelpers.ExtractRow(command.Columns, container.TryGetValue<object>),
+                command.IncludeStatus ? container.ContentItemCommonDataVersionStatus : default,
+                command.IncludeUrls ? ReadUrlData(container) : default),
+            new ContentQueryExecutionOptions { ForPreview = !command.PublishedOnly, IncludeSecuredItems = true },
+            cancellationToken)).ToList();
+
+        var items = new List<Dictionary<string, JsonElement>>();
+
+        foreach (var page in pages)
+        {
+            if (command.IncludeStatus)
+            {
+                page.Values[StatusKey] = JsonSerializer.SerializeToElement(page.Status.ToString());
+
+                // A Draft is always a change on top of a published version (a page that was never published is an
+                // InitialDraft), so the latest version's status is all it takes to know if a page is published.
+                page.Values[IsPublishedKey] = JsonSerializer.SerializeToElement(page.Status is VersionStatus.Published or VersionStatus.Draft);
+            }
+
+            if (command.IncludeUrls)
+            {
+                var retrieved = await webPageUrlRetriever.Retrieve(
+                    page.Url.UrlPath ?? string.Empty,
+                    page.Url.TreePath ?? string.Empty,
+                    page.Url.ChannelId,
+                    languageName,
+                    cancellationToken);
+
+                page.Values[RelativeUrlKey] = JsonSerializer.SerializeToElement(retrieved.RelativePath);
+                page.Values[AbsoluteUrlKey] = JsonSerializer.SerializeToElement(retrieved.AbsoluteUrl);
+            }
+
+            items.Add(page.Values);
+        }
+
+        return RelayCommandResult.Ok(data: new QueryItemsResult { Items = items });
+    }
+
+    private static ContentItemQueryBuilder BuildQuery(
+        QueryWebPageItemsCommand command,
+        string websiteChannelName,
+        string languageName,
+        string[] columns)
+    {
+        var builder = new ContentItemQueryBuilder();
 
         foreach (var contentTypeName in command.ContentTypeNames)
         {
@@ -67,38 +124,14 @@ public class QueryWebPageItemsCommandHandler(
             });
         }
 
-        var queryOptions = new ContentQueryExecutionOptions { ForPreview = true, IncludeSecuredItems = true };
-
-        var pages = await executor.GetWebPageResult(
-            builder,
-            container => new PageRow(
-                QueryItemsHelpers.ExtractRow(command.Columns, container.TryGetValue<object>),
-                command.IncludeUrls ? container.WebPageUrlPath : null,
-                command.IncludeUrls ? container.WebPageItemTreePath : null,
-                command.IncludeUrls ? container.WebPageItemWebsiteChannelID : 0),
-            queryOptions,
-            cancellationToken);
-
-        var items = new List<Dictionary<string, JsonElement>>();
-
-        foreach (var page in pages)
-        {
-            if (command.IncludeUrls)
-            {
-                var url = await webPageUrlRetriever.Retrieve(
-                    page.UrlPath ?? string.Empty,
-                    page.TreePath ?? string.Empty,
-                    page.ChannelId,
-                    languageName,
-                    cancellationToken);
-
-                page.Values[RelativeUrlKey] = JsonSerializer.SerializeToElement(url.RelativePath);
-                page.Values[AbsoluteUrlKey] = JsonSerializer.SerializeToElement(url.AbsoluteUrl);
-            }
-
-            items.Add(page.Values);
-        }
-
-        return RelayCommandResult.Ok(data: new QueryItemsResult { Items = items });
+        return builder;
     }
+
+    private static UrlData ReadUrlData(IWebPageContentQueryDataContainer container) => new(
+        container.WebPageUrlPath,
+        container.WebPageItemTreePath,
+        container.WebPageItemWebsiteChannelID);
+
+    private static string[] Combine(params IEnumerable<string>[] columnSets) =>
+        columnSets.SelectMany(set => set).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
 }

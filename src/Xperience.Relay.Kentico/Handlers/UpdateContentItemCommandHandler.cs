@@ -1,11 +1,8 @@
 using CMS.ContentEngine;
-using CMS.ContentEngine.Internal;
-using CMS.DataEngine;
 using Microsoft.Extensions.Options;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
 using Xperience.Relay.Core;
-using Xperience.Relay.Kentico.Extensions;
 using Xperience.Relay.Kentico.Internal;
 
 namespace Xperience.Relay.Kentico.Handlers;
@@ -17,7 +14,9 @@ namespace Xperience.Relay.Kentico.Handlers;
 /// </summary>
 public class UpdateContentItemCommandHandler(
     IContentItemManagerFactory contentItemManagerFactory,
-    IInfoProvider<ContentItemCommonDataInfo> contentItemCommonDataInfoProvider,
+    ContentVersionReader versionReader,
+    ContentFieldChecker fieldChecker,
+    FailedWriteCacheCleaner cacheCleaner,
     ServiceAccountResolver serviceAccountResolver,
     IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<UpdateContentItemCommand>
 {
@@ -35,17 +34,29 @@ public class UpdateContentItemCommandHandler(
 
         var languageName = command.LanguageName ?? _options.DefaultLanguageName;
 
-        var commonData = contentItemCommonDataInfoProvider.Get()
-            .WhereEquals(nameof(ContentItemCommonDataInfo.ContentItemCommonDataContentItemID), command.ContentItemId)
-            .WhereTrue(nameof(ContentItemCommonDataInfo.ContentItemCommonDataIsLatest))
-            .FirstOrDefault();
-
-        if (commonData is null)
+        var problem = versionReader.CheckReusable(command.ContentItemId, "update-web-page");
+        if (problem is not null)
         {
-            return RelayCommandResult.Fail($"Content item {command.ContentItemId} was not found.");
+            return RelayCommandResult.Fail(problem);
         }
 
-        var isPublished = commonData.IsPublished();
+        // The item's state in this language decides how to edit it and whether to publish the edit afterwards.
+        var subject = $"content item {command.ContentItemId} ({languageName})";
+        var state = versionReader.Read(command.ContentItemId, languageName);
+
+        if (state is null)
+        {
+            return DraftEditFlow.NotFound(subject);
+        }
+
+        problem = fieldChecker.CheckItem(
+            command.ContentItemId,
+            new ContentFields(command.Fields, command.LinkedItemFields, command.TagFields, command.Assets));
+
+        if (problem is not null)
+        {
+            return RelayCommandResult.Fail(problem);
+        }
 
         var fieldData = new Dictionary<string, object?>();
 
@@ -109,15 +120,18 @@ public class UpdateContentItemCommandHandler(
 
             var itemData = new ContentItemData(fieldData);
 
-            await contentItemManager.TryCreateDraft(command.ContentItemId, languageName, cancellationToken);
-            await contentItemManager.TryUpdateDraft(command.ContentItemId, languageName, itemData, cancellationToken);
-
-            if (isPublished)
-            {
-                await contentItemManager.TryPublish(command.ContentItemId, languageName, cancellationToken);
-            }
-
-            return RelayCommandResult.Ok($"Updated {fieldData.Count} field(s) on content item {command.ContentItemId}.");
+            return await DraftEditFlow.EditAsync(
+                subject,
+                state,
+                new DraftOperations(
+                    CreateDraft: () => contentItemManager.TryCreateDraft(command.ContentItemId, languageName, cancellationToken),
+                    SaveDraft: async () => DraftEditFlow.SavedOrError(
+                        await contentItemManager.TryUpdateDraft(command.ContentItemId, languageName, itemData, cancellationToken),
+                        subject),
+                    Publish: () => contentItemManager.TryPublish(command.ContentItemId, languageName, cancellationToken),
+                    DiscardDraft: () => contentItemManager.TryDiscardDraft(command.ContentItemId, languageName, cancellationToken),
+                    ForgetCachedCopies: () => cacheCleaner.Forget(command.ContentItemId, languageName)),
+                $"Updated {fieldData.Count} field(s) on content item {command.ContentItemId}.");
         }
         finally
         {

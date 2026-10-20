@@ -18,4 +18,10 @@ public abstract class QueryItemsCommandBase : IRelayCommand
 
     /// <summary>Optional column-equality filters. All conditions are ANDed together.</summary>
     public Dictionary<string, JsonElement>? WhereEquals { get; set; }
+
+    /// <summary>
+    /// When true, returns the published version of each item, and leaves out items that have none. Defaults to false,
+    /// which returns each item's latest version, drafts included.
+    /// </summary>
+    public bool PublishedOnly { get; set; }
 }

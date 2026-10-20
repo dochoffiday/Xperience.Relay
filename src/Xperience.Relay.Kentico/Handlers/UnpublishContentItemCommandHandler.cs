@@ -9,6 +9,7 @@ namespace Xperience.Relay.Kentico.Handlers;
 
 public class UnpublishContentItemCommandHandler(
     IContentItemManagerFactory contentItemManagerFactory,
+    ContentVersionReader versionReader,
     ServiceAccountResolver serviceAccountResolver,
     IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<UnpublishContentItemCommand>
 {
@@ -16,12 +17,19 @@ public class UnpublishContentItemCommandHandler(
 
     public async Task<RelayCommandResult> HandleAsync(UnpublishContentItemCommand command, CancellationToken cancellationToken = default)
     {
+        var problem = versionReader.CheckReusable(command.ContentItemId, "unpublish-web-page");
+        if (problem is not null)
+        {
+            return RelayCommandResult.Fail(problem);
+        }
+
         var languageName = command.LanguageName ?? _options.DefaultLanguageName;
         var userId = serviceAccountResolver.ResolveUserId();
         var contentItemManager = contentItemManagerFactory.Create(userId);
 
-        await contentItemManager.TryUnpublish(command.ContentItemId, languageName, cancellationToken);
-
-        return RelayCommandResult.Ok($"Unpublished content item {command.ContentItemId} ({languageName}).");
+        return await PublishingFlow.UnpublishAsync(
+            $"content item {command.ContentItemId} ({languageName})",
+            versionReader.Read(command.ContentItemId, languageName),
+            () => contentItemManager.TryUnpublish(command.ContentItemId, languageName, cancellationToken));
     }
 }

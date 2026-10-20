@@ -12,6 +12,7 @@ namespace Xperience.Relay.Kentico.Handlers;
 public class PublishWebPageCommandHandler(
     IWebPageManagerFactory webPageManagerFactory,
     IInfoProvider<WebPageItemInfo> webPageItemInfoProvider,
+    ContentVersionReader versionReader,
     ServiceAccountResolver serviceAccountResolver,
     IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<PublishWebPageCommand>
 {
@@ -32,8 +33,10 @@ public class PublishWebPageCommandHandler(
         var userId = serviceAccountResolver.ResolveUserId();
         var webPageManager = webPageManagerFactory.Create(webPageItem.WebPageItemWebsiteChannelID, userId);
 
-        await webPageManager.TryPublish(command.WebPageId, languageName, cancellationToken);
-
-        return RelayCommandResult.Ok($"Published web page {command.WebPageId} ({languageName}).");
+        return await PublishingFlow.PublishAsync(
+            $"web page {command.WebPageId} ({languageName})",
+            versionReader.Read(webPageItem.WebPageItemContentItemID, languageName),
+            () => webPageManager.TryCreateDraft(command.WebPageId, languageName, cancellationToken),
+            () => webPageManager.TryPublish(command.WebPageId, languageName, cancellationToken));
     }
 }

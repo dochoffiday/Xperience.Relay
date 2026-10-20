@@ -39,7 +39,7 @@ public class QueryReusableItemsCommandHandler(
             });
         }
 
-        var queryOptions = new ContentQueryExecutionOptions { ForPreview = true, IncludeSecuredItems = true };
+        var queryOptions = new ContentQueryExecutionOptions { ForPreview = !command.PublishedOnly, IncludeSecuredItems = true };
 
         var rows = await executor.GetResult(
             builder,

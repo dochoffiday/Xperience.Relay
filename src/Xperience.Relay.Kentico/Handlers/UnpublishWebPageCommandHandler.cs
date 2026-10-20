@@ -12,6 +12,7 @@ namespace Xperience.Relay.Kentico.Handlers;
 public class UnpublishWebPageCommandHandler(
     IWebPageManagerFactory webPageManagerFactory,
     IInfoProvider<WebPageItemInfo> webPageItemInfoProvider,
+    ContentVersionReader versionReader,
     ServiceAccountResolver serviceAccountResolver,
     IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<UnpublishWebPageCommand>
 {
@@ -32,8 +33,9 @@ public class UnpublishWebPageCommandHandler(
         var userId = serviceAccountResolver.ResolveUserId();
         var webPageManager = webPageManagerFactory.Create(webPageItem.WebPageItemWebsiteChannelID, userId);
 
-        await webPageManager.TryUnpublish(command.WebPageId, languageName, cancellationToken);
-
-        return RelayCommandResult.Ok($"Unpublished web page {command.WebPageId} ({languageName}).");
+        return await PublishingFlow.UnpublishAsync(
+            $"web page {command.WebPageId} ({languageName})",
+            versionReader.Read(webPageItem.WebPageItemContentItemID, languageName),
+            () => webPageManager.TryUnpublish(command.WebPageId, languageName, cancellationToken));
     }
 }

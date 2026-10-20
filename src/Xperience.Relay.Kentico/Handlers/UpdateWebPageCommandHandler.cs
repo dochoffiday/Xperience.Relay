@@ -1,5 +1,4 @@
 using CMS.ContentEngine;
-using CMS.ContentEngine.Internal;
 using CMS.DataEngine;
 using CMS.Websites;
 using CMS.Websites.Internal;
@@ -7,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
 using Xperience.Relay.Core;
-using Xperience.Relay.Kentico.Extensions;
 using Xperience.Relay.Kentico.Internal;
 
 namespace Xperience.Relay.Kentico.Handlers;
@@ -20,7 +18,9 @@ namespace Xperience.Relay.Kentico.Handlers;
 public class UpdateWebPageCommandHandler(
     IWebPageManagerFactory webPageManagerFactory,
     IInfoProvider<WebPageItemInfo> webPageItemInfoProvider,
-    IInfoProvider<ContentItemCommonDataInfo> contentItemCommonDataInfoProvider,
+    ContentVersionReader versionReader,
+    ContentFieldChecker fieldChecker,
+    FailedWriteCacheCleaner cacheCleaner,
     ServiceAccountResolver serviceAccountResolver,
     IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<UpdateWebPageCommand>
 {
@@ -47,13 +47,23 @@ public class UpdateWebPageCommandHandler(
             return RelayCommandResult.Fail($"Web page {command.WebPageId} was not found.");
         }
 
-        // Check whether the latest version is published so we can restore state after the update.
-        var commonData = contentItemCommonDataInfoProvider.Get()
-            .WhereEquals(nameof(ContentItemCommonDataInfo.ContentItemCommonDataContentItemID), webPageItem.WebPageItemContentItemID)
-            .WhereTrue(nameof(ContentItemCommonDataInfo.ContentItemCommonDataIsLatest))
-            .FirstOrDefault();
+        // The page's state in this language decides how to edit it and whether to publish the edit afterwards.
+        var subject = $"web page {command.WebPageId} ({languageName})";
+        var state = versionReader.Read(webPageItem.WebPageItemContentItemID, languageName);
 
-        var isPublished = commonData.IsPublished();
+        if (state is null)
+        {
+            return DraftEditFlow.NotFound(subject);
+        }
+
+        var problem = fieldChecker.CheckItem(
+            webPageItem.WebPageItemContentItemID,
+            new ContentFields(command.Fields, command.LinkedItemFields, command.TagFields, command.Assets));
+
+        if (problem is not null)
+        {
+            return RelayCommandResult.Fail(problem);
+        }
 
         var fieldData = new Dictionary<string, object?>();
 
@@ -117,15 +127,18 @@ public class UpdateWebPageCommandHandler(
 
             var itemData = new ContentItemData(fieldData);
 
-            await webPageManager.TryCreateDraft(command.WebPageId, languageName);
-            await webPageManager.TryUpdateDraft(command.WebPageId, languageName, new UpdateDraftData(itemData));
-
-            if (isPublished)
-            {
-                await webPageManager.TryPublish(command.WebPageId, languageName);
-            }
-
-            return RelayCommandResult.Ok($"Updated {fieldData.Count} field(s) on web page {command.WebPageId}.");
+            return await DraftEditFlow.EditAsync(
+                subject,
+                state,
+                new DraftOperations(
+                    CreateDraft: () => webPageManager.TryCreateDraft(command.WebPageId, languageName, cancellationToken),
+                    SaveDraft: async () => DraftEditFlow.SavedOrError(
+                        await webPageManager.TryUpdateDraft(command.WebPageId, languageName, new UpdateDraftData(itemData), cancellationToken),
+                        subject),
+                    Publish: () => webPageManager.TryPublish(command.WebPageId, languageName, cancellationToken),
+                    DiscardDraft: () => webPageManager.TryDiscardDraft(command.WebPageId, languageName, cancellationToken),
+                    ForgetCachedCopies: () => cacheCleaner.Forget(webPageItem.WebPageItemContentItemID, languageName)),
+                $"Updated {fieldData.Count} field(s) on web page {command.WebPageId}.");
         }
         finally
         {

@@ -7,7 +7,6 @@ using Microsoft.Extensions.Options;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
 using Xperience.Relay.Core;
-using Xperience.Relay.Kentico.Extensions;
 using Xperience.Relay.Kentico.Internal;
 
 namespace Xperience.Relay.Kentico.Handlers;
@@ -20,7 +19,8 @@ public class UpdateSlugCommandHandler(
     IWebPageUrlPathDataRetriever webPageUrlPathDataRetriever,
     IWebPageManagerFactory webPageManagerFactory,
     IInfoProvider<WebPageItemInfo> webPageItemInfoProvider,
-    IInfoProvider<ContentItemCommonDataInfo> contentItemCommonDataInfoProvider,
+    ContentVersionReader versionReader,
+    FailedWriteCacheCleaner cacheCleaner,
     ServiceAccountResolver serviceAccountResolver,
     IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<UpdateSlugCommand>
 {
@@ -39,37 +39,43 @@ public class UpdateSlugCommandHandler(
             return RelayCommandResult.Fail($"Web page {command.WebPageId} was not found.");
         }
 
-        var commonData = contentItemCommonDataInfoProvider.Get()
-            .WhereEquals(nameof(ContentItemCommonDataInfo.ContentItemCommonDataContentItemID), webPageItem.WebPageItemContentItemID)
-            .WhereTrue(nameof(ContentItemCommonDataInfo.ContentItemCommonDataIsLatest))
-            .FirstOrDefault();
+        var subject = $"web page {command.WebPageId} ({languageName})";
+        var state = versionReader.Read(webPageItem.WebPageItemContentItemID, languageName);
 
-        var isPublished = commonData.IsPublished();
+        if (state is null)
+        {
+            return DraftEditFlow.NotFound(subject);
+        }
+
         var userId = serviceAccountResolver.ResolveUserId();
         var webPageManager = webPageManagerFactory.Create(webPageItem.WebPageItemWebsiteChannelID, userId);
 
-        await webPageManager.TryCreateDraft(command.WebPageId, languageName);
+        return await DraftEditFlow.EditAsync(
+            subject,
+            state,
+            new DraftOperations(
+                CreateDraft: () => webPageManager.TryCreateDraft(command.WebPageId, languageName, cancellationToken),
+                SaveDraft: async () =>
+                {
+                    var urlPathData = await webPageUrlPathDataRetriever.GetDraftData(
+                        command.WebPageId,
+                        languageName,
+                        cancellationToken);
 
-        var urlPathData = await webPageUrlPathDataRetriever.GetDraftData(
-            command.WebPageId,
-            languageName,
-            cancellationToken
-        );
+                    if (urlPathData is null)
+                    {
+                        return $"Could not retrieve draft URL data for web page {command.WebPageId} in language '{languageName}'.";
+                    }
 
-        if (urlPathData is null)
-        {
-            return RelayCommandResult.Fail($"Could not retrieve draft URL data for web page {command.WebPageId} in language '{languageName}'.");
-        }
+                    urlPathData.EditSystemUrlSlug(command.Slug);
 
-        urlPathData.EditSystemUrlSlug(command.Slug);
-
-        await webPageManager.TryUpdateDraft(command.WebPageId, languageName, new UpdateDraftData(urlPathData));
-
-        if (isPublished)
-        {
-            await webPageManager.TryPublish(command.WebPageId, languageName);
-        }
-
-        return RelayCommandResult.Ok($"Updated slug on web page {command.WebPageId} to '{command.Slug}'.");
+                    return DraftEditFlow.SavedOrError(
+                        await webPageManager.TryUpdateDraft(command.WebPageId, languageName, new UpdateDraftData(urlPathData), cancellationToken),
+                        subject);
+                },
+                Publish: () => webPageManager.TryPublish(command.WebPageId, languageName, cancellationToken),
+                DiscardDraft: () => webPageManager.TryDiscardDraft(command.WebPageId, languageName, cancellationToken),
+                ForgetCachedCopies: () => cacheCleaner.Forget(webPageItem.WebPageItemContentItemID, languageName)),
+            $"Updated slug on web page {command.WebPageId} to '{command.Slug}'.");
     }
 }

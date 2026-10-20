@@ -17,4 +17,13 @@ public class QueryWebPageItemsCommand : QueryItemsCommandBase
     /// (empty strings for pages with no URL path). Defaults to false.
     /// </summary>
     public bool IncludeUrls { get; set; }
+
+    /// <summary>
+    /// When true, each item also gets <c>WebPageStatus</c> -- the status of its latest version: InitialDraft, Draft,
+    /// Published or Unpublished -- and <c>WebPageIsPublished</c>: whether a published version exists. That is true for
+    /// Published and for Draft, which is a change on top of a published version (a page that was never published is an
+    /// InitialDraft), so a live page with unpublished changes has status Draft and is still published. The query still
+    /// returns every page, drafts included. Defaults to false.
+    /// </summary>
+    public bool IncludeStatus { get; set; }
 }

@@ -17,6 +17,7 @@ namespace Xperience.Relay.Kentico.Handlers;
 public class CreateContentItemCommandHandler(
     IContentItemManagerFactory contentItemManagerFactory,
     IContentFolderManagerFactory contentFolderManagerFactory,
+    ContentFieldChecker fieldChecker,
     ServiceAccountResolver serviceAccountResolver,
     IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<CreateContentItemCommand>
 {
@@ -31,6 +32,15 @@ public class CreateContentItemCommandHandler(
         if (string.IsNullOrWhiteSpace(workspaceName))
         {
             return RelayCommandResult.Fail("WorkspaceName is required. Set it on the command or configure RelayKenticoOptions.DefaultWorkspaceName.");
+        }
+
+        var problem = fieldChecker.CheckType(
+            command.ContentTypeName,
+            new ContentFields(command.Fields, command.LinkedItemFields, command.TagFields, command.Assets));
+
+        if (problem is not null)
+        {
+            return RelayCommandResult.Fail(problem);
         }
 
         var contentItemManager = contentItemManagerFactory.Create(userId);

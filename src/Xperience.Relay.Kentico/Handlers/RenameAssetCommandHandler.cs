@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
 using Xperience.Relay.Core;
-using Xperience.Relay.Kentico.Extensions;
 using Xperience.Relay.Kentico.Internal;
 
 namespace Xperience.Relay.Kentico.Handlers;
@@ -20,10 +19,11 @@ namespace Xperience.Relay.Kentico.Handlers;
 public class RenameAssetCommandHandler(
     IContentItemManagerFactory contentItemManagerFactory,
     IInfoProvider<ContentItemInfo> contentItemInfoProvider,
-    IInfoProvider<ContentItemCommonDataInfo> contentItemCommonDataInfoProvider,
+    ContentVersionReader versionReader,
     IInfoProvider<ContentLanguageInfo> contentLanguageInfoProvider,
     IContentItemAssetMetadataItemProvider contentItemAssetMetadataItemProvider,
     IContentItemAssetPathProvider contentItemAssetPathProvider,
+    FailedWriteCacheCleaner cacheCleaner,
     ServiceAccountResolver serviceAccountResolver,
     IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<RenameAssetCommand>
 {
@@ -92,12 +92,20 @@ public class RenameAssetCommandHandler(
             contentItem.ContentItemGUID,
             field.Guid);
 
-        var commonData = contentItemCommonDataInfoProvider.Get()
-            .WhereEquals(nameof(ContentItemCommonDataInfo.ContentItemCommonDataContentItemID), command.ContentItemId)
-            .WhereTrue(nameof(ContentItemCommonDataInfo.ContentItemCommonDataIsLatest))
-            .FirstOrDefault();
+        var subject = $"content item {command.ContentItemId} ({languageName})";
+        var state = versionReader.Read(command.ContentItemId, languageName);
 
-        var isPublished = commonData.IsPublished();
+        if (state is null)
+        {
+            return DraftEditFlow.NotFound(subject);
+        }
+
+        using var copy = TemporaryAssetCopy.TryCreate(filePath);
+
+        if (copy is null)
+        {
+            return RelayCommandResult.Fail($"The file for asset '{command.FieldName}' on content item {command.ContentItemId} was not found on the server.");
+        }
 
         var extension = Path.GetExtension(command.AssetName) is { Length: > 0 } ext
             ? ext
@@ -115,21 +123,24 @@ public class RenameAssetCommandHandler(
         var fieldData = new Dictionary<string, object?>
         {
             [command.FieldName] = new ContentItemAssetMetadataWithSource(
-                new ContentItemAssetFileSource(filePath, false),
+                new ContentItemAssetFileSource(copy.FilePath, false),
                 renamedMetadata)
         };
 
         var userId = serviceAccountResolver.ResolveUserId();
         var contentItemManager = contentItemManagerFactory.Create(userId);
 
-        await contentItemManager.TryCreateDraft(command.ContentItemId, languageName, cancellationToken);
-        await contentItemManager.TryUpdateDraft(command.ContentItemId, languageName, new ContentItemData(fieldData), cancellationToken);
-
-        if (isPublished)
-        {
-            await contentItemManager.TryPublish(command.ContentItemId, languageName, cancellationToken);
-        }
-
-        return RelayCommandResult.Ok($"Renamed asset '{command.FieldName}' on content item {command.ContentItemId} to '{command.AssetName}'.");
+        return await DraftEditFlow.EditAsync(
+            subject,
+            state,
+            new DraftOperations(
+                CreateDraft: () => contentItemManager.TryCreateDraft(command.ContentItemId, languageName, cancellationToken),
+                SaveDraft: async () => DraftEditFlow.SavedOrError(
+                    await contentItemManager.TryUpdateDraft(command.ContentItemId, languageName, new ContentItemData(fieldData), cancellationToken),
+                    subject),
+                Publish: () => contentItemManager.TryPublish(command.ContentItemId, languageName, cancellationToken),
+                DiscardDraft: () => contentItemManager.TryDiscardDraft(command.ContentItemId, languageName, cancellationToken),
+                ForgetCachedCopies: () => cacheCleaner.Forget(command.ContentItemId, languageName)),
+            $"Renamed asset '{command.FieldName}' on content item {command.ContentItemId} to '{command.AssetName}'.");
     }
 }

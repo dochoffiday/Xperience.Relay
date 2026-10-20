@@ -20,6 +20,7 @@ public class CreateWebPageCommandHandler(
     IWebPageManagerFactory webPageManagerFactory,
     IInfoProvider<ChannelInfo> channelInfoProvider,
     IInfoProvider<WebsiteChannelInfo> websiteChannelInfoProvider,
+    ContentFieldChecker fieldChecker,
     ServiceAccountResolver serviceAccountResolver,
     IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<CreateWebPageCommand>
 {
@@ -63,6 +64,15 @@ public class CreateWebPageCommandHandler(
         }
 
         var languageName = command.LanguageName ?? _options.DefaultLanguageName;
+
+        var problem = fieldChecker.CheckType(
+            command.ContentTypeName,
+            new ContentFields(command.Fields, command.LinkedItemFields, command.TagFields, command.Assets));
+
+        if (problem is not null)
+        {
+            return RelayCommandResult.Fail(problem);
+        }
 
         var fieldData = new Dictionary<string, object?>();
 
@@ -137,9 +147,9 @@ public class CreateWebPageCommandHandler(
 
             var webPageItemId = await webPageManager.Create(createParams, cancellationToken);
 
-            if (command.PublishAfterCreate)
+            if (command.PublishAfterCreate && !await webPageManager.TryPublish(webPageItemId, languageName, cancellationToken))
             {
-                await webPageManager.TryPublish(webPageItemId, languageName, cancellationToken);
+                return RelayCommandResult.Fail($"Web page '{command.DisplayName}' was created (ID={webPageItemId}) but could not be published.");
             }
 
             var webPageMetadata = await webPageManager.GetWebPageMetadata(webPageItemId);

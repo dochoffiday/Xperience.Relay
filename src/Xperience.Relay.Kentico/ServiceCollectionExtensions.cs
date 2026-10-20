@@ -23,6 +23,9 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IRelayApiKeyValidator, KenticoRelayApiKeyValidator>();
         services.AddScoped<ServiceAccountResolver>();
+        services.AddScoped<ContentVersionReader>();
+        services.AddScoped<ContentFieldChecker>();
+        services.AddScoped<FailedWriteCacheCleaner>();
 
         services.AddScoped<IRelayCommandHandler<MoveWebPageCommand>, MoveWebPageCommandHandler>();
         services.AddScoped<IRelayCommandHandler<MoveContentItemCommand>, MoveContentItemCommandHandler>();

@@ -4,7 +4,7 @@ namespace Xperience.Relay.Contracts.Commands;
 /// Moves one or more reusable content items into a content hub folder. Use "get-content-hub-folder"
 /// first to resolve or create the target folder and obtain its ID.
 /// </summary>
-[RelayCommand("move-content-item")]
+[RelayCommand("move-content-item", Access = RelayAccess.Write)]
 public class MoveContentItemCommand : IRelayCommand
 {
     /// <summary>IDs of the content items to move.</summary>

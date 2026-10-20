@@ -6,7 +6,7 @@ namespace Xperience.Relay.Contracts.Commands;
 /// <see cref="TagId"/> or <see cref="TagName"/> returns the matching tag(s).
 /// Results are in <see cref="GetTagsResult"/>.
 /// </summary>
-[RelayCommand("get-tags")]
+[RelayCommand("get-tags", Access = RelayAccess.Read)]
 public class GetTagsCommand : IRelayCommand
 {
     public int? TaxonomyId { get; set; }

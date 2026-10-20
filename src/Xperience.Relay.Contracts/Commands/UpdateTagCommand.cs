@@ -1,6 +1,6 @@
 namespace Xperience.Relay.Contracts.Commands;
 
-[RelayCommand("update-tag")]
+[RelayCommand("update-tag", Access = RelayAccess.Write)]
 public class UpdateTagCommand : IRelayCommand
 {
     public int TagId { get; set; }

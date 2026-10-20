@@ -7,7 +7,7 @@ namespace Xperience.Relay.Contracts.Commands;
 /// be supplied. Returns a <see cref="GetContentHubFolderResult"/> in
 /// <see cref="RelayCommandResult.Data"/>.
 /// </summary>
-[RelayCommand("get-content-hub-folder")]
+[RelayCommand("get-content-hub-folder", Access = RelayAccess.Write)]
 public class GetContentHubFolderCommand : IRelayCommand
 {
     /// <summary>Look up by numeric ID. Mutually exclusive with <see cref="CodeName"/> and <see cref="FolderPath"/>.</summary>

@@ -2,7 +2,7 @@ using System.Text.Json;
 
 namespace Xperience.Relay.Contracts.Commands;
 
-[RelayCommand("update-custom-object")]
+[RelayCommand("update-custom-object", Access = RelayAccess.Admin)]
 public class UpdateCustomObjectCommand : IRelayCommand
 {
     public string ObjectTypeName { get; set; } = string.Empty;

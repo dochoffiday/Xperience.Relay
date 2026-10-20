@@ -1,6 +1,6 @@
 namespace Xperience.Relay.Contracts.Commands;
 
-[RelayCommand("get-content-item-usage")]
+[RelayCommand("get-content-item-usage", Access = RelayAccess.Read)]
 public class GetContentItemUsageCommand : IRelayCommand
 {
     public int ContentItemId { get; set; }

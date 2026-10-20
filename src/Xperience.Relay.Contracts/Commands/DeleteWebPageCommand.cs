@@ -5,7 +5,7 @@ namespace Xperience.Relay.Contracts.Commands;
 /// not the last language variant the page is moved to the recycle bin; set it to true to bypass
 /// the recycle bin entirely. Optionally creates a redirect to another page after deletion.
 /// </summary>
-[RelayCommand("delete-web-page")]
+[RelayCommand("delete-web-page", Access = RelayAccess.Write)]
 public class DeleteWebPageCommand : IRelayCommand
 {
     public int WebPageId { get; set; }

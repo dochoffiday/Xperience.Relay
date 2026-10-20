@@ -37,9 +37,20 @@ internal static class SqlStatementAnalyzer
         // (e.g. EXEC xp_cmdshell '...', OPENDATASOURCE workaround for parser gap).
         foreach (var token in fragment!.ScriptTokenStream)
         {
-            if (!string.IsNullOrEmpty(token.Text) && DangerousTokens.Contains(token.Text))
+            if (string.IsNullOrEmpty(token.Text))
+            {
+                continue;
+            }
+
+            if (DangerousTokens.Contains(token.Text))
             {
                 return Fail($"'{token.Text.ToUpperInvariant()}' is not allowed.");
+            }
+
+            // Token text includes string literals, so this also catches the name inside dynamic SQL.
+            if (ProtectedObjects.MentionsProtectedTable(token.Text))
+            {
+                return Fail("The relay API key table is protected and can't be queried or changed through relay.");
             }
         }
 

@@ -1,6 +1,6 @@
 namespace Xperience.Relay.Contracts.Commands;
 
-[RelayCommand("create-tag")]
+[RelayCommand("create-tag", Access = RelayAccess.Write)]
 public class CreateTagCommand : IRelayCommand
 {
     /// <summary>Identify the taxonomy by ID or code name — one is required.</summary>

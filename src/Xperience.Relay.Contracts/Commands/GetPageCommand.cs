@@ -4,7 +4,7 @@ namespace Xperience.Relay.Contracts.Commands;
 /// Fetches a web page's system fields plus its content-type-specific field data.
 /// Result payload is a <see cref="WebPageData"/>.
 /// </summary>
-[RelayCommand("get-page")]
+[RelayCommand("get-page", Access = RelayAccess.Read)]
 public class GetPageCommand : IRelayCommand
 {
     public int WebPageId { get; set; }

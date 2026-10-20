@@ -3,7 +3,7 @@ namespace Xperience.Relay.Contracts.Commands;
 /// <summary>
 /// Publishes a web page language variant. No-ops if the page is already published.
 /// </summary>
-[RelayCommand("publish-web-page")]
+[RelayCommand("publish-web-page", Access = RelayAccess.Write)]
 public class PublishWebPageCommand : IRelayCommand
 {
     public int WebPageId { get; set; }

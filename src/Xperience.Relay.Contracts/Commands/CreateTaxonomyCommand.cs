@@ -1,6 +1,6 @@
 namespace Xperience.Relay.Contracts.Commands;
 
-[RelayCommand("create-taxonomy")]
+[RelayCommand("create-taxonomy", Access = RelayAccess.Write)]
 public class CreateTaxonomyCommand : IRelayCommand
 {
     public string Title { get; set; } = string.Empty;

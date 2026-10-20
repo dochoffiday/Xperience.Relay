@@ -4,7 +4,7 @@ namespace Xperience.Relay.Contracts.Commands;
 /// Fetches a reusable content item's system fields plus its content-type-specific field data.
 /// Result payload is a <see cref="ContentData"/>.
 /// </summary>
-[RelayCommand("get-content")]
+[RelayCommand("get-content", Access = RelayAccess.Read)]
 public class GetContentCommand : IRelayCommand
 {
     public int ContentItemId { get; set; }

@@ -8,7 +8,7 @@ namespace Xperience.Relay.Contracts.Commands;
 /// true to immediately publish after creation. Returns a <see cref="CreateWebPageResult"/> in
 /// <see cref="RelayCommandResult.Data"/>.
 /// </summary>
-[RelayCommand("create-web-page")]
+[RelayCommand("create-web-page", Access = RelayAccess.Write)]
 public class CreateWebPageCommand : IRelayCommand
 {
     /// <summary>Website channel that owns the page. Defaults to <c>RelayKenticoOptions.DefaultWebsiteChannelName</c> when null.</summary>

@@ -3,6 +3,7 @@ using Xperience.Relay.Contracts.Commands;
 using Xperience.Relay.Core;
 using Xperience.Relay.Kentico.Handlers;
 using Xperience.Relay.Kentico.Internal;
+using Xperience.Relay.Kentico.Security;
 
 namespace Xperience.Relay.Kentico;
 
@@ -13,12 +14,14 @@ public static class ServiceCollectionExtensions
     /// get-page-info, get-page, get-content-info, get-content, create-content-item, update-web-page,
     /// update-content-item, update-slug, get-content-hub-folder, query-web-page-items, query-reusable-items, query-sql,
     /// delete-content-item, delete-web-page, create-web-page, publish-web-page,
-    /// unpublish-web-page, publish-content-item, unpublish-content-item). Call
+    /// unpublish-web-page, publish-content-item, unpublish-content-item) and the validator that checks relay
+    /// API keys against the keys managed in the Xperience admin. Call
     /// <c>services.Configure&lt;RelayKenticoOptions&gt;(...)</c> separately to set
     /// <see cref="RelayKenticoOptions.ServiceAccountUserName"/> and related options.
     /// </summary>
     public static IServiceCollection AddRelayKentico(this IServiceCollection services)
     {
+        services.AddSingleton<IRelayApiKeyValidator, KenticoRelayApiKeyValidator>();
         services.AddScoped<ServiceAccountResolver>();
 
         services.AddScoped<IRelayCommandHandler<MoveWebPageCommand>, MoveWebPageCommandHandler>();

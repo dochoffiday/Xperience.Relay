@@ -1,6 +1,6 @@
 namespace Xperience.Relay.Contracts.Commands;
 
-[RelayCommand("search-content")]
+[RelayCommand("search-content", Access = RelayAccess.Read)]
 public class SearchContentCommand : IRelayCommand
 {
     public string ContentTypeName { get; set; } = string.Empty;

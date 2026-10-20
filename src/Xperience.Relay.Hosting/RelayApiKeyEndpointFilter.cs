@@ -1,49 +1,74 @@
-using System.Security.Cryptography;
-using System.Text;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Xperience.Relay.Contracts;
+using Xperience.Relay.Core;
 
 namespace Xperience.Relay.Hosting;
 
 /// <summary>
-/// Rejects requests that don't present the configured API key in <see cref="RelayHostingOptions.ApiKeyHeaderName"/>.
-/// Compares using a fixed-time check so response timing can't be used to brute-force the key.
+/// Authenticates every relay request by validating the key in <see cref="RelayHostingOptions.ApiKeyHeaderName"/>
+/// through <see cref="IRelayApiKeyValidator"/>, then checks that the key's access tier covers every verb in the
+/// request. A batch is authorized as a whole before any command in it runs.
 /// </summary>
-public class RelayApiKeyEndpointFilter : IEndpointFilter
+public class RelayApiKeyEndpointFilter(
+    IOptions<RelayHostingOptions> options,
+    IRelayApiKeyValidator validator,
+    RelayVerbRegistry registry,
+    ILogger<RelayApiKeyEndpointFilter> logger) : IEndpointFilter
 {
-    private readonly RelayHostingOptions _options;
-
-    public RelayApiKeyEndpointFilter(IOptions<RelayHostingOptions> options)
-    {
-        _options = options.Value;
-    }
-
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
-        if (string.IsNullOrEmpty(_options.ApiKey))
-        {
-            throw new InvalidOperationException("RelayHostingOptions.ApiKey must be configured before relay endpoints can be mapped.");
-        }
+        var httpContext = context.HttpContext;
+        var providedKey = httpContext.Request.Headers[options.Value.ApiKeyHeaderName].ToString();
 
-        var providedKey = context.HttpContext.Request.Headers[_options.ApiKeyHeaderName].ToString();
-        if (!IsMatch(providedKey, _options.ApiKey))
+        var identity = providedKey.Length == 0
+            ? null
+            : await validator.ValidateAsync(providedKey, httpContext.RequestAborted);
+
+        if (identity is null)
         {
+            logger.LogWarning("Relay request rejected: missing or invalid API key.");
             return Results.Unauthorized();
         }
 
-        return await next(context);
+        foreach (var verb in GetRequestedVerbs(context))
+        {
+            if (registry.TryGetRequiredAccess(verb, out var required) && identity.Access < required)
+            {
+                logger.LogWarning(
+                    "Relay API key '{KeyName}' ({Access}) was denied verb '{Verb}', which requires {Required}.",
+                    identity.Name, identity.Access, verb, required);
+
+                return Results.Json(
+                    RelayCommandResult.Fail($"This API key has {identity.Access} access, but '{verb}' requires {required}."),
+                    statusCode: StatusCodes.Status403Forbidden);
+            }
+        }
+
+        using (logger.BeginScope(new Dictionary<string, object> { ["RelayApiKey"] = identity.Name }))
+        {
+            return await next(context);
+        }
     }
 
-    private static bool IsMatch(string provided, string expected)
+    private static IEnumerable<string> GetRequestedVerbs(EndpointFilterInvocationContext context)
     {
-        var providedBytes = Encoding.UTF8.GetBytes(provided);
-        var expectedBytes = Encoding.UTF8.GetBytes(expected);
+        foreach (var argument in context.Arguments)
+        {
+            switch (argument)
+            {
+                case RelayCommandEnvelope envelope:
+                    yield return envelope.Verb;
+                    break;
+                case RelayBatchRequest batch:
+                    foreach (var item in batch.Commands)
+                    {
+                        yield return item.Verb;
+                    }
 
-        // Hash both sides first so the comparison is fixed-length regardless of the provided key's
-        // length -- FixedTimeEquals alone still leaks length via early-exit-free but differently
-        // sized inputs in some implementations, so equalizing length removes that signal too.
-        var providedHash = SHA256.HashData(providedBytes);
-        var expectedHash = SHA256.HashData(expectedBytes);
-        return CryptographicOperations.FixedTimeEquals(providedHash, expectedHash);
+                    break;
+            }
+        }
     }
 }

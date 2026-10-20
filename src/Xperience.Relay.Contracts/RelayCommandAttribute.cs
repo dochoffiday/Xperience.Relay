@@ -10,6 +10,12 @@ public sealed class RelayCommandAttribute : Attribute
 {
     public string Verb { get; }
 
+    /// <summary>
+    /// The minimum API key access needed to run this command. Defaults to <see cref="RelayAccess.Admin"/>
+    /// so a command nobody classified is never reachable by a lower-tier key.
+    /// </summary>
+    public RelayAccess Access { get; set; } = RelayAccess.Admin;
+
     public RelayCommandAttribute(string verb)
     {
         Verb = verb;

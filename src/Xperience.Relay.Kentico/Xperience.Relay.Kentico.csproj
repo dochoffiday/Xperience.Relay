@@ -1,13 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!-- Kentico.Xperience.Admin pulls in HotChocolate, which otherwise adds global usings that make Path ambiguous. -->
+    <HotChocolateImplicitUsings>disable</HotChocolateImplicitUsings>
     <PackageId>Xperience.Relay.Kentico</PackageId>
     <Description>Kentico Xperience handlers for Xperience.Relay commands (move, get-page, get-content, ...). Depends on the Kentico Xperience SDK -- deploy this package as part of the live Xperience web app.</Description>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Kentico.Xperience.Admin" Version="31.7.2" />
     <PackageReference Include="Kentico.Xperience.Core" Version="31.7.2" />
     <PackageReference Include="Microsoft.SqlServer.TransactSql.ScriptDom" Version="170.53.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Xperience.Relay.Kentico.Tests" />
   </ItemGroup>
 
   <ItemGroup>

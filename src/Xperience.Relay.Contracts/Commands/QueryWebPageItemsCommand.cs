@@ -4,7 +4,7 @@ namespace Xperience.Relay.Contracts.Commands;
 /// Queries web pages of one or more content types, returning only the requested columns.
 /// Results land in <see cref="QueryItemsResult"/> in <see cref="RelayCommandResult.Data"/>.
 /// </summary>
-[RelayCommand("query-web-page-items")]
+[RelayCommand("query-web-page-items", Access = RelayAccess.Read)]
 public class QueryWebPageItemsCommand : QueryItemsCommandBase
 {
     /// <summary>

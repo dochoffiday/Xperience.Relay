@@ -1,6 +1,6 @@
 namespace Xperience.Relay.Contracts.Commands;
 
-[RelayCommand("move-tag")]
+[RelayCommand("move-tag", Access = RelayAccess.Write)]
 public class MoveTagCommand : IRelayCommand
 {
     public int TagId { get; set; }

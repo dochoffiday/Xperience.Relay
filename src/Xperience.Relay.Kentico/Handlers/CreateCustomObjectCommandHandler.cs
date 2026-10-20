@@ -2,6 +2,7 @@ using CMS.DataEngine;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
 using Xperience.Relay.Core;
+using Xperience.Relay.Kentico.Internal;
 
 namespace Xperience.Relay.Kentico.Handlers;
 
@@ -12,6 +13,11 @@ public class CreateCustomObjectCommandHandler : IRelayCommandHandler<CreateCusto
         if (string.IsNullOrWhiteSpace(command.ObjectTypeName))
         {
             return Task.FromResult(RelayCommandResult.Fail("ObjectTypeName is required."));
+        }
+
+        if (ProtectedObjects.IsProtectedObjectType(command.ObjectTypeName))
+        {
+            return Task.FromResult(RelayCommandResult.Fail($"Object type '{command.ObjectTypeName}' is protected."));
         }
 
         var typeInfo = ObjectTypeManager.GetTypeInfo(command.ObjectTypeName, false);

@@ -9,7 +9,7 @@ namespace Xperience.Relay.Contracts.Commands;
 /// cleaned up in a finally block regardless of outcome. Returns a <see cref="CreateContentItemResult"/> in
 /// <see cref="RelayCommandResult.Data"/>.
 /// </summary>
-[RelayCommand("create-content-item")]
+[RelayCommand("create-content-item", Access = RelayAccess.Write)]
 public class CreateContentItemCommand : IRelayCommand
 {
     public string ContentTypeName { get; set; } = string.Empty;

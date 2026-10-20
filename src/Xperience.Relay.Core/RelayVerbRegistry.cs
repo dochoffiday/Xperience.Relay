@@ -11,19 +11,27 @@ namespace Xperience.Relay.Core;
 public class RelayVerbRegistry
 {
     private readonly Dictionary<string, Type> _commandTypesByVerb;
+    private readonly Dictionary<string, RelayAccess> _accessByVerb;
 
     public RelayVerbRegistry(IEnumerable<Assembly> assembliesToScan)
     {
-        _commandTypesByVerb = assembliesToScan
+        var commands = assembliesToScan
             .SelectMany(a => a.GetTypes())
             .Where(t => typeof(IRelayCommand).IsAssignableFrom(t) && !t.IsAbstract)
             .Select(t => new { Type = t, Attribute = t.GetCustomAttribute<RelayCommandAttribute>() })
             .Where(x => x.Attribute is not null)
-            .ToDictionary(x => x.Attribute!.Verb, x => x.Type, StringComparer.OrdinalIgnoreCase);
+            .ToList();
+
+        _commandTypesByVerb = commands.ToDictionary(x => x.Attribute!.Verb, x => x.Type, StringComparer.OrdinalIgnoreCase);
+        _accessByVerb = commands.ToDictionary(x => x.Attribute!.Verb, x => x.Attribute!.Access, StringComparer.OrdinalIgnoreCase);
     }
 
     public IReadOnlyCollection<string> Verbs => _commandTypesByVerb.Keys;
 
     public bool TryGetCommandType(string verb, out Type commandType) =>
         _commandTypesByVerb.TryGetValue(verb, out commandType!);
+
+    /// <summary>The minimum API key access tier needed to run <paramref name="verb"/>.</summary>
+    public bool TryGetRequiredAccess(string verb, out RelayAccess access) =>
+        _accessByVerb.TryGetValue(verb, out access);
 }

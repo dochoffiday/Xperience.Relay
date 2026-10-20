@@ -3,7 +3,7 @@ namespace Xperience.Relay.Contracts.Commands;
 /// <summary>
 /// Unpublishes a web page language variant. No-ops if the page is already unpublished.
 /// </summary>
-[RelayCommand("unpublish-web-page")]
+[RelayCommand("unpublish-web-page", Access = RelayAccess.Write)]
 public class UnpublishWebPageCommand : IRelayCommand
 {
     public int WebPageId { get; set; }

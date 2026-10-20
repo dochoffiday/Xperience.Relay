@@ -3,7 +3,7 @@ namespace Xperience.Relay.Contracts.Commands;
 /// <summary>
 /// Unpublishes a reusable content item language variant. No-ops if the item is already unpublished.
 /// </summary>
-[RelayCommand("unpublish-content-item")]
+[RelayCommand("unpublish-content-item", Access = RelayAccess.Write)]
 public class UnpublishContentItemCommand : IRelayCommand
 {
     public int ContentItemId { get; set; }

@@ -8,7 +8,7 @@ namespace Xperience.Relay.Contracts.Commands;
 /// the value is a list of ContentItemGUIDs) go in <see cref="LinkedItemFields"/> — pass an
 /// empty list to clear a field.
 /// </summary>
-[RelayCommand("update-content-item")]
+[RelayCommand("update-content-item", Access = RelayAccess.Write)]
 public class UpdateContentItemCommand : IRelayCommand
 {
     public int ContentItemId { get; set; }

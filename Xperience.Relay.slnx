@@ -9,5 +9,7 @@
   <Folder Name="/tests/">
     <Project Path="tests/Xperience.Relay.Client.Tests/Xperience.Relay.Client.Tests.csproj" />
     <Project Path="tests/Xperience.Relay.Core.Tests/Xperience.Relay.Core.Tests.csproj" />
+    <Project Path="tests/Xperience.Relay.Hosting.Tests/Xperience.Relay.Hosting.Tests.csproj" />
+    <Project Path="tests/Xperience.Relay.Kentico.Tests/Xperience.Relay.Kentico.Tests.csproj" />
   </Folder>
 </Solution>

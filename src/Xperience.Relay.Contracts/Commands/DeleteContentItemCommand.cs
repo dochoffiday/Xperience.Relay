@@ -5,7 +5,7 @@ namespace Xperience.Relay.Contracts.Commands;
 /// the parent content item is also removed. Returns <see cref="RelayCommandResult.Success"/> on
 /// success.
 /// </summary>
-[RelayCommand("delete-content-item")]
+[RelayCommand("delete-content-item", Access = RelayAccess.Write)]
 public class DeleteContentItemCommand : IRelayCommand
 {
     public int ContentItemId { get; set; }

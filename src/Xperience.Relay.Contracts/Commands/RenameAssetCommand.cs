@@ -1,6 +1,6 @@
 namespace Xperience.Relay.Contracts.Commands;
 
-[RelayCommand("rename-asset")]
+[RelayCommand("rename-asset", Access = RelayAccess.Write)]
 public class RenameAssetCommand : IRelayCommand
 {
     public int ContentItemId { get; set; }

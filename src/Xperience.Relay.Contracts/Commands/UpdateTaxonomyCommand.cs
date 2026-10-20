@@ -1,6 +1,6 @@
 namespace Xperience.Relay.Contracts.Commands;
 
-[RelayCommand("update-taxonomy")]
+[RelayCommand("update-taxonomy", Access = RelayAccess.Write)]
 public class UpdateTaxonomyCommand : IRelayCommand
 {
     public int TaxonomyId { get; set; }

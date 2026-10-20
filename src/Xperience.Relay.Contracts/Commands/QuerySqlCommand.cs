@@ -6,7 +6,7 @@ namespace Xperience.Relay.Contracts.Commands;
 /// is rejected before execution. Results land in <see cref="QuerySqlResult"/> in
 /// <see cref="RelayCommandResult.Data"/>.
 /// </summary>
-[RelayCommand("query-sql")]
+[RelayCommand("query-sql", Access = RelayAccess.Admin)]
 public class QuerySqlCommand : IRelayCommand
 {
     /// <summary>The SQL query to execute. Must be a SELECT or WITH...SELECT statement.</summary>

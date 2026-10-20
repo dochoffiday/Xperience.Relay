@@ -23,7 +23,7 @@ it, so a remote caller's client library never needs it.
 |---|---|---|
 | `Xperience.Relay.Contracts` | No | Command/result/envelope types shared by every other package. |
 | `Xperience.Relay.Core` | No | Command dispatch (`IRelayDispatcher`), pipeline behaviors, verb registry. Self-rolled, no MediatR dependency. |
-| `Xperience.Relay.Kentico` | Yes (`Kentico.Xperience.Core` >= 31.6.3) | Handlers that actually call Kentico APIs (`IWebPageManager`, `IContentItemManager`, ...). Deployed as part of the live Xperience app. |
+| `Xperience.Relay.Kentico` | Yes (`Kentico.Xperience.Core` and `Kentico.Xperience.Admin` >= 31.7.2) | Handlers that actually call Kentico APIs (`IWebPageManager`, `IContentItemManager`, ...), plus the API key store and its admin application. Deployed as part of the live Xperience app. |
 | `Xperience.Relay.Hosting` | No | ASP.NET Core endpoints (`/commands`, `/batch`, `/verbs`) exposing the dispatcher over HTTP, with API-key auth. |
 | `Xperience.Relay.Client` | No | Lightweight remote caller (`RelayClient`) -- no Kentico SDK dependency, just HTTP + the `Contracts` types. Resolves each command's verb from its `[RelayCommand]` attribute and posts to `/commands`/`/batch`, or reads `/verbs`. |
 
@@ -147,17 +147,47 @@ builder.Services.Configure<RelayKenticoOptions>(options =>
     options.DefaultWebsiteChannelName   = "MyChannel";      // required for query-web-page-items
 });
 
+// Optional -- both shown with their defaults. API keys aren't configured here; see below.
 builder.Services.Configure<RelayHostingOptions>(options =>
 {
-    options.ApiKey = "your-secret-key";   // must be set -- no default
-    // options.ApiKeyHeaderName = "X-Relay-Api-Key";  // default
-    // options.BasePath         = "/api/relay";        // default
+    // options.ApiKeyHeaderName = "X-Relay-Api-Key";
+    // options.BasePath         = "/api/relay";
 });
 
 // ---
 
 app.MapRelayEndpoints();   // exposes /api/relay/commands, /api/relay/batch, /api/relay/verbs
 ```
+
+### API keys and access tiers
+
+API keys are managed in the Xperience admin, in the **Relay API keys** application (Configuration
+category) -- there's nothing to put in `appsettings.json`. The package creates its `Relay_ApiKey`
+table on startup, so there's no setup beyond installing it. Until you create a key, every request is
+rejected with `401`.
+
+Create a key, give it a name and a tier, and **copy it when it's shown**: only a hash is stored, so it
+can't be shown again (if it's lost, delete it and create a new one). Deleting a key revokes it on the
+very next request. The listing shows each key's name, the start of the key (to tell keys apart), its
+tier, when it was created, and when it was last used (updated at most every five minutes). Who can
+manage keys is controlled by the application's View / Create / Delete permissions.
+
+Each key has one tier, and each tier includes the ones below it. A request is rejected with `403` if
+the key's tier is lower than the verb needs, and a `/batch` is checked as a whole before any command
+in it runs.
+
+| Tier | Verbs |
+|---|---|
+| **Read** | `get-page-info`, `get-page`, `get-content-info`, `get-content`, `query-web-page-items`, `query-reusable-items`, `search-content`, `get-taxonomies`, `get-tags`, `get-content-item-usage`, `get-form-submissions` |
+| **Write** | everything in Read, plus `move-web-page`, `move-content-item`, `get-content-hub-folder`, `create-content-item`, `create-web-page`, `update-web-page`, `update-content-item`, `update-slug`, `publish-web-page`, `unpublish-web-page`, `publish-content-item`, `unpublish-content-item`, `delete-web-page`, `delete-content-item`, `reoptimize-asset`, `rename-asset`, `create-taxonomy`, `update-taxonomy`, `delete-taxonomy`, `create-tag`, `update-tag`, `move-tag`, `delete-tag` |
+| **Admin** | everything in Write, plus `query-sql`, `execute-sql`, `query-custom-objects`, `create-custom-object`, `update-custom-object`, `delete-custom-object`, `delete-contacts` |
+
+A command's tier is set on its `[RelayCommand("verb", Access = RelayAccess.X)]` attribute. A command
+with no `Access` defaults to Admin, so a new command is never open to lower tiers by accident.
+
+The key table and its `relay.apikey` object type can't be reached through `query-sql`, `execute-sql`, or
+the custom-object commands. That's a guardrail, not a security boundary: Admin keys are fully trusted,
+and an Admin key can do anything the database login can.
 
 ### Client (remote caller)
 
@@ -273,11 +303,16 @@ in `Kentico.Xperience.Core` 31.6.3 (confirmed by reflecting over every type cont
 the compiled assemblies -- none exist in the public API at this SDK version). If a later SDK version
 adds one, `GetContentInfoCommandHandler.FetchContentInfoAsync` is the place to use it.
 
-**Why the API key check in `RelayApiKeyEndpointFilter` hashes both sides before comparing.**
-`CryptographicOperations.FixedTimeEquals` is constant-time only when both inputs are the same
-length; comparing raw UTF-8 bytes of a wrong-length guess could still leak length via early
-allocation/comparison differences. Hashing both sides first (SHA-256) normalizes the length before
-the fixed-time comparison.
+**Why API keys are stored as a plain, unsalted SHA-256 hash.** Keys are 256 bits of randomness, so
+there is nothing to brute-force and no reason for a salt or a slow password hash. A request hashes the
+presented key and looks it up in an in-memory copy of the key table, which Kentico's cache invalidation
+refreshes when a key is added or deleted -- so revocation is immediate and requests never hit the
+database. "Last used" is written straight to the table (throttled to once per five minutes per key)
+instead of through the info object, because updating the object would invalidate that cache on every
+request.
+
+**Why `get-content-hub-folder` is a Write verb.** In `FolderPath` mode it creates any missing
+folders, so it can't be treated as a read.
 
 **Why `RelayCommandResult.Data` isn't generic.** Considered threading a `TResult` generic parameter
 through `IRelayCommandHandler<TCommand, TResult>` and `RelayDispatcher`, but since results always

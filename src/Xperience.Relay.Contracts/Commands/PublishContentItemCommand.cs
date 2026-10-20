@@ -3,7 +3,7 @@ namespace Xperience.Relay.Contracts.Commands;
 /// <summary>
 /// Publishes a reusable content item language variant. No-ops if the item is already published.
 /// </summary>
-[RelayCommand("publish-content-item")]
+[RelayCommand("publish-content-item", Access = RelayAccess.Write)]
 public class PublishContentItemCommand : IRelayCommand
 {
     public int ContentItemId { get; set; }

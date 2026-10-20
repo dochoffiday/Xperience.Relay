@@ -1,6 +1,6 @@
 namespace Xperience.Relay.Contracts.Commands;
 
-[RelayCommand("get-form-submissions")]
+[RelayCommand("get-form-submissions", Access = RelayAccess.Read)]
 public class GetFormSubmissionsCommand : IRelayCommand
 {
     public string FormClassName { get; set; } = string.Empty;

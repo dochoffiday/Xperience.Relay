@@ -1,6 +1,6 @@
 namespace Xperience.Relay.Contracts.Commands;
 
-[RelayCommand("update-slug")]
+[RelayCommand("update-slug", Access = RelayAccess.Write)]
 public class UpdateSlugCommand : IRelayCommand
 {
     public int WebPageId { get; set; }

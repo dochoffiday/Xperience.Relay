@@ -2,7 +2,7 @@ using System.Text.Json;
 
 namespace Xperience.Relay.Contracts.Commands;
 
-[RelayCommand("create-custom-object")]
+[RelayCommand("create-custom-object", Access = RelayAccess.Admin)]
 public class CreateCustomObjectCommand : IRelayCommand
 {
     public string ObjectTypeName { get; set; } = string.Empty;

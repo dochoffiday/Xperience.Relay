@@ -22,9 +22,9 @@ The envelope also has an `as` property. It is reserved: Relay accepts it and doe
 
 - **Names are camelCase** on the wire (`webPageId`), and they are matched without regard to case, so `WebPageId` works too.
 - **Unknown names are ignored.** A parameter that doesn't exist is dropped without an error, so check your spelling: a misspelled name leaves the real parameter at its default.
-- **A missing `parameters` is the same as `{}`**, which suits commands that take nothing, such as [`get-taxonomies`](../commands/taxonomies/get-taxonomies.md). A `parameters` of `null` is a failure.
+- **A missing `parameters` is the same as `{}`**, which suits commands that take nothing, such as [`get-taxonomies`](../commands/taxonomies/index.md#get-taxonomies). A `parameters` of `null` is a failure.
 - **A value of the wrong type fails the command** and the message names the property: `The JSON value could not be converted to System.Int32. Path: $.webPageId`.
-- **Optional parameters** can be left out. Where a parameter has a default (`languageName`, for one), the command's page says so; see also [Defaults and languages](defaults-and-languages.md).
+- **Optional parameters** can be left out. Where a parameter has a default (`languageName`, for one), the command's section says so; see also [Defaults and languages](defaults-and-languages.md).
 
 ## The result
 
@@ -42,7 +42,7 @@ The envelope also has an `as` property. It is reserved: Relay accepts it and doe
 | `success` | `true` when the command was carried out. |
 | `message` | A sentence about what was done, for commands that report one. |
 | `error` | Why the command couldn't be carried out. Only set when `success` is `false`. |
-| `data` | The command's payload, for commands that return one. Each command page says which type it is. |
+| `data` | The command's payload, for commands that return one. Each command's section says which type it is. |
 
 The types are listed on the [Types](../reference/types.md) page. In C#, `result.GetData<T>()` reads `data` as the type you expect.
 
@@ -62,7 +62,7 @@ So check `success` on every `200`: a failed command is not an HTTP error. [Error
 
 ## Reading `data`
 
-`data` holds a different type for each command, which is why the result isn't generic: since it all travels as JSON, a type parameter would add nothing. The type is part of the command's page, and in C# the command's class tells you which type to ask `GetData<T>()` for.
+`data` holds a different type for each command, which is why the result isn't generic: since it all travels as JSON, a type parameter would add nothing. The type is part of the command's section, and in C# the command's class tells you which type to ask `GetData<T>()` for.
 
 Two things are worth knowing about values inside `data`:
 

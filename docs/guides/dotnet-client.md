@@ -59,7 +59,7 @@ public class PageService(RelayClient relay)
 
 The client reads each command's verb from its `[RelayCommand]` attribute, so you never type verbs.
 
-`GetData<T>()` reads `result.Data` as the type the command returns. Each command's page names the type, and the [Types](../reference/types.md) page lists them.
+`GetData<T>()` reads `result.Data` as the type the command returns. Each command's section names the type, and the [Types](../reference/types.md) page lists them.
 
 ### Field values
 

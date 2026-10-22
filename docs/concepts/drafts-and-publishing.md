@@ -13,7 +13,7 @@ A language variant of a page or item has a **latest version**, and that version 
 | `Published` | Live. |
 | `Unpublished` | Was published, now offline. The content is kept. |
 
-A published page can have a newer draft at the same time: the latest version is the `Draft`, and a published version still exists. That is why [`includeStatus`](../commands/web-pages/query-web-page-items.md) reports two things: the status of the latest version, and whether anything is published at all.
+A published page can have a newer draft at the same time: the latest version is the `Draft`, and a published version still exists. That is why [`includeStatus`](../commands/web-pages/index.md#query-web-page-items) reports two things: the status of the latest version, and whether anything is published at all.
 
 ## What Kentico allows
 

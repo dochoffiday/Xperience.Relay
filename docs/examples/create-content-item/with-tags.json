@@ -1,6 +1,6 @@
 {
   "title": "Create an item with a tag field",
-  "note": "`CafePromotion` is a tag field, so it takes tag GUIDs (see [`get-tags`](../taxonomies/get-tags.md)).",
+  "note": "`CafePromotion` is a tag field, so it takes tag GUIDs (see [`get-tags`](../taxonomies/index.md#get-tags)).",
   "order": 1008,
   "status": 200,
   "request": {

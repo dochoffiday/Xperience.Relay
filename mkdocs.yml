@@ -4,11 +4,14 @@ site_url: https://dochoffiday.github.io/Xperience.Relay/
 repo_url: https://github.com/dochoffiday/Xperience.Relay
 repo_name: dochoffiday/Xperience.Relay
 edit_uri: edit/master/docs/
-copyright: Xperience.Relay is released under the MIT license.
+copyright: Xperience.Relay is released under the MIT license. It is an independent project, not created by, endorsed by or affiliated with Kentico.
 
 docs_dir: docs
 extra_css:
   - stylesheets/extra.css
+# Lets the command pages keep their table of contents to the commands (front matter: toc_depth: 2).
+hooks:
+  - hooks/toc_depth.py
 # The captured examples are read by the docs generator; the pages show them, so they don't need to be published as files too.
 exclude_docs: |
   examples/
@@ -18,6 +21,7 @@ theme:
   name: material
   language: en
   features:
+    - navigation.instant
     - navigation.sections
     - navigation.indexes
     - navigation.top
@@ -32,14 +36,14 @@ theme:
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: brown
+      primary: custom   # the orange of the site, defined in stylesheets/extra.css
       accent: deep orange
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: brown
+      primary: custom
       accent: deep orange
       toggle:
         icon: material/weather-sunny
@@ -72,6 +76,10 @@ plugins:
 
 # Anything that points nowhere fails the build (mkdocs build --strict).
 validation:
+  nav:
+    # A command in the navigation is a link to its section on the page of its area, and MkDocs only knows files.
+    # The docs generator checks the files the navigation does name.
+    not_found: ignore
   omitted_files: warn
   absolute_links: warn
   unrecognized_links: warn
@@ -98,59 +106,59 @@ nav:
     - commands/index.md
     - Web pages:
       - commands/web-pages/index.md
-      - commands/web-pages/create-web-page.md
-      - commands/web-pages/update-web-page.md
-      - commands/web-pages/update-slug.md
-      - commands/web-pages/move-web-page.md
-      - commands/web-pages/publish-web-page.md
-      - commands/web-pages/unpublish-web-page.md
-      - commands/web-pages/delete-web-page.md
-      - commands/web-pages/get-page-info.md
-      - commands/web-pages/get-page.md
-      - commands/web-pages/query-web-page-items.md
+      - create-web-page: "commands/web-pages/#create-web-page"
+      - update-web-page: "commands/web-pages/#update-web-page"
+      - update-slug: "commands/web-pages/#update-slug"
+      - move-web-page: "commands/web-pages/#move-web-page"
+      - publish-web-page: "commands/web-pages/#publish-web-page"
+      - unpublish-web-page: "commands/web-pages/#unpublish-web-page"
+      - delete-web-page: "commands/web-pages/#delete-web-page"
+      - get-page-info: "commands/web-pages/#get-page-info"
+      - get-page: "commands/web-pages/#get-page"
+      - query-web-page-items: "commands/web-pages/#query-web-page-items"
     - Content items:
       - commands/content-items/index.md
-      - commands/content-items/create-content-item.md
-      - commands/content-items/update-content-item.md
-      - commands/content-items/move-content-item.md
-      - commands/content-items/publish-content-item.md
-      - commands/content-items/unpublish-content-item.md
-      - commands/content-items/delete-content-item.md
-      - commands/content-items/get-content-info.md
-      - commands/content-items/get-content.md
-      - commands/content-items/get-content-item-usage.md
-      - commands/content-items/get-content-hub-folder.md
-      - commands/content-items/query-reusable-items.md
-      - commands/content-items/search-content.md
+      - create-content-item: "commands/content-items/#create-content-item"
+      - update-content-item: "commands/content-items/#update-content-item"
+      - move-content-item: "commands/content-items/#move-content-item"
+      - publish-content-item: "commands/content-items/#publish-content-item"
+      - unpublish-content-item: "commands/content-items/#unpublish-content-item"
+      - delete-content-item: "commands/content-items/#delete-content-item"
+      - get-content-info: "commands/content-items/#get-content-info"
+      - get-content: "commands/content-items/#get-content"
+      - get-content-item-usage: "commands/content-items/#get-content-item-usage"
+      - get-content-hub-folder: "commands/content-items/#get-content-hub-folder"
+      - query-reusable-items: "commands/content-items/#query-reusable-items"
+      - search-content: "commands/content-items/#search-content"
     - Assets:
       - commands/assets/index.md
-      - commands/assets/rename-asset.md
-      - commands/assets/reoptimize-asset.md
+      - rename-asset: "commands/assets/#rename-asset"
+      - reoptimize-asset: "commands/assets/#reoptimize-asset"
     - Taxonomies and tags:
       - commands/taxonomies/index.md
-      - commands/taxonomies/create-taxonomy.md
-      - commands/taxonomies/update-taxonomy.md
-      - commands/taxonomies/delete-taxonomy.md
-      - commands/taxonomies/get-taxonomies.md
-      - commands/taxonomies/create-tag.md
-      - commands/taxonomies/update-tag.md
-      - commands/taxonomies/move-tag.md
-      - commands/taxonomies/delete-tag.md
-      - commands/taxonomies/get-tags.md
+      - create-taxonomy: "commands/taxonomies/#create-taxonomy"
+      - update-taxonomy: "commands/taxonomies/#update-taxonomy"
+      - delete-taxonomy: "commands/taxonomies/#delete-taxonomy"
+      - get-taxonomies: "commands/taxonomies/#get-taxonomies"
+      - create-tag: "commands/taxonomies/#create-tag"
+      - update-tag: "commands/taxonomies/#update-tag"
+      - move-tag: "commands/taxonomies/#move-tag"
+      - delete-tag: "commands/taxonomies/#delete-tag"
+      - get-tags: "commands/taxonomies/#get-tags"
     - Custom objects:
       - commands/custom-objects/index.md
-      - commands/custom-objects/create-custom-object.md
-      - commands/custom-objects/update-custom-object.md
-      - commands/custom-objects/delete-custom-object.md
-      - commands/custom-objects/query-custom-objects.md
+      - create-custom-object: "commands/custom-objects/#create-custom-object"
+      - update-custom-object: "commands/custom-objects/#update-custom-object"
+      - delete-custom-object: "commands/custom-objects/#delete-custom-object"
+      - query-custom-objects: "commands/custom-objects/#query-custom-objects"
     - Forms and contacts:
       - commands/forms-and-contacts/index.md
-      - commands/forms-and-contacts/get-form-submissions.md
-      - commands/forms-and-contacts/delete-contacts.md
+      - get-form-submissions: "commands/forms-and-contacts/#get-form-submissions"
+      - delete-contacts: "commands/forms-and-contacts/#delete-contacts"
     - SQL:
       - commands/sql/index.md
-      - commands/sql/query-sql.md
-      - commands/sql/execute-sql.md
+      - query-sql: "commands/sql/#query-sql"
+      - execute-sql: "commands/sql/#execute-sql"
     # relay:end nav-commands
   - Reference:
     - HTTP API: reference/http-api.md

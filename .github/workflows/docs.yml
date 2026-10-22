@@ -8,6 +8,7 @@ on:
     branches: [master]
     paths:
       - 'docs/**'
+      - 'hooks/**'
       - 'mkdocs.yml'
       - 'src/**'
       - 'tools/**'
@@ -16,6 +17,7 @@ on:
   pull_request:
     paths:
       - 'docs/**'
+      - 'hooks/**'
       - 'mkdocs.yml'
       - 'src/**'
       - 'tools/**'
@@ -38,8 +40,8 @@ jobs:
         with:
           dotnet-version: '8.x'
 
-      # The parameter tables, results and examples of the command pages are generated from the code.
-      # This fails when one of them is out of date, or when a command has no page.
+      # The parameter tables, results and examples of the command sections are generated from the code.
+      # This fails when one of them is out of date, or when a command has no section.
       - name: Check the generated docs are up to date
         run: |
           dotnet build tools/Xperience.Relay.Docs --configuration Release

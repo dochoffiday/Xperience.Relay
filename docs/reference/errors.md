@@ -35,16 +35,16 @@ The messages below are the ones you will meet most, grouped by cause. The text o
 | `Parameters for verb '...' resolved to null.` | `parameters` was `null`. Send an object, or leave it out. |
 | `... is required.`, `... must not be empty.`, `... must list at least one ...` | A required parameter is missing. The message names it. |
 | `No fields provided — nothing to update.` | An update command had nothing to change. |
-| `One of ContentFolderId, CodeName, or FolderPath must be provided.` | [`get-content-hub-folder`](../commands/content-items/get-content-hub-folder.md) needs exactly one. Giving two gives `Only one of ... may be provided.` |
-| `At least one filter (...) is required.` | [`get-tags`](../commands/taxonomies/get-tags.md) needs a filter. |
-| `LanguageName is required.` | [`get-content-item-usage`](../commands/content-items/get-content-item-usage.md) has no default language. |
+| `One of ContentFolderId, CodeName, or FolderPath must be provided.` | [`get-content-hub-folder`](../commands/content-items/index.md#get-content-hub-folder) needs exactly one. Giving two gives `Only one of ... may be provided.` |
+| `At least one filter (...) is required.` | [`get-tags`](../commands/taxonomies/index.md#get-tags) needs a filter. |
+| `LanguageName is required.` | [`get-content-item-usage`](../commands/content-items/index.md#get-content-item-usage) has no default language. |
 
 ### Not found
 
 | Message | What it means and what to do |
 |---|---|
 | `Web page N was not found.` | No page has that ID. |
-| `Web page N (the new parent) was not found.` | [`move-web-page`](../commands/web-pages/move-web-page.md): the target parent doesn't exist. |
+| `Web page N (the new parent) was not found.` | [`move-web-page`](../commands/web-pages/index.md#move-web-page): the target parent doesn't exist. |
 | `Content item N was not found.` | No content item has that ID. |
 | `... was not found in that language.` | The page or item exists but has no variant in the language. Relay can't add a language; see [Defaults and languages](../concepts/defaults-and-languages.md). |
 | `Content item N is not a reusable content item. Use ... for web pages.` | You passed a page's content item ID to a content item command. Use the page command. |
@@ -75,7 +75,7 @@ A create or update command checks its fields against the content type before it 
 | `Kentico did not save the changes to ...` | Kentico refused the saved change. See the event log. |
 | `The changes to ... were saved as a draft, but Kentico did not publish them, so the live version is unchanged.` | The edit is in a draft, and only the final publish failed. Publish it, or look in the event log. |
 | `Kentico did not publish ...` / `Kentico did not unpublish ...` | Kentico declined. See the event log. |
-| `Web page '...' was created (ID=N) but could not be published.` | The page exists as a draft. Publish it with [`publish-web-page`](../commands/web-pages/publish-web-page.md) instead of creating it again. |
+| `Web page '...' was created (ID=N) but could not be published.` | The page exists as a draft. Publish it with [`publish-web-page`](../commands/web-pages/index.md#publish-web-page) instead of creating it again. |
 
 ### SQL
 
@@ -108,8 +108,8 @@ The part in brackets is the exception's type, and the text after it is **Kentico
 
 | Kentico says | Why |
 |---|---|
-| `Content type with ID N is not allowed as a child of web page with ID M.` | The parent doesn't allow that content type under it. Pages are limited by their parent's allowed child types, in [`create-web-page`](../commands/web-pages/create-web-page.md) and [`move-web-page`](../commands/web-pages/move-web-page.md). |
+| `Content type with ID N is not allowed as a child of web page with ID M.` | The parent doesn't allow that content type under it. Pages are limited by their parent's allowed child types, in [`create-web-page`](../commands/web-pages/index.md#create-web-page) and [`move-web-page`](../commands/web-pages/index.md#move-web-page). |
 | `The web page with ID N does not exist.` | A page ID in a parameter such as `redirectToWebPageId` is wrong. |
-| `The content folder with ID N does not exist.` | [`move-content-item`](../commands/content-items/move-content-item.md) was given a folder ID that doesn't exist. |
+| `The content folder with ID N does not exist.` | [`move-content-item`](../commands/content-items/index.md#move-content-item) was given a folder ID that doesn't exist. |
 
 The exception is also written to the site's log, with its stack trace, which is where to look when the message isn't enough.

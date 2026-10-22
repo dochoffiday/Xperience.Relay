@@ -25,7 +25,7 @@ The outcome of executing a single `IRelayCommand`.
 | `success` | boolean | True when the command was carried out. False when it wasn't; `error` says why. |
 | `message` | string | A sentence about what was done, for commands that report one. Null when the command failed. |
 | `error` | string | Why the command couldn't be carried out. Null when it succeeded. |
-| `data` | any | Verb-specific payload (e.g. a [`WebPageInfo`](types.md#webpageinfo) for [`get-page-info`](../commands/web-pages/get-page-info.md)). Null when the command failed or has nothing to return. Travels as JSON; `GetData<T>` reads it as the type the command returns. |
+| `data` | any | Verb-specific payload (e.g. a [`WebPageInfo`](types.md#webpageinfo) for [`get-page-info`](../commands/web-pages/index.md#get-page-info)). Null when the command failed or has nothing to return. Travels as JSON; `GetData<T>` reads it as the type the command returns. |
 
 ### RelayBatchRequest
 
@@ -77,11 +77,11 @@ A binary file to upload into an asset field. Used by the create and update comma
 
 ## Command results
 
-What a successful command returns in `data`. Each command page says which one.
+What a successful command returns in `data`. Each command says which one.
 
 ### ContentData
 
-A content item's system fields plus its content-type-specific field data. Returned by [`get-content`](../commands/content-items/get-content.md). `fields` is untyped since its shape depends on the content type.
+A content item's system fields plus its content-type-specific field data. Returned by [`get-content`](../commands/content-items/index.md#get-content). `fields` is untyped since its shape depends on the content type.
 
 | Field | Type | Description |
 |---|---|---|
@@ -89,14 +89,14 @@ A content item's system fields plus its content-type-specific field data. Return
 | `contentItemGuid` | guid | GUID of the content item. |
 | `name` | string | The item's code name. |
 | `contentType` | string | Code name of the item's content type, e.g. `DancingGoat.Image`. |
-| `languageName` | string | Empty from [`get-content-info`](../commands/content-items/get-content-info.md) (the item's system fields don't vary by language); the requested language from [`get-content`](../commands/content-items/get-content.md). |
+| `languageName` | string | Empty from [`get-content-info`](../commands/content-items/index.md#get-content-info) (the item's system fields don't vary by language); the requested language from [`get-content`](../commands/content-items/index.md#get-content). |
 | `workspaceName` | string | The workspace's numeric ID, as text. Kentico's public API doesn't expose a workspace's name. |
 | `contentFolderPath` | string | Reserved. Not filled in yet, so currently always null. |
 | `fields` | { name: any } | Field values of the item's latest version, by field name, as JSON (text, numbers, dates, ...). Asset, tag and reference fields come as the JSON text Kentico stores in them. Only the content type's own fields are listed: fields that come from reusable field schemas are not included. |
 
 ### ContentInfo
 
-System-level fields describing a reusable content item, without its content-type-specific field data. Returned by [`get-content-info`](../commands/content-items/get-content-info.md) -- cheap enough to use for existence checks.
+System-level fields describing a reusable content item, without its content-type-specific field data. Returned by [`get-content-info`](../commands/content-items/index.md#get-content-info) -- cheap enough to use for existence checks.
 
 | Field | Type | Description |
 |---|---|---|
@@ -104,7 +104,7 @@ System-level fields describing a reusable content item, without its content-type
 | `contentItemGuid` | guid | GUID of the content item. |
 | `name` | string | The item's code name. |
 | `contentType` | string | Code name of the item's content type, e.g. `DancingGoat.Image`. |
-| `languageName` | string | Empty from [`get-content-info`](../commands/content-items/get-content-info.md) (the item's system fields don't vary by language); the requested language from [`get-content`](../commands/content-items/get-content.md). |
+| `languageName` | string | Empty from [`get-content-info`](../commands/content-items/index.md#get-content-info) (the item's system fields don't vary by language); the requested language from [`get-content`](../commands/content-items/index.md#get-content). |
 | `workspaceName` | string | The workspace's numeric ID, as text. Kentico's public API doesn't expose a workspace's name. |
 | `contentFolderPath` | string | Reserved. Not filled in yet, so currently always null. |
 
@@ -126,7 +126,7 @@ A content item language variant that references another content item.
 
 ### CreateContentItemResult
 
-Returned in `data` after a successful [`create-content-item`](../commands/content-items/create-content-item.md) command.
+Returned in `data` after a successful [`create-content-item`](../commands/content-items/index.md#create-content-item) command.
 
 | Field | Type | Description |
 |---|---|---|
@@ -135,7 +135,7 @@ Returned in `data` after a successful [`create-content-item`](../commands/conten
 
 ### CreateCustomObjectResult
 
-Returned in `data` after a successful [`create-custom-object`](../commands/custom-objects/create-custom-object.md) command.
+Returned in `data` after a successful [`create-custom-object`](../commands/custom-objects/index.md#create-custom-object) command.
 
 | Field | Type | Description |
 |---|---|---|
@@ -143,7 +143,7 @@ Returned in `data` after a successful [`create-custom-object`](../commands/custo
 
 ### CreateTagResult
 
-Returned in `data` after a successful [`create-tag`](../commands/taxonomies/create-tag.md) command.
+Returned in `data` after a successful [`create-tag`](../commands/taxonomies/index.md#create-tag) command.
 
 | Field | Type | Description |
 |---|---|---|
@@ -154,7 +154,7 @@ Returned in `data` after a successful [`create-tag`](../commands/taxonomies/crea
 
 ### CreateTaxonomyResult
 
-Returned in `data` after a successful [`create-taxonomy`](../commands/taxonomies/create-taxonomy.md) command.
+Returned in `data` after a successful [`create-taxonomy`](../commands/taxonomies/index.md#create-taxonomy) command.
 
 | Field | Type | Description |
 |---|---|---|
@@ -165,7 +165,7 @@ Returned in `data` after a successful [`create-taxonomy`](../commands/taxonomies
 
 ### CreateWebPageResult
 
-Returned in `data` after a successful [`create-web-page`](../commands/web-pages/create-web-page.md) command.
+Returned in `data` after a successful [`create-web-page`](../commands/web-pages/index.md#create-web-page) command.
 
 | Field | Type | Description |
 |---|---|---|
@@ -174,7 +174,7 @@ Returned in `data` after a successful [`create-web-page`](../commands/web-pages/
 
 ### ExecuteSqlResult
 
-Returned in `data` after a successful [`execute-sql`](../commands/sql/execute-sql.md) command: the preview of what would run (`confirmed` is false), or the outcome of running it.
+Returned in `data` after a successful [`execute-sql`](../commands/sql/index.md#execute-sql) command: the preview of what would run (`confirmed` is false), or the outcome of running it.
 
 | Field | Type | Description |
 |---|---|---|
@@ -185,15 +185,15 @@ Returned in `data` after a successful [`execute-sql`](../commands/sql/execute-sq
 
 ### GetContentHubFolderResult
 
-Returned in `data` after a successful [`get-content-hub-folder`](../commands/content-items/get-content-hub-folder.md) command.
+Returned in `data` after a successful [`get-content-hub-folder`](../commands/content-items/index.md#get-content-hub-folder) command.
 
 | Field | Type | Description |
 |---|---|---|
-| `contentFolderId` | integer | ID of the folder that was found or created, for [`create-content-item`](../commands/content-items/create-content-item.md) and [`move-content-item`](../commands/content-items/move-content-item.md). |
+| `contentFolderId` | integer | ID of the folder that was found or created, for [`create-content-item`](../commands/content-items/index.md#create-content-item) and [`move-content-item`](../commands/content-items/index.md#move-content-item). |
 
 ### GetContentItemUsageResult
 
-Returned in `data` after a successful [`get-content-item-usage`](../commands/content-items/get-content-item-usage.md) command.
+Returned in `data` after a successful [`get-content-item-usage`](../commands/content-items/index.md#get-content-item-usage) command.
 
 | Field | Type | Description |
 |---|---|---|
@@ -201,7 +201,7 @@ Returned in `data` after a successful [`get-content-item-usage`](../commands/con
 
 ### GetFormSubmissionsResult
 
-Returned in `data` after a successful [`get-form-submissions`](../commands/forms-and-contacts/get-form-submissions.md) command.
+Returned in `data` after a successful [`get-form-submissions`](../commands/forms-and-contacts/index.md#get-form-submissions) command.
 
 | Field | Type | Description |
 |---|---|---|
@@ -211,7 +211,7 @@ Returned in `data` after a successful [`get-form-submissions`](../commands/forms
 
 ### GetTagsResult
 
-Returned in `data` after a successful [`get-tags`](../commands/taxonomies/get-tags.md) command.
+Returned in `data` after a successful [`get-tags`](../commands/taxonomies/index.md#get-tags) command.
 
 | Field | Type | Description |
 |---|---|---|
@@ -219,7 +219,7 @@ Returned in `data` after a successful [`get-tags`](../commands/taxonomies/get-ta
 
 ### GetTaxonomiesResult
 
-Returned in `data` after a successful [`get-taxonomies`](../commands/taxonomies/get-taxonomies.md) command.
+Returned in `data` after a successful [`get-taxonomies`](../commands/taxonomies/index.md#get-taxonomies) command.
 
 | Field | Type | Description |
 |---|---|---|
@@ -227,7 +227,7 @@ Returned in `data` after a successful [`get-taxonomies`](../commands/taxonomies/
 
 ### QueryCustomObjectsResult
 
-Returned in `data` after a successful [`query-custom-objects`](../commands/custom-objects/query-custom-objects.md) command.
+Returned in `data` after a successful [`query-custom-objects`](../commands/custom-objects/index.md#query-custom-objects) command.
 
 | Field | Type | Description |
 |---|---|---|
@@ -235,7 +235,7 @@ Returned in `data` after a successful [`query-custom-objects`](../commands/custo
 
 ### QueryItemsResult
 
-Returned in `data` after a successful [`query-web-page-items`](../commands/web-pages/query-web-page-items.md) or [`query-reusable-items`](../commands/content-items/query-reusable-items.md) command. Each item is a dictionary of column name to its JSON-serialized value.
+Returned in `data` after a successful [`query-web-page-items`](../commands/web-pages/index.md#query-web-page-items) or [`query-reusable-items`](../commands/content-items/index.md#query-reusable-items) command. Each item is a dictionary of column name to its JSON-serialized value.
 
 | Field | Type | Description |
 |---|---|---|
@@ -243,7 +243,7 @@ Returned in `data` after a successful [`query-web-page-items`](../commands/web-p
 
 ### QuerySqlResult
 
-Returned in `data` after a successful [`query-sql`](../commands/sql/query-sql.md) command.
+Returned in `data` after a successful [`query-sql`](../commands/sql/index.md#query-sql) command.
 
 | Field | Type | Description |
 |---|---|---|
@@ -264,7 +264,7 @@ An item with at least one field that contains the searched text.
 
 ### SearchContentResult
 
-Returned in `data` after a successful [`search-content`](../commands/content-items/search-content.md) command.
+Returned in `data` after a successful [`search-content`](../commands/content-items/index.md#search-content) command.
 
 | Field | Type | Description |
 |---|---|---|
@@ -272,7 +272,7 @@ Returned in `data` after a successful [`search-content`](../commands/content-ite
 
 ### TagResult
 
-A tag, as listed by [`get-tags`](../commands/taxonomies/get-tags.md).
+A tag, as listed by [`get-tags`](../commands/taxonomies/index.md#get-tags).
 
 | Field | Type | Description |
 |---|---|---|
@@ -287,7 +287,7 @@ A tag, as listed by [`get-tags`](../commands/taxonomies/get-tags.md).
 
 ### TaxonomyResult
 
-A taxonomy, as listed by [`get-taxonomies`](../commands/taxonomies/get-taxonomies.md).
+A taxonomy, as listed by [`get-taxonomies`](../commands/taxonomies/index.md#get-taxonomies).
 
 | Field | Type | Description |
 |---|---|---|
@@ -299,7 +299,7 @@ A taxonomy, as listed by [`get-taxonomies`](../commands/taxonomies/get-taxonomie
 
 ### WebPageData
 
-A web page's system fields plus its content-type-specific field data. Returned by [`get-page`](../commands/web-pages/get-page.md). `fields` is untyped since its shape depends on the page's content type.
+A web page's system fields plus its content-type-specific field data. Returned by [`get-page`](../commands/web-pages/index.md#get-page). `fields` is untyped since its shape depends on the page's content type.
 
 | Field | Type | Description |
 |---|---|---|
@@ -315,7 +315,7 @@ A web page's system fields plus its content-type-specific field data. Returned b
 
 ### WebPageInfo
 
-System-level fields describing a web page, without its content-type-specific field data. Returned by [`get-page-info`](../commands/web-pages/get-page-info.md) -- cheap enough to use for existence checks or path resolution (e.g. before sending a [`move-web-page`](../commands/web-pages/move-web-page.md) command).
+System-level fields describing a web page, without its content-type-specific field data. Returned by [`get-page-info`](../commands/web-pages/index.md#get-page-info) -- cheap enough to use for existence checks or path resolution (e.g. before sending a [`move-web-page`](../commands/web-pages/index.md#move-web-page) command).
 
 | Field | Type | Description |
 |---|---|---|

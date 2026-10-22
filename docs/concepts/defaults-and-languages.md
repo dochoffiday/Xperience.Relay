@@ -12,7 +12,7 @@ Many commands have parameters you can leave out, because Relay fills them in fro
 
 When a parameter is left out and there is no default to fall back to, the command fails with a message that says what to set: `WebsiteChannelName is required. Set it on the command or configure RelayKenticoOptions.DefaultWebsiteChannelName.`
 
-One exception: [`get-content-item-usage`](../commands/content-items/get-content-item-usage.md) has no language default. `languageName` is required there, because it says which variant of the item to look at.
+One exception: [`get-content-item-usage`](../commands/content-items/index.md#get-content-item-usage) has no language default. `languageName` is required there, because it says which variant of the item to look at.
 
 Names, not display names. `workspaceName` and `websiteChannelName` are **code names** (such as `DancingGoat.DancingGoatEvents` and `DancingGoatPages`), and `languageName` is a language's code name (`en`, `es`).
 

@@ -67,7 +67,7 @@ curl -X POST "https://your-site.example/api/relay/commands" \
 
 ## Commands
 
-41 commands, each with its own page in the documentation:
+41 commands in 7 areas. Each area has a page in the documentation with a section for every one of its commands:
 
 | Area | Commands |
 |---|---|
@@ -92,6 +92,10 @@ Every key has a tier, **Read**, **Write** or **Admin**, and each command needs a
 ## Contributing and releases
 
 See [Contributing](https://dochoffiday.github.io/Xperience.Relay/contributing/). Packages are published to NuGet by `.github/workflows/publish.yml` when a `v*.*.*` tag is pushed, and the documentation is built and published from `master` by `.github/workflows/docs.yml`. The docs sources are in [docs/](docs/).
+
+## Disclaimer
+
+Xperience.Relay is an independent project. It is not created by, endorsed by or affiliated with Kentico. "Kentico" and "Xperience by Kentico" are trademarks of their respective owners.
 
 ## License
 

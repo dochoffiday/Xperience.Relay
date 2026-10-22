@@ -6,15 +6,15 @@ Relay offers several ways to find things. This page helps you pick one, and show
 
 | You want to | Use | Tier |
 |---|---|---|
-| Find **pages** by type, field value, status or URL | [`query-web-page-items`](../commands/web-pages/query-web-page-items.md) | Read |
-| Find **reusable content items** by type or field value | [`query-reusable-items`](../commands/content-items/query-reusable-items.md) | Read |
-| Find items that **contain some text** | [`search-content`](../commands/content-items/search-content.md) | Read |
-| Read **one** page or item with its fields | [`get-page`](../commands/web-pages/get-page.md), [`get-content`](../commands/content-items/get-content.md) | Read |
-| See what **refers to** an item | [`get-content-item-usage`](../commands/content-items/get-content-item-usage.md) | Read |
-| List **tags** or taxonomies | [`get-tags`](../commands/taxonomies/get-tags.md), [`get-taxonomies`](../commands/taxonomies/get-taxonomies.md) | Read |
-| Read **form submissions** | [`get-form-submissions`](../commands/forms-and-contacts/get-form-submissions.md) | Read |
-| Read any **registered object type** | [`query-custom-objects`](../commands/custom-objects/query-custom-objects.md) | Admin |
-| Ask the **database** anything else | [`query-sql`](../commands/sql/query-sql.md) | Admin |
+| Find **pages** by type, field value, status or URL | [`query-web-page-items`](../commands/web-pages/index.md#query-web-page-items) | Read |
+| Find **reusable content items** by type or field value | [`query-reusable-items`](../commands/content-items/index.md#query-reusable-items) | Read |
+| Find items that **contain some text** | [`search-content`](../commands/content-items/index.md#search-content) | Read |
+| Read **one** page or item with its fields | [`get-page`](../commands/web-pages/index.md#get-page), [`get-content`](../commands/content-items/index.md#get-content) | Read |
+| See what **refers to** an item | [`get-content-item-usage`](../commands/content-items/index.md#get-content-item-usage) | Read |
+| List **tags** or taxonomies | [`get-tags`](../commands/taxonomies/index.md#get-tags), [`get-taxonomies`](../commands/taxonomies/index.md#get-taxonomies) | Read |
+| Read **form submissions** | [`get-form-submissions`](../commands/forms-and-contacts/index.md#get-form-submissions) | Read |
+| Read any **registered object type** | [`query-custom-objects`](../commands/custom-objects/index.md#query-custom-objects) | Admin |
+| Ask the **database** anything else | [`query-sql`](../commands/sql/index.md#query-sql) | Admin |
 
 Prefer the typed commands. They need only a Read key, they follow Kentico's rules for language fallback and versions, and they don't depend on the database's layout.
 
@@ -33,7 +33,7 @@ Prefer the typed commands. They need only a Read key, they follow Kentico's rule
 
 - **`contentTypeNames`** lists one or more content types, by code name. The answer is the union of their items. At least one is required.
 - **`columns`** names what you want back, and at least one is required. Use the content type's field names, plus system columns: `WebPageItemID`, `WebPageItemGUID`, `WebPageUrlPath` for pages, and `ContentItemID`, `ContentItemGUID`, `ContentItemName` for reusable items. The answer holds only these columns.
-- **`whereEquals`** keeps the items whose columns equal the given values, all conditions together (AND). The column must **also be listed in `columns`**, because the filter runs over the selected columns; otherwise the query fails with "Invalid column name". Values are strings, numbers or booleans. There are no other operators: for ranges, patterns or joins, use [`query-sql`](../commands/sql/query-sql.md).
+- **`whereEquals`** keeps the items whose columns equal the given values, all conditions together (AND). The column must **also be listed in `columns`**, because the filter runs over the selected columns; otherwise the query fails with "Invalid column name". Values are strings, numbers or booleans. There are no other operators: for ranges, patterns or joins, use [`query-sql`](../commands/sql/index.md#query-sql).
 - There is **no paging**. The answer holds every match, so narrow a query on a large type with `whereEquals`.
 
 The answer is a list of objects, one per item, with just the columns you asked for:
@@ -60,7 +60,7 @@ To find out whether pages are published without a second query, add `includeStat
 
 ## Searching text
 
-[`search-content`](../commands/content-items/search-content.md) looks for text, without regard to case, in every text, long text and rich text field of the **published** items of one content type:
+[`search-content`](../commands/content-items/index.md#search-content) looks for text, without regard to case, in every text, long text and rich text field of the **published** items of one content type:
 
 ```json
 { "contentTypeName": "DancingGoat.ArticlePage", "websiteChannelName": "DancingGoatPages", "filter": "cold brew" }

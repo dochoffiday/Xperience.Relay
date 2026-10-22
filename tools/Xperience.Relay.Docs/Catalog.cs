@@ -43,8 +43,11 @@ sealed class CommandModel : TypeModel
     /// <summary>The DTO a successful run returns in <c>data</c>, or null when it returns none.</summary>
     public Type? ResultType { get; set; }
 
-    /// <summary>Path of the command's page, relative to the docs folder.</summary>
-    public string PagePath => $"commands/{Area.Folder}/{Verb}.md";
+    /// <summary>
+    /// Path of the page the command is documented on, relative to the docs folder. Every command of an area shares the
+    /// area's page, as a section whose heading is the verb.
+    /// </summary>
+    public string PagePath => $"commands/{Area.Folder}/index.md";
 }
 
 /// <summary>Everything the generator knows about the Contracts package, read by reflection and from its XML docs.</summary>

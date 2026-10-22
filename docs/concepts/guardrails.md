@@ -9,7 +9,7 @@ Some commands are powerful enough that a mistake, or a misplaced key, would hurt
 
 The `Relay_ApiKey` table and the `relay.apikey` object type hold the API key hashes. They can't be reached through the generic commands, so a key can't read other keys' hashes or give itself a higher tier:
 
-- [`query-sql`](../commands/sql/query-sql.md) and [`execute-sql`](../commands/sql/execute-sql.md) refuse any statement that mentions the table by name (in any letter case, schema-qualified or in brackets), and **also when the name is inside a string literal**, so it can't be tucked into dynamic SQL.
+- [`query-sql`](../commands/sql/index.md#query-sql) and [`execute-sql`](../commands/sql/index.md#execute-sql) refuse any statement that mentions the table by name (in any letter case, schema-qualified or in brackets), and **also when the name is inside a string literal**, so it can't be tucked into dynamic SQL.
 - The four custom-object commands refuse the object type with "Object type 'relay.apikey' is protected."
 
 ## How SQL is checked
@@ -30,7 +30,7 @@ Other limits:
 
 - A query that doesn't parse is refused with the parser's message.
 - Queries are cut off after [`SqlQueryTimeoutSeconds`](../configuration.md#sqlquerytimeoutseconds) (30 seconds by default).
-- `execute-sql` works in two steps. Without `confirm: true` it only describes what would run; see the command's page.
+- `execute-sql` works in two steps. Without `confirm: true` it only describes what would run; see [`execute-sql`](../commands/sql/index.md#execute-sql).
 - Relay doesn't wrap statements in a transaction.
 
 ## Checks on content writes
@@ -49,9 +49,9 @@ Values for reference, asset and tag fields sent through plain `fields` are not c
 Some commands check what Kentico would not:
 
 - Deleting or moving something that doesn't exist fails instead of reporting success.
-- [`move-tag`](../commands/taxonomies/move-tag.md) refuses a parent from another taxonomy and a move under the tag itself or one of its children.
-- [`move-web-page`](../commands/web-pages/move-web-page.md) and [`move-content-item`](../commands/content-items/move-content-item.md) check the target and the items first.
-- [`delete-contacts`](../commands/forms-and-contacts/delete-contacts.md) refuses an empty condition.
+- [`move-tag`](../commands/taxonomies/index.md#move-tag) refuses a parent from another taxonomy and a move under the tag itself or one of its children.
+- [`move-web-page`](../commands/web-pages/index.md#move-web-page) and [`move-content-item`](../commands/content-items/index.md#move-content-item) check the target and the items first.
+- [`delete-contacts`](../commands/forms-and-contacts/index.md#delete-contacts) refuses an empty condition.
 
 ## What guardrails don't do
 

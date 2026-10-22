@@ -12,7 +12,7 @@ A file is a `RelayAsset` with three parts:
 | `fileName` | The file's name with its extension, such as `cold-brew.png`. Kentico uses it for the asset's name and extension. |
 | `base64` | The file's bytes, Base64-encoded. |
 
-Four commands take a list of them in `assets`: [`create-content-item`](../commands/content-items/create-content-item.md), [`update-content-item`](../commands/content-items/update-content-item.md), [`create-web-page`](../commands/web-pages/create-web-page.md) and [`update-web-page`](../commands/web-pages/update-web-page.md). One call can fill several asset fields.
+Four commands take a list of them in `assets`: [`create-content-item`](../commands/content-items/index.md#create-content-item), [`update-content-item`](../commands/content-items/index.md#update-content-item), [`create-web-page`](../commands/web-pages/index.md#create-web-page) and [`update-web-page`](../commands/web-pages/index.md#update-web-page). One call can fill several asset fields.
 
 On the server, Relay decodes each file to a temporary file, hands it to Kentico as an asset, and deletes the temporary files afterwards, whatever the outcome.
 
@@ -54,7 +54,7 @@ var result = await relay.ExecuteAsync(new CreateContentItemCommand
 
 ## What Kentico stores
 
-Reading the item back with [`get-content`](../commands/content-items/get-content.md) shows the asset field as the JSON text Kentico stores:
+Reading the item back with [`get-content`](../commands/content-items/index.md#get-content) shows the asset field as the JSON text Kentico stores:
 
 ```json
 {
@@ -84,7 +84,7 @@ Reading the item back with [`get-content`](../commands/content-items/get-content
 
 Two commands work on a file that is already in an asset field, without sending it again:
 
-- [`rename-asset`](../commands/assets/rename-asset.md) changes the file's name.
-- [`reoptimize-asset`](../commands/assets/reoptimize-asset.md) runs the file through Kentico's optimization again, after the field's settings changed.
+- [`rename-asset`](../commands/assets/index.md#rename-asset) changes the file's name.
+- [`reoptimize-asset`](../commands/assets/index.md#reoptimize-asset) runs the file through Kentico's optimization again, after the field's settings changed.
 
 Both find the file on the server, hand it to Kentico again, and keep the item's state, so nothing but the new name travels over the wire.

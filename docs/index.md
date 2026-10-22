@@ -2,7 +2,11 @@
 
 Drive an Xperience by Kentico site remotely. Relay is a set of packages that runs **inside** your deployed Xperience web app and exposes Kentico operations over a small, secured HTTP API. You call it from a few lines of C#, or from any HTTP client: create and publish pages, change fields, upload files, query content, manage taxonomies and more.
 
-It has 41 commands, each with its own page, and a client library that needs no Kentico SDK.
+It has 41 commands in 7 areas, each one documented in full, and a client library that needs no Kentico SDK.
+
+!!! note "An independent project"
+
+    Xperience.Relay is not created by, endorsed by or affiliated with Kentico. "Kentico" and "Xperience by Kentico" are trademarks of their respective owners.
 
 ## Why Relay exists
 

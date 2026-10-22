@@ -6,7 +6,7 @@ Every step is a [command](../commands/index.md) sent as `{ "verb": ..., "paramet
 
 ## 1. Create the page as a draft
 
-[`create-web-page`](../commands/web-pages/create-web-page.md) creates a page under a parent and fills in its fields. Here the parent is the Articles section:
+[`create-web-page`](../commands/web-pages/index.md#create-web-page) creates a page under a parent and fills in its fields. Here the parent is the Articles section:
 
 ```json
 {
@@ -29,17 +29,17 @@ If a field name is wrong, or a value doesn't fit, nothing is created and the ans
 
 ## 2. Read it back
 
-[`get-page`](../commands/web-pages/get-page.md) returns the page's fields as they are in its latest version, drafts included:
+[`get-page`](../commands/web-pages/index.md#get-page) returns the page's fields as they are in its latest version, drafts included:
 
 ```json
 { "webPageId": 68 }
 ```
 
-[`get-page-info`](../commands/web-pages/get-page-info.md) returns only the system fields (type, tree path, parent, channel) when you don't need the values.
+[`get-page-info`](../commands/web-pages/index.md#get-page-info) returns only the system fields (type, tree path, parent, channel) when you don't need the values.
 
 ## 3. Change a field
 
-[`update-web-page`](../commands/web-pages/update-web-page.md) edits through a draft. The page has never been published, so the change goes into its draft and stays there:
+[`update-web-page`](../commands/web-pages/index.md#update-web-page) edits through a draft. The page has never been published, so the change goes into its draft and stays there:
 
 ```json
 {
@@ -55,7 +55,7 @@ The answer: `Updated 2 field(s) on web page 68. Saved as a draft; it is not publ
 
 ## 4. Publish it
 
-[`publish-web-page`](../commands/web-pages/publish-web-page.md) puts the draft live:
+[`publish-web-page`](../commands/web-pages/index.md#publish-web-page) puts the draft live:
 
 ```json
 { "webPageId": 68 }
@@ -65,7 +65,7 @@ The answer: `Published web page 68 (en).` Sending the same command again is harm
 
 ## 5. Change the URL
 
-[`update-slug`](../commands/web-pages/update-slug.md) changes the last part of the page's URL. The page is published, so Relay publishes the change too, and the new URL is live when the answer returns:
+[`update-slug`](../commands/web-pages/index.md#update-slug) changes the last part of the page's URL. The page is published, so Relay publishes the change too, and the new URL is live when the answer returns:
 
 ```json
 { "webPageId": 68, "slug": "cold-brew-guide" }
@@ -85,7 +85,7 @@ The answer: `Updated 1 field(s) on web page 68.`
 
 ## 7. Check where it stands
 
-[`query-web-page-items`](../commands/web-pages/query-web-page-items.md) shows a page's status and URL together:
+[`query-web-page-items`](../commands/web-pages/index.md#query-web-page-items) shows a page's status and URL together:
 
 ```json
 {
@@ -111,7 +111,7 @@ The answer: `Updated 1 field(s) on web page 68.`
 
 ## 8. Take it offline, and bring it back
 
-[`unpublish-web-page`](../commands/web-pages/unpublish-web-page.md) takes the page offline and keeps its content. [`publish-web-page`](../commands/web-pages/publish-web-page.md) brings it back: for an unpublished page Relay makes a draft first, then publishes it.
+[`unpublish-web-page`](../commands/web-pages/index.md#unpublish-web-page) takes the page offline and keeps its content. [`publish-web-page`](../commands/web-pages/index.md#publish-web-page) brings it back: for an unpublished page Relay makes a draft first, then publishes it.
 
 ```json
 { "webPageId": 68 }
@@ -121,7 +121,7 @@ The answers: `Unpublished web page 68 (en).` and then `Published web page 68 (en
 
 ## 9. Delete it
 
-[`delete-web-page`](../commands/web-pages/delete-web-page.md) sends the page to the recycle bin, where it can be restored from the admin UI. Add `"permanently": true` to remove it for good. Pages below the deleted page go with it.
+[`delete-web-page`](../commands/web-pages/index.md#delete-web-page) sends the page to the recycle bin, where it can be restored from the admin UI. Add `"permanently": true` to remove it for good. Pages below the deleted page go with it.
 
 ```json
 { "webPageId": 68, "languageName": "en" }

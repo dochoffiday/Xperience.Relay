@@ -1,3 +1,22 @@
+/* The site's orange. Material names only a few colours, so mkdocs.yml sets the primary colour to "custom" and it is defined here. */
+:root {
+  --md-primary-fg-color: #F05A22;
+  --md-primary-fg-color--light: #F4845A;
+  --md-primary-fg-color--dark: #C8470F;
+  --md-primary-bg-color: #FFFFFF;
+  --md-primary-bg-color--light: rgba(255, 255, 255, 0.7);
+}
+
+/* Links are text, and that orange on a white page is too pale to read comfortably, so they use a darker shade of it. */
+[data-md-color-scheme="default"] {
+  --md-typeset-a-color: #C2410C;
+}
+
+/* On the dark scheme a lighter shade reads best. */
+[data-md-color-scheme="slate"] {
+  --md-typeset-a-color: #FF8A5C;
+}
+
 /* A wider page, so the parameter and result tables have room. */
 .md-grid {
   max-width: 76rem;
@@ -8,7 +27,7 @@
   white-space: nowrap;
 }
 
-/* The tables at the top of the command pages are a summary line, not data: keep them compact. */
+/* The tables at the top of the command sections are a summary line, not data: keep them compact. */
 .md-typeset table:not([class]) {
   font-size: 0.72rem;
 }

@@ -14,7 +14,9 @@ static partial class Pages
     private static string AccessLink(RelayAccess access, Links links) => $"[{access}]({links.To(Links.AccessTiersPage)})";
 
     // ---------------------------------------------------------------------------------------------------------------
-    // Command pages
+    // The sections of a command. They sit on the page of the command's area, under the command's own heading (level 2),
+    // so their headings are level 3, with ids that carry the verb: every command has a "Parameters", and ids have to be
+    // unique on a page.
 
     public static string Header(CommandModel command, Catalog catalog, Links links)
     {
@@ -31,7 +33,7 @@ static partial class Pages
 
     public static string Parameters(CommandModel command, Catalog catalog, Links links)
     {
-        var text = new StringBuilder("## Parameters\n\n");
+        var text = new StringBuilder($"### Parameters {{ #{command.Verb}-parameters }}\n\n");
 
         if (command.Properties.Count == 0)
         {
@@ -52,7 +54,7 @@ static partial class Pages
 
     public static string Result(CommandModel command, Catalog catalog, Links links)
     {
-        var text = new StringBuilder("## Result\n\n");
+        var text = new StringBuilder($"### Result {{ #{command.Verb}-result }}\n\n");
 
         if (command.ResultType is not { } type || catalog.TypeFor(type) is not { } model)
         {
@@ -72,7 +74,7 @@ static partial class Pages
             return string.Empty;
         }
 
-        var text = new StringBuilder("## Examples\n\n");
+        var text = new StringBuilder($"### Examples {{ #{command.Verb}-examples }}\n\n");
         text.AppendLine("The examples were captured from a live site running the Dancing Goat sample. Replace `https://your-site.example` and `YOUR_API_KEY` with your own site and key.").AppendLine();
 
         foreach (var example in successes)
@@ -80,7 +82,7 @@ static partial class Pages
             var source = $"docs/examples/{command.Verb}/{example.Name}.json";
             var csharp = CSharpSnippet.For(command, example.Parameters, problems, source);
 
-            text.AppendLine($"### {example.Title}").AppendLine();
+            text.AppendLine($"#### {example.Title} {{ #{command.Verb}-example-{example.Name} }}").AppendLine();
 
             if (example.Note is { Length: > 0 } note)
             {
@@ -107,7 +109,7 @@ static partial class Pages
             return string.Empty;
         }
 
-        var text = new StringBuilder("## Errors\n\n");
+        var text = new StringBuilder($"### Errors {{ #{command.Verb}-errors }}\n\n");
         text.AppendLine("A command that can't be carried out comes back with HTTP 200 and `success` set to `false`; `error` says why. These are real answers:").AppendLine();
 
         foreach (var failure in failures)
@@ -150,7 +152,8 @@ static partial class Pages
         var text = new StringBuilder();
 
         text.AppendLine("# Commands").AppendLine();
-        text.AppendLine($"Relay has {catalog.Commands.Count} commands, each with its own page. A command is identified by its **verb**, " +
+        text.AppendLine($"Relay has {catalog.Commands.Count} commands in {Areas.All.Length} areas. Each area has one page with a section for every command: " +
+                        "its parameters, result, behavior, examples and errors. A command is identified by its **verb**, " +
                         "takes its parameters as JSON, and answers with a [result](../reference/types.md#relaycommandresult). " +
                         $"The **Access** column is the lowest [API key tier]({links.To(Links.AccessTiersPage)}) that may run it.").AppendLine();
 
@@ -197,7 +200,7 @@ static partial class Pages
         {
             ("Envelopes and results", "What every call sends and every answer carries.", catalog.Types.Where(t => envelopeTypes.Contains(t.Type))),
             ("Shared input types", "A type that is part of the parameters of more than one command.", catalog.Types.Where(t => t.Type == typeof(Contracts.Commands.RelayAsset))),
-            ("Command results", "What a successful command returns in `data`. Each command page says which one.", catalog.Types.Where(t => !envelopeTypes.Contains(t.Type) && t.Type != typeof(Contracts.Commands.RelayAsset))),
+            ("Command results", "What a successful command returns in `data`. Each command says which one.", catalog.Types.Where(t => !envelopeTypes.Contains(t.Type) && t.Type != typeof(Contracts.Commands.RelayAsset))),
         };
 
         foreach (var (title, intro, types) in groups)
@@ -228,6 +231,10 @@ static partial class Pages
         return text.ToString().TrimEnd() + "\n";
     }
 
+    /// <summary>
+    /// The navigation of the commands: an entry for each area, which is a page, and under it an entry for each command, which is a
+    /// link to the command's section on that page. MkDocs only knows files, so a link to a section is written as the page's URL.
+    /// </summary>
     public static string NavCommands(Catalog catalog, string indent)
     {
         var text = new StringBuilder();
@@ -240,7 +247,7 @@ static partial class Pages
 
             foreach (var verb in area.Verbs)
             {
-                text.AppendLine($"{indent}  - commands/{area.Folder}/{verb}.md");
+                text.AppendLine($"{indent}  - {verb}: \"commands/{area.Folder}/#{verb}\"");
             }
         }
 

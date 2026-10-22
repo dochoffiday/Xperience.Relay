@@ -18,11 +18,15 @@ sealed partial class Links(Catalog catalog, string fromPage) : IMarkdownLinks
         return Path.GetRelativePath(_fromDirectory.Length == 0 ? "." : _fromDirectory, docsPath).Replace('\\', '/');
     }
 
-    public string ToCommand(CommandModel command) => To(command.PagePath);
+    /// <summary>A link to a command's section, which is on the page of its area (the same page, if that is this one).</summary>
+    public string ToCommand(CommandModel command) =>
+        string.Equals(command.PagePath, fromPage, StringComparison.Ordinal)
+            ? $"#{command.Verb}"
+            : $"{To(command.PagePath)}#{command.Verb}";
 
     public string ToType(TypeModel type) => $"{To(TypesPage)}#{type.Anchor}";
 
-    /// <summary>A link to a command's page, labelled with its verb.</summary>
+    /// <summary>A link to a command's section, labelled with its verb.</summary>
     public string Command(CommandModel command) => $"[`{command.Verb}`]({ToCommand(command)})";
 
     public string Cref(string cref)

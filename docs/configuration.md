@@ -42,7 +42,7 @@ builder.Services.Configure<RelayKenticoOptions>(builder.Configuration.GetSection
 | | |
 |---|---|
 | Default | empty |
-| Needed by | Every command that creates, changes, moves, publishes or deletes pages and content items, and [`get-content-info`](commands/content-items/get-content-info.md) and [`get-content`](commands/content-items/get-content.md) |
+| Needed by | Every command that creates, changes, moves, publishes or deletes pages and content items, and [`get-content-info`](commands/content-items/index.md#get-content-info) and [`get-content`](commands/content-items/index.md#get-content) |
 
 The user name of the Kentico user that Relay's changes are attributed to: Kentico shows it as who modified something. It has to be an existing user. Its permissions are **not** checked: Kentico's management API uses the user for attribution only, so a key's tier, not this user, decides what a caller may do. A dedicated user, such as `relay-service`, makes Relay's changes easy to recognize.
 

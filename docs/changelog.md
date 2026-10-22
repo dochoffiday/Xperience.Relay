@@ -8,7 +8,7 @@ Versions are tagged in the repository as `v<major>.<minor>.<patch>`, and a tag p
 
 ### Documentation
 
-- This documentation site: a page for each of the 41 commands, concept pages, guides and reference pages. The parameter tables, results, examples and error samples of the command pages are generated from the code by `tools/Xperience.Relay.Docs`, so they can't drift from it.
+- This documentation site: one page for each of the 7 command areas, with a section for each of the 41 commands, plus concept pages, guides and reference pages. The parameter tables, results, examples and error samples of the command sections are generated from the code by `tools/Xperience.Relay.Docs`, so they can't drift from it.
 - XML documentation for every command parameter and result field, which the packages now ship (IntelliSense).
 
 ### Fixed

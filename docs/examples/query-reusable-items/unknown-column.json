@@ -1,0 +1,24 @@
+{
+  "title": "A column the content type does not have",
+  "kind": "error",
+  "order": 1024,
+  "status": 200,
+  "request": {
+    "verb": "query-reusable-items",
+    "parameters": {
+      "contentTypeNames": [
+        "DancingGoat.Cafe"
+      ],
+      "columns": [
+        "ContentItemID",
+        "CafeTitle"
+      ]
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Column 'CafeTitle' was not found on content type 'DancingGoat.Cafe'.",
+    "data": null
+  }
+}

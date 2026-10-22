@@ -33,4 +33,12 @@ public class ObjectColumnCheckerTests
     {
         Assert.Null(ObjectColumnChecker.Check("custom.thing", [], ["Anything"]));
     }
+
+    [Fact]
+    public void TheKindOfType_IsNamedInTheMessage()
+    {
+        var problem = ObjectColumnChecker.Check("DancingGoat.Cafe", ["CafeName"], ["CafeCity"], "content type");
+
+        Assert.Equal("Column 'CafeCity' was not found on content type 'DancingGoat.Cafe'.", problem);
+    }
 }

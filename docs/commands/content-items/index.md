@@ -1808,10 +1808,10 @@ Names are shown the way they appear in the JSON; a C# command uses the same name
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `contentTypeNames` | string[] | Yes | Code names of the content types to include, e.g. `DancingGoat.ArticlePage`. At least one. |
+| `contentTypeNames` | string[] | Yes | Code names of the content types to include, e.g. `DancingGoat.ArticlePage`. At least one, and at most 25. |
 | `languageName` | string | No | Defaults to [`RelayKenticoOptions.DefaultLanguageName`](../../configuration.md#defaultlanguagename) when null. |
-| `columns` | string[] | Yes | Columns to fetch and return. At least one. |
-| `whereEquals` | { name: any } | No | Optional column-equality filters. All conditions are ANDed together. Each column must also be listed in `columns`. |
+| `columns` | string[] | Yes | Columns to fetch and return. At least one, and at most 500. Each is a plain column name (letters, digits and underscores) that exists on every content type listed: one of its fields, or a system column such as `ContentItemID`. |
+| `whereEquals` | { name: any } | No | Optional column-equality filters, at most 50. All conditions are ANDed together. Each column must also be listed in `columns`, and each value is text, a number, `true`, `false` or `null`. |
 | `publishedOnly` | boolean | No | When true, returns the published version of each item, and leaves out items that have none. Defaults to false, which returns each item's latest version, drafts included. |
 <!-- relay:end parameters:query-reusable-items -->
 
@@ -1827,8 +1827,8 @@ A successful run returns a [QueryItemsResult](../../reference/types.md#queryitem
 
 ### Behavior { #query-reusable-items-behavior }
 
-- **Columns.** Name the columns you want, at least one: the content type's field names, plus system columns such as `ContentItemID`, `ContentItemGUID` and `ContentItemName`. Each item in the answer is an object with just those columns. Reference and tag fields come back as JSON values (arrays of objects), not as strings.
-- **Filtering.** `whereEquals` keeps the items whose columns equal the values given; the conditions are combined with AND. A column used in `whereEquals` must also be listed in `columns`, otherwise the query fails with "Invalid column name". Values are strings, numbers or booleans.
+- **Columns.** Name the columns you want, at least one: the content type's field names, plus system columns such as `ContentItemID`, `ContentItemGUID` and `ContentItemName`. Each item in the answer is an object with just those columns. Reference and tag fields come back as JSON values (arrays of objects), not as strings. A column is a plain name (letters, digits and underscores) that exists on every content type listed, and one that doesn't is refused with a message that names it. Columns of web pages, such as `WebPageItemID`, exist only for web page content types: use [`query-web-page-items`](../web-pages/index.md#query-web-page-items) for those.
+- **Filtering.** `whereEquals` keeps the items whose columns equal the values given; the conditions are combined with AND. A column used in `whereEquals` must also be listed in `columns`, otherwise the query is refused. Values are text, numbers, `true`, `false` or `null`.
 - **Which version.** By default each item is its latest version, drafts included. With `publishedOnly: true` it is the published version of each item, and items that have none are left out. To find out whether an item is published, run the query twice, once with `publishedOnly`, and compare the `ContentItemID`s.
 - **Several types.** `contentTypeNames` can list more than one content type; the answer is the union of their items.
 - **Language.** Items come from `languageName`, with Kentico's language fallback.
@@ -1995,6 +1995,62 @@ A command that can't be carried out comes back with HTTP 200 and `success` set t
       "data": null
     }
     ```
+
+???+ failure "A column the content type does not have"
+
+    Parameters:
+
+    ```json
+    {
+      "contentTypeNames": [
+        "DancingGoat.Cafe"
+      ],
+      "columns": [
+        "ContentItemID",
+        "CafeTitle"
+      ]
+    }
+    ```
+
+    Response:
+
+    ```json
+    {
+      "success": false,
+      "message": null,
+      "error": "Column 'CafeTitle' was not found on content type 'DancingGoat.Cafe'.",
+      "data": null
+    }
+    ```
+
+???+ failure "A filter column that is not listed in columns"
+
+    Parameters:
+
+    ```json
+    {
+      "contentTypeNames": [
+        "DancingGoat.Cafe"
+      ],
+      "columns": [
+        "ContentItemID"
+      ],
+      "whereEquals": {
+        "CafeCity": "Seattle"
+      }
+    }
+    ```
+
+    Response:
+
+    ```json
+    {
+      "success": false,
+      "message": null,
+      "error": "The WhereEquals column 'CafeCity' must also be listed in Columns.",
+      "data": null
+    }
+    ```
 <!-- relay:end errors:query-reusable-items -->
 
 ### See also { #query-reusable-items-see-also }
@@ -2024,7 +2080,7 @@ Names are shown the way they appear in the JSON; a C# command uses the same name
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `contentTypeName` | string | Yes | Code name of the content type to search, e.g. `DancingGoat.ArticlePage`. |
-| `filter` | string | Yes | The text to look for. |
+| `filter` | string | Yes | The text to look for, up to 1000 characters. |
 | `languageName` | string | No | Defaults to [`RelayKenticoOptions.DefaultLanguageName`](../../configuration.md#defaultlanguagename) when null. |
 | `websiteChannelName` | string | No | Website channel to search, for web page content types. Defaults to [`RelayKenticoOptions.DefaultWebsiteChannelName`](../../configuration.md#defaultwebsitechannelname) when null. Not used for reusable content types. |
 <!-- relay:end parameters:search-content -->
@@ -2041,7 +2097,7 @@ A successful run returns a [SearchContentResult](../../reference/types.md#search
 
 ### Behavior { #search-content-behavior }
 
-- **What is searched.** Only published items, and only fields of the types `Text`, `LongText` and `RichTextHTML`. The text is matched anywhere in a field; for a rich text field that includes its HTML.
+- **What is searched.** Only published items, and only fields of the types `Text`, `LongText` and `RichTextHTML`. The text is matched anywhere in a field; for a rich text field that includes its HTML. It can be up to 1000 characters.
 - **What comes back.** One entry per item with at least one matching field. `matchedFields` has the whole value of each field that matched, so it can be long for rich text. `location` is the page's tree path for a page, and `null` for a reusable item. `contentItemId` is a content item ID, also for pages.
 - **Pages.** For a page type, `websiteChannelName` says which channel to search (it defaults to [`DefaultWebsiteChannelName`](../../configuration.md#defaultwebsitechannelname)), and the command fails when neither is set. It isn't used for reusable types.
 - **No matches.** That is a success with an empty list. A content type without any searchable text field also succeeds, with a message that says so.

@@ -27,6 +27,18 @@ public class QueryCustomObjectsCommandHandler : IRelayCommandHandler<QueryCustom
             return Task.FromResult(RelayCommandResult.Fail($"Object type '{command.ObjectTypeName}' was not found."));
         }
 
+        // Kentico takes a column as an expression, so each one has to be plainly a name, and one the type has.
+        var problem = QueryInputChecker.CheckQuery([], command.Columns ?? [], command.WhereEquals)
+            ?? ObjectColumnChecker.Check(
+                command.ObjectTypeName,
+                typeInfo.ClassStructureInfo?.ColumnNames ?? [],
+                (command.Columns ?? []).Concat(command.WhereEquals?.Keys ?? Enumerable.Empty<string>()));
+
+        if (problem is not null)
+        {
+            return Task.FromResult(RelayCommandResult.Fail(problem));
+        }
+
         var query = new ObjectQuery(command.ObjectTypeName, false);
 
         if (command.Columns?.Count > 0)

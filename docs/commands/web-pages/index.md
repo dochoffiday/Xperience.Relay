@@ -1425,10 +1425,10 @@ Names are shown the way they appear in the JSON; a C# command uses the same name
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `contentTypeNames` | string[] | Yes | Code names of the content types to include, e.g. `DancingGoat.ArticlePage`. At least one. |
+| `contentTypeNames` | string[] | Yes | Code names of the content types to include, e.g. `DancingGoat.ArticlePage`. At least one, and at most 25. |
 | `languageName` | string | No | Defaults to [`RelayKenticoOptions.DefaultLanguageName`](../../configuration.md#defaultlanguagename) when null. |
-| `columns` | string[] | Yes | Columns to fetch and return. At least one. |
-| `whereEquals` | { name: any } | No | Optional column-equality filters. All conditions are ANDed together. Each column must also be listed in `columns`. |
+| `columns` | string[] | Yes | Columns to fetch and return. At least one, and at most 500. Each is a plain column name (letters, digits and underscores) that exists on every content type listed: one of its fields, or a system column such as `ContentItemID`. |
+| `whereEquals` | { name: any } | No | Optional column-equality filters, at most 50. All conditions are ANDed together. Each column must also be listed in `columns`, and each value is text, a number, `true`, `false` or `null`. |
 | `publishedOnly` | boolean | No | When true, returns the published version of each item, and leaves out items that have none. Defaults to false, which returns each item's latest version, drafts included. |
 | `websiteChannelName` | string | No | Code name of the website channel to query. Defaults to [`RelayKenticoOptions.DefaultWebsiteChannelName`](../../configuration.md#defaultwebsitechannelname) when null; the command fails if neither is set. |
 | `includeUrls` | boolean | No | When true, each item also gets `WebPageRelativeUrl` and `WebPageAbsoluteUrl` (empty strings for pages with no URL path). Defaults to false. |
@@ -1447,8 +1447,8 @@ A successful run returns a [QueryItemsResult](../../reference/types.md#queryitem
 
 ### Behavior { #query-web-page-items-behavior }
 
-- **Columns.** Name the columns you want, at least one: the content type's field names, plus system columns such as `WebPageItemID`, `WebPageItemGUID` and `WebPageUrlPath`. Each item in the answer is an object with just those columns. Reference and tag fields come back as JSON values (arrays of objects), not as strings.
-- **Filtering.** `whereEquals` keeps the pages whose columns equal the values given; the conditions are combined with AND. A column used in `whereEquals` must also be listed in `columns`, otherwise the query fails with "Invalid column name". Values are strings, numbers or booleans.
+- **Columns.** Name the columns you want, at least one: the content type's field names, plus system columns such as `WebPageItemID`, `WebPageItemGUID` and `WebPageUrlPath`. Each item in the answer is an object with just those columns. Reference and tag fields come back as JSON values (arrays of objects), not as strings. A column is a plain name (letters, digits and underscores) that exists on every content type listed, and one that doesn't is refused with a message that names it. `WebPageUrlPath` exists only when `includeUrls` is set.
+- **Filtering.** `whereEquals` keeps the pages whose columns equal the values given; the conditions are combined with AND. A column used in `whereEquals` must also be listed in `columns`, otherwise the query is refused. Values are text, numbers, `true`, `false` or `null`.
 - **Which version.** By default each page is its latest version, drafts included. With `publishedOnly: true` it is the published version of each page, field values included, and pages that have no published version are left out.
 - **Several types.** `contentTypeNames` can list more than one content type; the answer is the union of their pages.
 - **`includeStatus`.** Adds `WebPageStatus`, the status of the page's latest version (`InitialDraft`, `Draft`, `Published` or `Unpublished`), and `WebPageIsPublished`, which says whether a published version exists. That is `true` for `Published` and for `Draft` (a draft is a change on top of a published version) and `false` for `InitialDraft` and `Unpublished`. So a live page with unpublished changes has the status `Draft` and is still published. Both come from the same query, so they cost nothing extra.

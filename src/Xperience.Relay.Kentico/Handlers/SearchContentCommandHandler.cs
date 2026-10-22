@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
 using Xperience.Relay.Core;
+using Xperience.Relay.Kentico.Internal;
 
 namespace Xperience.Relay.Kentico.Handlers;
 
@@ -32,6 +33,17 @@ public class SearchContentCommandHandler(
         if (string.IsNullOrWhiteSpace(command.Filter))
         {
             return RelayCommandResult.Fail("Filter is required.");
+        }
+
+        if (QueryInputChecker.CheckSearchText(command.Filter) is { } tooLong)
+        {
+            return RelayCommandResult.Fail(tooLong);
+        }
+
+        // A name that isn't a code name can't belong to a content type, so there is nothing to look up.
+        if (!QueryInputChecker.IsCodeName(command.ContentTypeName))
+        {
+            return RelayCommandResult.Fail($"Content type '{QueryInputChecker.Printable(command.ContentTypeName)}' was not found.");
         }
 
         var dataClass = DataClassInfoProvider

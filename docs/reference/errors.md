@@ -38,6 +38,14 @@ The messages below are the ones you will meet most, grouped by cause. The text o
 | `One of ContentFolderId, CodeName, or FolderPath must be provided.` | [`get-content-hub-folder`](../commands/content-items/index.md#get-content-hub-folder) needs exactly one. Giving two gives `Only one of ... may be provided.` |
 | `At least one filter (...) is required.` | [`get-tags`](../commands/taxonomies/index.md#get-tags) needs a filter. |
 | `LanguageName is required.` | [`get-content-item-usage`](../commands/content-items/index.md#get-content-item-usage) has no default language. |
+| `Column name '...' isn't valid: use letters, digits and underscores only.` | A name in `columns` or `whereEquals` isn't a plain column name. See [Checks on queries](../concepts/guardrails.md#checks-on-queries). |
+| `Column '...' was not found on content type '...'.` | The content type has no such column. Commands that read a form or an object type name that instead. Web page columns such as `WebPageItemID` exist only on web page content types. |
+| `The WhereEquals column '...' must also be listed in Columns.` | Add the column to `columns` as well. |
+| `The WhereEquals value for '...' must be text, a number, true, false or null.` | A filter value can't be a list or an object. |
+| `'...' is not a content type name; use the code name, such as DancingGoat.ArticlePage.` | Content types are named by code name, not display name. |
+| `WhereClause can't contain '...'.`, `OrderBy can't contain '...'.` | [`get-form-submissions`](../commands/forms-and-contacts/index.md#get-form-submissions) takes comparisons of the form's columns with values, and a list of its columns. Function calls, subqueries and comments are refused. |
+| `... can list at most N ...`, `... can be at most N characters.` | A list or a text is over its limit. |
+| `Top can't be negative.` | `top` of [`get-form-submissions`](../commands/forms-and-contacts/index.md#get-form-submissions) is below zero. |
 
 ### Not found
 

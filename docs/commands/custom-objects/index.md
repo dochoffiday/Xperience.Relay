@@ -467,8 +467,8 @@ Names are shown the way they appear in the JSON; a C# command uses the same name
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `objectTypeName` | string | Yes | Registered object type name, e.g. `custom.redirect`. |
-| `columns` | string[] | No | Columns to return. All of the object's columns when omitted or empty. |
-| `whereEquals` | { name: any } | No | Optional column-equality filters. All conditions are ANDed together. |
+| `columns` | string[] | No | Columns to return, each a plain column name (letters, digits and underscores) of the object type. All of the object's columns when omitted or empty. |
+| `whereEquals` | { name: any } | No | Optional column-equality filters. All conditions are ANDed together. Each column is a column of the object type, and each value is text, a number, `true`, `false` or `null`. |
 <!-- relay:end parameters:query-custom-objects -->
 
 <!-- relay:begin result:query-custom-objects -->
@@ -487,7 +487,7 @@ A successful run returns a [QueryCustomObjectsResult](../../reference/types.md#q
 - **Object type names.** `objectTypeName` is the registered name of the type, such as `custom.redirect` for a custom module class, or `cms.country` for a built-in type. The examples on this page use `cms.country`, which exists on every site. A name Kentico doesn't know fails with "Object type '...' was not found."
 - **Protected.** The type that holds Relay's own API keys can't be reached through these commands: it fails with "Object type '...' is protected."
 
-- **Columns.** `columns` names the columns to return; leave it out for all of them. `whereEquals` keeps the objects whose columns equal the values given, combined with AND.
+- **Columns.** `columns` names the columns to return; leave it out for all of them. `whereEquals` keeps the objects whose columns equal the values given, combined with AND. A column is a plain name (letters, digits and underscores) and has to be a column of the object type; one that isn't is refused with a message that names it.
 - **Text values.** Every value comes back as text, formatted the way the server formats it, so a date reads like `10/18/2024 5:06:33 AM`. A SQL NULL is `null`.
 - **No paging.** The answer holds every matching object.
 

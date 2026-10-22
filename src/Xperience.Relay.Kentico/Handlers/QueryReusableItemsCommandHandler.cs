@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
 using Xperience.Relay.Core;
+using Xperience.Relay.Kentico.Internal;
 
 namespace Xperience.Relay.Kentico.Handlers;
 
@@ -22,6 +23,13 @@ public class QueryReusableItemsCommandHandler(
         if (command.Columns is not { Count: > 0 })
         {
             return RelayCommandResult.Fail("Columns must list at least one column.");
+        }
+
+        var problem = ContentQueryChecker.Check(command, webPages: false, includeUrls: false);
+
+        if (problem is not null)
+        {
+            return RelayCommandResult.Fail(problem);
         }
 
         var languageName = command.LanguageName ?? _options.DefaultLanguageName;

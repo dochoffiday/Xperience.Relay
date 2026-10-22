@@ -44,6 +44,15 @@ Creating and updating pages and items checks the fields against the content type
 
 Values for reference, asset and tag fields sent through plain `fields` are not checked.
 
+## Checks on queries
+
+The commands that look things up take names and conditions from the caller, and Kentico runs them as they are written. Relay checks them first. A request that fails a check fails as a whole and says why; nothing is cleaned up or guessed.
+
+- **Columns.** In [`query-web-page-items`](../commands/web-pages/index.md#query-web-page-items), [`query-reusable-items`](../commands/content-items/index.md#query-reusable-items) and [`query-custom-objects`](../commands/custom-objects/index.md#query-custom-objects) a column is a plain name (letters, digits and underscores), and it has to be a column the content type or object type has. The names in `whereEquals` are checked the same way, each one must also be listed in `columns`, and a value is text, a number, `true`, `false` or `null`.
+- **Content types** are named by their code name, such as `DancingGoat.ArticlePage`, and have to exist.
+- **Conditions.** [`get-form-submissions`](../commands/forms-and-contacts/index.md#get-form-submissions) takes a `whereClause` and an `orderBy`. A condition compares the form's columns with values (`=`, `<>`, `!=`, `<`, `>`, `<=`, `>=`, `LIKE`, `IN`, `BETWEEN`, `IS NULL`) and combines the comparisons with `AND`, `OR`, `NOT` and parentheses. An ordering lists the form's columns, each followed by `ASC` or `DESC` if you like. Function calls, subqueries, comments and a second statement are refused; for those, use [`query-sql`](../commands/sql/index.md#query-sql) with an Admin key. What is sent to Kentico is SQL generated from what was checked, not the text of the request.
+- **Sizes.** A query takes at most 25 content types, 500 columns and 50 `whereEquals` entries. The text of [`search-content`](../commands/content-items/index.md#search-content) can be 1000 characters, a condition 2000 and an ordering 500.
+
 ## Checks on other commands
 
 Some commands check what Kentico would not:

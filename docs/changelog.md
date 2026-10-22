@@ -2,6 +2,16 @@
 
 Versions are tagged in the repository as `v<major>.<minor>.<patch>`, and a tag publishes the five NuGet packages at that version. This page lists the changes that matter to callers; for anything older than 0.4.0 see the tags and commit history on GitHub.
 
+## Unreleased
+
+**Upgrading from 0.6.0:** the query commands are stricter about what they accept. Check callers of `get-form-submissions` that pass a `whereClause` or `orderBy` with anything but comparisons of the form's columns, and callers of the other query commands that pass a column that isn't a plain name of a column the type has.
+
+### Changed
+
+- The query commands check what they are given before they run it: [`query-web-page-items`](commands/web-pages/index.md#query-web-page-items), [`query-reusable-items`](commands/content-items/index.md#query-reusable-items) and [`query-custom-objects`](commands/custom-objects/index.md#query-custom-objects) accept only plain column names that the content type or object type has, and a column that doesn't exist is answered with "Column 'X' was not found on content type 'Y'." instead of an error from the database. Each `whereEquals` column has to be listed in `columns` too (the docs always said so), and a `whereEquals` value has to be text, a number, `true`, `false` or `null`: a list or an object was read as `null`.
+- [`get-form-submissions`](commands/forms-and-contacts/index.md#get-form-submissions) takes a narrower `whereClause` and `orderBy`: a condition compares the form's columns with values and combines the comparisons, and an ordering lists the form's columns. Function calls, subqueries and comments are refused; `query-sql` still does anything else, with an Admin key. A negative `top` is refused.
+- Content types, lists and texts of the query commands have limits: 25 content types, 500 columns and 50 `whereEquals` entries per query, and 1000 characters of search text for `search-content`. See [Checks on queries](concepts/guardrails.md#checks-on-queries).
+
 ## 0.6.0 (2026-10-20)
 
 **Upgrading from 0.5.0:** a few commands now fail where they used to report success (deleting or moving something that doesn't exist), and `get-content` now returns the latest version of an item, not the published one. Check any caller that relied on either.

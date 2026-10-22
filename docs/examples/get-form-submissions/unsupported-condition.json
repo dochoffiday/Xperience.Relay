@@ -1,0 +1,19 @@
+{
+  "title": "A condition with a function call",
+  "kind": "error",
+  "order": 2040,
+  "status": 200,
+  "request": {
+    "verb": "get-form-submissions",
+    "parameters": {
+      "formClassName": "BizForm.DancingGoatContactUs",
+      "whereClause": "FormInserted > DATEADD(day, -7, GETDATE())"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "WhereClause can't contain 'DATEADD(day, -7, GETDATE())'. A condition can compare columns with values (=, <>, !=, <, >, <=, >=, LIKE, IN, BETWEEN, IS NULL) and combine them with AND, OR, NOT and parentheses.",
+    "data": null
+  }
+}

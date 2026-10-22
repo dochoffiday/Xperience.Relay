@@ -43,6 +43,10 @@ Kentico drops a field it doesn't know about without saying so, stores linked ite
 
 The query commands ask Kentico for the preview version by default, so drafts show up the way they do for editors, and `publishedOnly` asks for the live version instead. `includeStatus` takes the version status from the same query, so telling which pages are published costs nothing extra.
 
+## Why queries check what they are given
+
+Kentico takes a column as an expression rather than as a name, and takes a condition as SQL text. So the query commands don't pass on a column or a condition until they have checked it: a column has to be a plain name that the content type, object type or form has (`QueryInputChecker`, `ContentQueryChecker`), and `get-form-submissions` reads its condition with the T-SQL parser, accepts only comparisons of the form's columns with values, and sends Kentico SQL generated from what it accepted (`FormFilterChecker`). The checks refuse and don't clean up, because a request that comes out of a filter different from what went in would answer a question nobody asked. See [Checks on queries](concepts/guardrails.md#checks-on-queries).
+
 ## Why API keys are an unsalted SHA-256 hash
 
 Keys are 256 bits of randomness, so there is nothing to brute-force and no reason for a salt or a slow password hash. A request hashes the presented key and looks it up in an in-memory copy of the key table, which Kentico's cache invalidation refreshes when a key is added or deleted. Revocation is immediate, and requests never touch the database. "Last used" is written straight to the table, at most every five minutes per key, rather than through the info object, because updating the object would invalidate that cache on every request.

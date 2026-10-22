@@ -1,0 +1,26 @@
+{
+  "title": "A filter column that is not listed in columns",
+  "kind": "error",
+  "order": 1025,
+  "status": 200,
+  "request": {
+    "verb": "query-reusable-items",
+    "parameters": {
+      "contentTypeNames": [
+        "DancingGoat.Cafe"
+      ],
+      "columns": [
+        "ContentItemID"
+      ],
+      "whereEquals": {
+        "CafeCity": "Seattle"
+      }
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "The WhereEquals column 'CafeCity' must also be listed in Columns.",
+    "data": null
+  }
+}

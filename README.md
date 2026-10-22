@@ -76,7 +76,7 @@ curl -X POST "https://your-site.example/api/relay/commands" \
 | [Assets](https://dochoffiday.github.io/Xperience.Relay/commands/assets/) | rename, re-optimize |
 | [Taxonomies and tags](https://dochoffiday.github.io/Xperience.Relay/commands/taxonomies/) | create, update, move, delete, get |
 | [Custom objects](https://dochoffiday.github.io/Xperience.Relay/commands/custom-objects/) | create, update, delete, query (Admin) |
-| [Forms and contacts](https://dochoffiday.github.io/Xperience.Relay/commands/forms-and-contacts/) | get form submissions, delete contacts (Admin) |
+| [Forms and contacts](https://dochoffiday.github.io/Xperience.Relay/commands/forms-and-contacts/) | get form submissions (Read), delete contacts (Admin) |
 | [SQL](https://dochoffiday.github.io/Xperience.Relay/commands/sql/) | guarded raw SQL (Admin) |
 
 Every key has a tier, **Read**, **Write** or **Admin**, and each command needs a minimum tier. See [Access tiers and API keys](https://dochoffiday.github.io/Xperience.Relay/concepts/access-tiers/).

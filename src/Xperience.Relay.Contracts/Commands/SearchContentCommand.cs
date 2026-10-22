@@ -11,7 +11,7 @@ public class SearchContentCommand : IRelayCommand
     /// <summary>Code name of the content type to search, e.g. <c>DancingGoat.ArticlePage</c>. Required.</summary>
     public string ContentTypeName { get; set; } = string.Empty;
 
-    /// <summary>The text to look for. Required.</summary>
+    /// <summary>The text to look for, up to 1000 characters. Required.</summary>
     public string Filter { get; set; } = string.Empty;
 
     /// <summary>Defaults to <c>RelayKenticoOptions.DefaultLanguageName</c> when null.</summary>

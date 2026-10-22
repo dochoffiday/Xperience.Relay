@@ -1,16 +1,22 @@
 namespace Xperience.Relay.Kentico.Internal;
 
 /// <summary>
-/// Checks the columns a custom object command sets against the columns of the object type. Kentico accepts a column the
-/// type doesn't have and drops it without saying so, so a misspelled column would look like it was saved.
+/// Checks the columns a command names against the columns of the type they belong to: an object type, a content type or a
+/// form. Kentico accepts a column the type doesn't have and drops it without saying so, so a misspelled column would look
+/// like it was saved. In a query it would only fail later, with an error from the database.
 /// </summary>
 internal static class ObjectColumnChecker
 {
-    /// <param name="objectTypeName">Used in the message.</param>
-    /// <param name="knownColumns">The columns of the object type. A type that doesn't list its columns isn't checked.</param>
-    /// <param name="columns">The columns the command sets.</param>
+    /// <param name="typeName">Used in the message.</param>
+    /// <param name="knownColumns">The columns of the type. A type that doesn't list its columns isn't checked.</param>
+    /// <param name="columns">The columns the command names.</param>
+    /// <param name="kind">What the type is, used in the message.</param>
     /// <returns>Null when every column exists, otherwise a message naming those that don't.</returns>
-    public static string? Check(string objectTypeName, IReadOnlyCollection<string> knownColumns, IEnumerable<string> columns)
+    public static string? Check(
+        string typeName,
+        IReadOnlyCollection<string> knownColumns,
+        IEnumerable<string> columns,
+        string kind = "object type")
     {
         if (knownColumns.Count == 0)
         {
@@ -26,8 +32,8 @@ internal static class ObjectColumnChecker
         return unknown.Count switch
         {
             0 => null,
-            1 => $"Column {unknown[0]} was not found on object type '{objectTypeName}'.",
-            _ => $"Columns {string.Join(", ", unknown)} were not found on object type '{objectTypeName}'.",
+            1 => $"Column {unknown[0]} was not found on {kind} '{typeName}'.",
+            _ => $"Columns {string.Join(", ", unknown)} were not found on {kind} '{typeName}'.",
         };
     }
 }

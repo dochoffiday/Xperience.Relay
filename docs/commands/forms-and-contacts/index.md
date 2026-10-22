@@ -33,9 +33,9 @@ Names are shown the way they appear in the JSON; a C# command uses the same name
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `formClassName` | string | Yes | Class name of the form, as shown in the admin under the form's properties, e.g. `BizForm.DancingGoatContactUs`. |
-| `top` | integer | No | Maximum number of submissions to return. All of them when omitted. |
-| `whereClause` | string | No | A SQL WHERE expression, without the `WHERE` keyword, over the form's table columns. Passed to Kentico as given. |
-| `orderBy` | string | No | A SQL ORDER BY expression, without the keywords. Defaults to `FormInserted DESC`. |
+| `top` | integer | No | Maximum number of submissions to return. All of them when omitted. Can't be negative. |
+| `whereClause` | string | No | A condition over the form's table columns, without the `WHERE` keyword: comparisons of columns with values (`=`, `LIKE`, `IN`, `BETWEEN`, `IS NULL` and the like) combined with `AND`, `OR`, `NOT` and parentheses, at most 2000 characters. Function calls, subqueries and comments are refused. |
+| `orderBy` | string | No | The form's table columns to sort by, separated by commas, each optionally followed by `ASC` or `DESC`, without the `ORDER BY` keywords. Defaults to `FormInserted DESC`. |
 <!-- relay:end parameters:get-form-submissions -->
 
 <!-- relay:begin result:get-form-submissions -->
@@ -55,7 +55,7 @@ A successful run returns a [GetFormSubmissionsResult](../../reference/types.md#g
 - **The form.** `formClassName` is the form's class name, shown in the admin under the form's properties; the examples use `BizForm.DancingGoatContactUs`. A name that isn't a form fails with "Form '...' was not found."
 - **Columns and rows.** `columns` are the columns of the form's table (its fields, the submission's ID, `FormInserted` and `FormUpdated`), taken from the first row, so they are empty when there are no submissions. Every value is text, formatted the way the server formats it (a date reads like `10/19/2026 2:05:00 PM`), and `null` for a SQL NULL.
 - **Order and size.** Submissions come newest first (`FormInserted DESC`) unless `orderBy` says otherwise. `top` limits how many come back; without it all submissions do.
-- **`whereClause` and `orderBy`.** These are SQL fragments over the form's table columns, written without the `WHERE` and `ORDER BY` keywords, for example `UserEmail LIKE 'grace@%'`.
+- **`whereClause` and `orderBy`.** Both are written without the `WHERE` and `ORDER BY` keywords, over the columns of the form's table. A condition compares columns with values (`=`, `<>`, `!=`, `<`, `>`, `<=`, `>=`, `LIKE`, `IN`, `BETWEEN`, `IS NULL`) and combines the comparisons with `AND`, `OR`, `NOT` and parentheses, for example `UserEmail LIKE 'grace@%'`. An ordering lists columns, each followed by `ASC` or `DESC` if you like. Function calls, subqueries and comments are refused, so a date filter takes the date written out (`FormInserted > '2026-10-01'`); [`query-sql`](../sql/index.md#query-sql) does what these can't. See [Checks on queries](../../concepts/guardrails.md#checks-on-queries).
 
 <!-- relay:begin examples:get-form-submissions -->
 ### Examples { #get-form-submissions-examples }
@@ -220,6 +220,28 @@ A command that can't be carried out comes back with HTTP 200 and `success` set t
       "success": false,
       "message": null,
       "error": "Form 'BizForm.NoSuchForm' was not found. Use the form's class name, shown in the admin under the form's properties (for example BizForm.ContactUs).",
+      "data": null
+    }
+    ```
+
+???+ failure "A condition with a function call"
+
+    Parameters:
+
+    ```json
+    {
+      "formClassName": "BizForm.DancingGoatContactUs",
+      "whereClause": "FormInserted > DATEADD(day, -7, GETDATE())"
+    }
+    ```
+
+    Response:
+
+    ```json
+    {
+      "success": false,
+      "message": null,
+      "error": "WhereClause can't contain 'DATEADD(day, -7, GETDATE())'. A condition can compare columns with values (=, <>, !=, <, >, <=, >=, LIKE, IN, BETWEEN, IS NULL) and combine them with AND, OR, NOT and parentheses.",
       "data": null
     }
     ```

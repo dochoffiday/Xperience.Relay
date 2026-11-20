@@ -67,11 +67,11 @@ curl -X POST "https://your-site.example/api/relay/commands" \
 
 ## Commands
 
-41 commands in 7 areas. Each area has a page in the documentation with a section for every one of its commands:
+42 commands in 7 areas. Each area has a page in the documentation with a section for every one of its commands:
 
 | Area | Commands |
 |---|---|
-| [Web pages](https://dochoffiday.github.io/Xperience.Relay/commands/web-pages/) | create, update, move, publish, unpublish, delete, update the slug, get, query |
+| [Web pages](https://dochoffiday.github.io/Xperience.Relay/commands/web-pages/) | create, update, move, publish, unpublish, delete, update the slug, get, get page templates, query |
 | [Content items](https://dochoffiday.github.io/Xperience.Relay/commands/content-items/) | create, update, move, publish, unpublish, delete, get, query, search, usage, content hub folders |
 | [Assets](https://dochoffiday.github.io/Xperience.Relay/commands/assets/) | rename, re-optimize |
 | [Taxonomies and tags](https://dochoffiday.github.io/Xperience.Relay/commands/taxonomies/) | create, update, move, delete, get |

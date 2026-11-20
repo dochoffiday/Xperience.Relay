@@ -1,0 +1,34 @@
+{
+  "title": "Widgets that aren't in the shape Kentico stores",
+  "kind": "error",
+  "order": 18,
+  "status": 200,
+  "request": {
+    "verb": "update-web-page",
+    "parameters": {
+      "webPageId": 68,
+      "pageBuilder": {
+        "widgets": {
+          "editableAreas": [
+            {
+              "identifier": "areaMain",
+              "sections": [
+                {
+                  "identifier": "first",
+                  "type": "DancingGoat.SingleColumnSection",
+                  "zones": []
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Widgets.editableAreas[0].sections[0]: 'identifier' must be a GUID.",
+    "data": null
+  }
+}

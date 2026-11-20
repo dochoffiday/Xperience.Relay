@@ -1,0 +1,25 @@
+{
+  "title": "A template the page can't use",
+  "kind": "error",
+  "order": 17,
+  "status": 200,
+  "request": {
+    "verb": "update-web-page",
+    "parameters": {
+      "webPageId": 9,
+      "pageBuilder": {
+        "template": {
+          "identifier": "DancingGoat.LandingPageSingleColumn",
+          "properties": null,
+          "fieldIdentifiers": null
+        }
+      }
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Page template 'DancingGoat.LandingPageSingleColumn' isn't available for content type 'DancingGoat.ArticlePage'. \"get-page-templates\" lists the ones that are.",
+    "data": null
+  }
+}

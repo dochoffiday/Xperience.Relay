@@ -6,7 +6,8 @@ namespace Xperience.Relay.Contracts.Commands;
 /// Creates a new web page under a parent web page. The page is created in
 /// the <c>InitialDraft</c> status by default; set <see cref="PublishAfterCreate"/> to
 /// true to immediately publish after creation. Every field is checked against the content type before anything is
-/// created. Returns a <see cref="CreateWebPageResult"/> in <see cref="RelayCommandResult.Data"/>.
+/// created. A page that uses Page Builder can be created with its widgets and template in <see cref="PageBuilder"/>.
+/// Returns a <see cref="CreateWebPageResult"/> in <see cref="RelayCommandResult.Data"/>.
 /// </summary>
 [RelayCommand("create-web-page", Access = RelayAccess.Write)]
 public class CreateWebPageCommand : IRelayCommand
@@ -49,4 +50,10 @@ public class CreateWebPageCommand : IRelayCommand
 
     /// <summary>Optional binary assets to upload into asset fields. Each entry maps to one field.</summary>
     public List<RelayAsset>? Assets { get; set; }
+
+    /// <summary>
+    /// Optional Page Builder data for the new page: its widgets, its page template, or both. The widgets are checked for
+    /// structure and the template has to be one the page can use (see "get-page-templates").
+    /// </summary>
+    public PageBuilderData? PageBuilder { get; set; }
 }

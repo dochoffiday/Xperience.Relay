@@ -1,0 +1,71 @@
+{
+  "title": "Read a page's widgets and template",
+  "note": "`includePageBuilder` adds the widgets and the template. The widgets come back as the JSON Kentico stores.",
+  "order": 19,
+  "status": 200,
+  "request": {
+    "verb": "get-page",
+    "parameters": {
+      "webPageId": 68,
+      "includePageBuilder": true
+    }
+  },
+  "response": {
+    "success": true,
+    "message": null,
+    "error": null,
+    "data": {
+      "fields": {},
+      "pageBuilder": {
+        "widgets": {
+          "editableAreas": [
+            {
+              "identifier": "areaMain",
+              "sections": [
+                {
+                  "identifier": "5f4e6a0e-1b6c-4d6e-9a54-0e7a3d6b2c11",
+                  "type": "DancingGoat.SingleColumnSection",
+                  "properties": {
+                    "theme": null
+                  },
+                  "zones": [
+                    {
+                      "identifier": "8d1d9c7a-0f56-43c4-8d0e-6a1c1b5f9a22",
+                      "widgets": [
+                        {
+                          "identifier": "c1f3b6d2-71a5-4ad5-b0b4-3f1d2d4e5a33",
+                          "type": "Kentico.Widget.RichText",
+                          "variants": [
+                            {
+                              "identifier": "e2a4c7f3-82b6-4be6-81c5-4a2e3e5f6b44",
+                              "properties": {
+                                "content": "<p>Join us on Friday for a tasting of three new roasts.</p>"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "template": {
+          "identifier": "DancingGoat.LandingPageSingleColumn",
+          "properties": null,
+          "fieldIdentifiers": null
+        }
+      },
+      "webPageId": 68,
+      "webPageGuid": "c6df5be8-3870-4b38-a5c0-140be1622543",
+      "name": "CoffeeTastingNight-mks6u4l8",
+      "contentType": "DancingGoat.LandingPage",
+      "treePath": "/Landing_pages/Coffee_tasting_night",
+      "parentWebPageId": 4,
+      "languageName": "en",
+      "channelName": "DancingGoatPages"
+    }
+  }
+}

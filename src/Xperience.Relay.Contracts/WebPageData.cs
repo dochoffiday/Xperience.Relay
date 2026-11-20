@@ -12,4 +12,10 @@ public class WebPageData : WebPageInfo
     /// fields that come from reusable field schemas are not included.
     /// </summary>
     public Dictionary<string, object?> Fields { get; set; } = new();
+
+    /// <summary>
+    /// The page's widgets and page template in its latest version. Only set when <c>includePageBuilder</c> was asked
+    /// for, and null for a page that has no Page Builder data.
+    /// </summary>
+    public PageBuilderData? PageBuilder { get; set; }
 }

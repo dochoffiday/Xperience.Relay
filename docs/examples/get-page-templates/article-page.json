@@ -1,0 +1,40 @@
+{
+  "title": "The templates of an article page",
+  "note": "The sample site registers two templates for article pages. `currentTemplate` is the one this page uses now.",
+  "order": 1,
+  "status": 200,
+  "request": {
+    "verb": "get-page-templates",
+    "parameters": {
+      "webPageId": 9
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Found 2 page template(s) for content type 'DancingGoat.ArticlePage'.",
+    "error": null,
+    "data": {
+      "templates": [
+        {
+          "identifier": "DancingGoat.Article",
+          "name": "Article detail",
+          "description": "Displays an article detail with related articles underneath.",
+          "iconClass": "xp-l-text",
+          "contentTypeNames": [
+            "DancingGoat.ArticlePage"
+          ]
+        },
+        {
+          "identifier": "DancingGoat.ArticleWithSidebar",
+          "name": "Article detail with sidebar",
+          "description": "Displays an article detail with sidebar.",
+          "iconClass": "xp-l-text-col",
+          "contentTypeNames": [
+            "DancingGoat.ArticlePage"
+          ]
+        }
+      ],
+      "currentTemplate": "DancingGoat.Article"
+    }
+  }
+}

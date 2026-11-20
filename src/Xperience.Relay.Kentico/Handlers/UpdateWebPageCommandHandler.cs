@@ -20,6 +20,7 @@ public class UpdateWebPageCommandHandler(
     IInfoProvider<WebPageItemInfo> webPageItemInfoProvider,
     ContentVersionReader versionReader,
     ContentFieldChecker fieldChecker,
+    PageBuilderPreparer pageBuilderPreparer,
     FailedWriteCacheCleaner cacheCleaner,
     ServiceAccountResolver serviceAccountResolver,
     IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<UpdateWebPageCommand>
@@ -31,7 +32,8 @@ public class UpdateWebPageCommandHandler(
         if ((command.Fields == null || command.Fields.Count == 0)
             && (command.LinkedItemFields == null || command.LinkedItemFields.Count == 0)
             && (command.TagFields == null || command.TagFields.Count == 0)
-            && (command.Assets == null || command.Assets.Count == 0))
+            && (command.Assets == null || command.Assets.Count == 0)
+            && command.PageBuilder == null)
         {
             return RelayCommandResult.Fail("No fields provided — nothing to update.");
         }
@@ -63,6 +65,18 @@ public class UpdateWebPageCommandHandler(
         if (problem is not null)
         {
             return RelayCommandResult.Fail(problem);
+        }
+
+        PageBuilderPlan? pageBuilder = null;
+
+        if (command.PageBuilder is not null)
+        {
+            pageBuilder = pageBuilderPreparer.ForExistingPage(command.PageBuilder, command.WebPageId, languageName);
+
+            if (pageBuilder.Error is not null)
+            {
+                return RelayCommandResult.Fail(pageBuilder.Error);
+            }
         }
 
         var fieldData = new Dictionary<string, object?>();
@@ -126,6 +140,12 @@ public class UpdateWebPageCommandHandler(
             }
 
             var itemData = new ContentItemData(fieldData);
+            var draftData = new UpdateDraftData(itemData);
+
+            if (pageBuilder is not null)
+            {
+                draftData.SetPageBuilderData(pageBuilder.Widgets, pageBuilder.Template);
+            }
 
             return await DraftEditFlow.EditAsync(
                 subject,
@@ -133,12 +153,12 @@ public class UpdateWebPageCommandHandler(
                 new DraftOperations(
                     CreateDraft: () => webPageManager.TryCreateDraft(command.WebPageId, languageName, cancellationToken),
                     SaveDraft: async () => DraftEditFlow.SavedOrError(
-                        await webPageManager.TryUpdateDraft(command.WebPageId, languageName, new UpdateDraftData(itemData), cancellationToken),
+                        await webPageManager.TryUpdateDraft(command.WebPageId, languageName, draftData, cancellationToken),
                         subject),
                     Publish: () => webPageManager.TryPublish(command.WebPageId, languageName, cancellationToken),
                     DiscardDraft: () => webPageManager.TryDiscardDraft(command.WebPageId, languageName, cancellationToken),
                     ForgetCachedCopies: () => cacheCleaner.Forget(webPageItem.WebPageItemContentItemID, languageName)),
-                $"Updated {fieldData.Count} field(s) on web page {command.WebPageId}.");
+                SuccessMessage(fieldData.Count, pageBuilder is not null, command.WebPageId));
         }
         finally
         {
@@ -149,4 +169,10 @@ public class UpdateWebPageCommandHandler(
         }
     }
 
+    private static string SuccessMessage(int fieldCount, bool pageBuilder, int webPageId) => (fieldCount, pageBuilder) switch
+    {
+        (_, false) => $"Updated {fieldCount} field(s) on web page {webPageId}.",
+        (0, true) => $"Updated the Page Builder data of web page {webPageId}.",
+        _ => $"Updated {fieldCount} field(s) and the Page Builder data of web page {webPageId}.",
+    };
 }

@@ -98,6 +98,7 @@ nav:
   - Guides:
     - Call Relay from .NET: guides/dotnet-client.md
     - Create, edit and publish a page: guides/page-lifecycle.md
+    - Work with Page Builder data: guides/page-builder.md
     - Query content: guides/querying.md
     - Upload files: guides/uploading-assets.md
     - Run several commands at once: guides/batches.md
@@ -115,6 +116,7 @@ nav:
       - delete-web-page: "commands/web-pages/#delete-web-page"
       - get-page-info: "commands/web-pages/#get-page-info"
       - get-page: "commands/web-pages/#get-page"
+      - get-page-templates: "commands/web-pages/#get-page-templates"
       - query-web-page-items: "commands/web-pages/#query-web-page-items"
     - Content items:
       - commands/content-items/index.md

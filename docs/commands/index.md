@@ -1,6 +1,6 @@
 # Commands
 
-Relay has 41 commands in 7 areas. Each area has one page with a section for every command: its parameters, result, behavior, examples and errors. A command is identified by its **verb**, takes its parameters as JSON, and answers with a [result](../reference/types.md#relaycommandresult). The **Access** column is the lowest [API key tier](../concepts/access-tiers.md) that may run it.
+Relay has 42 commands in 7 areas. Each area has one page with a section for every command: its parameters, result, behavior, examples and errors. A command is identified by its **verb**, takes its parameters as JSON, and answers with a [result](../reference/types.md#relaycommandresult). The **Access** column is the lowest [API key tier](../concepts/access-tiers.md) that may run it.
 
 ## [Web pages](web-pages/index.md)
 
@@ -14,7 +14,8 @@ Relay has 41 commands in 7 areas. Each area has one page with a section for ever
 | [`unpublish-web-page`](web-pages/index.md#unpublish-web-page) | Write | Unpublishes a web page language variant. |
 | [`delete-web-page`](web-pages/index.md#delete-web-page) | Write | Deletes a language variant of a web page. |
 | [`get-page-info`](web-pages/index.md#get-page-info) | Read | Fetches a web page's system fields (content type, tree path, parent ID, ...) without its content-type-specific field data. |
-| [`get-page`](web-pages/index.md#get-page) | Read | Fetches a web page's system fields plus the field values of its latest version (drafts included). |
+| [`get-page`](web-pages/index.md#get-page) | Read | Fetches a web page's system fields plus the field values of its latest version (drafts included), and optionally its Page Builder data. |
+| [`get-page-templates`](web-pages/index.md#get-page-templates) | Read | Lists the page templates that a page can use, which are the identifiers that go in the `template` of [`PageBuilderData`](../reference/types.md#pagebuilderdata). |
 | [`query-web-page-items`](web-pages/index.md#query-web-page-items) | Read | Queries web pages of one or more content types, returning only the requested columns. |
 
 ## [Content items](content-items/index.md)

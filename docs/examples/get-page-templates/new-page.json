@@ -1,0 +1,32 @@
+{
+  "title": "The templates of a page that isn't created yet",
+  "note": "Without a page, the content type and the parent it will go under say what the templates are for.",
+  "order": 2,
+  "status": 200,
+  "request": {
+    "verb": "get-page-templates",
+    "parameters": {
+      "contentTypeName": "DancingGoat.LandingPage",
+      "parentWebPageItemId": 4
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Found 1 page template(s) for content type 'DancingGoat.LandingPage'.",
+    "error": null,
+    "data": {
+      "templates": [
+        {
+          "identifier": "DancingGoat.LandingPageSingleColumn",
+          "name": "Single column landing page",
+          "description": "A default single column page template with two sections differentiated by a background color.",
+          "iconClass": "xp-l-header-text",
+          "contentTypeNames": [
+            "DancingGoat.LandingPage"
+          ]
+        }
+      ],
+      "currentTemplate": null
+    }
+  }
+}

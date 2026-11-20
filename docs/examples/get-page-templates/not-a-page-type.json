@@ -1,0 +1,18 @@
+{
+  "title": "A content type that isn't a page type",
+  "kind": "error",
+  "order": 4,
+  "status": 200,
+  "request": {
+    "verb": "get-page-templates",
+    "parameters": {
+      "contentTypeName": "DancingGoat.Cafe"
+    }
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Content type 'DancingGoat.Cafe' was not found, or isn't a web page content type.",
+    "data": null
+  }
+}

@@ -182,3 +182,4 @@ The steps depend on each other (each needs the ID the first one returns), so the
 - [Drafts and publishing](../concepts/drafts-and-publishing.md), for the rules behind every step
 - [Query content](querying.md), for finding the pages you want to act on
 - [Upload files](uploading-assets.md), for pages and items with images and documents
+- [Work with Page Builder data](page-builder.md), for the widgets and template of a page

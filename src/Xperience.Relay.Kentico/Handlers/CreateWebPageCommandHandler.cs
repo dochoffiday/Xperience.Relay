@@ -21,6 +21,7 @@ public class CreateWebPageCommandHandler(
     IInfoProvider<ChannelInfo> channelInfoProvider,
     IInfoProvider<WebsiteChannelInfo> websiteChannelInfoProvider,
     ContentFieldChecker fieldChecker,
+    PageBuilderPreparer pageBuilderPreparer,
     ServiceAccountResolver serviceAccountResolver,
     IOptions<RelayKenticoOptions> options) : IRelayCommandHandler<CreateWebPageCommand>
 {
@@ -72,6 +73,18 @@ public class CreateWebPageCommandHandler(
         if (problem is not null)
         {
             return RelayCommandResult.Fail(problem);
+        }
+
+        PageBuilderPlan? pageBuilder = null;
+
+        if (command.PageBuilder is not null)
+        {
+            pageBuilder = pageBuilderPreparer.ForNewPage(command.PageBuilder, command.ContentTypeName, command.ParentWebPageItemId, languageName);
+
+            if (pageBuilder.Error is not null)
+            {
+                return RelayCommandResult.Fail(pageBuilder.Error);
+            }
         }
 
         var fieldData = new Dictionary<string, object?>();
@@ -144,6 +157,11 @@ public class CreateWebPageCommandHandler(
                 VersionStatus = VersionStatus.InitialDraft,
                 UrlSlug = command.UrlSlug,
             };
+
+            if (pageBuilder is not null)
+            {
+                createParams.SetPageBuilderConfiguration(pageBuilder.Widgets, pageBuilder.Template);
+            }
 
             var webPageItemId = await webPageManager.Create(createParams, cancellationToken);
 

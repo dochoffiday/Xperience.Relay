@@ -209,6 +209,15 @@ Returned in `data` after a successful [`get-form-submissions`](../commands/forms
 | `columns` | string[] | Column names, taken from the first submission, so they are empty when there are no submissions. |
 | `rows` | string[][] | One list of values per submission, in `columns` order. Every value is text; null for SQL NULL. |
 
+### GetPageTemplatesResult
+
+Returned in `data` after a successful [`get-page-templates`](../commands/web-pages/index.md#get-page-templates) command.
+
+| Field | Type | Description |
+|---|---|---|
+| `templates` | [PageTemplateResult](types.md#pagetemplateresult)[] | The templates the page can use, by name. |
+| `currentTemplate` | string | Identifier of the template the page uses now, when an existing page was asked about and it has one. It is listed among `templates` unless the site no longer offers it. |
+
 ### GetTagsResult
 
 Returned in `data` after a successful [`get-tags`](../commands/taxonomies/index.md#get-tags) command.
@@ -224,6 +233,27 @@ Returned in `data` after a successful [`get-taxonomies`](../commands/taxonomies/
 | Field | Type | Description |
 |---|---|---|
 | `taxonomies` | [TaxonomyResult](types.md#taxonomyresult)[] | All taxonomies. |
+
+### PageBuilderData
+
+The Page Builder data of a web page: the widgets on it and the page template it uses, as the JSON Kentico stores them. Used in [`create-web-page`](../commands/web-pages/index.md#create-web-page) and [`update-web-page`](../commands/web-pages/index.md#update-web-page) to set the data, and in [`get-page`](../commands/web-pages/index.md#get-page) to read it.
+
+| Field | Type | Description |
+|---|---|---|
+| `widgets` | any | The widgets of the page, as Kentico stores them: an object with an `editableAreas` list. Each area holds sections, each section holds widget zones, and each zone holds widgets with their variants and properties. Read a page with `includePageBuilder` in [`get-page`](../commands/web-pages/index.md#get-page) to see one. Left out, the widgets stay as they are; what is sent replaces all of them. |
+| `template` | any | The page template and its properties, as Kentico stores them: an object with the template's `identifier`, its `properties` and its `fieldIdentifiers`, the last two `null` when there is nothing to set. Only the identifier is required. [`get-page-templates`](../commands/web-pages/index.md#get-page-templates) lists the identifiers a page can use. Left out, the template stays as it is. |
+
+### PageTemplateResult
+
+A page template, as listed by [`get-page-templates`](../commands/web-pages/index.md#get-page-templates).
+
+| Field | Type | Description |
+|---|---|---|
+| `identifier` | string | The template's identifier, for the `template` of [`PageBuilderData`](types.md#pagebuilderdata). |
+| `name` | string | Name of the template, localized the way the administration shows it: a name the site registers as a localization key comes back as its text. |
+| `description` | string | Description of the template, localized the same way; null when it has none. |
+| `iconClass` | string | CSS class of the icon the administration shows for the template; null when it has none. |
+| `contentTypeNames` | string[] | Code names of the content types the template is registered for. Empty when it is registered for all page content types. |
 
 ### QueryCustomObjectsResult
 
@@ -312,6 +342,7 @@ A web page's system fields plus its content-type-specific field data. Returned b
 | `languageName` | string | The language that was asked for (the page isn't checked to have a variant in it). |
 | `channelName` | string | Code name of the website channel the page belongs to, e.g. `DancingGoatPages`. |
 | `fields` | { name: any } | Field values of the page's latest version, by field name, as JSON (text, numbers, dates, ...). Asset, tag and reference fields come as the JSON text Kentico stores in them. Only the content type's own fields are listed: fields that come from reusable field schemas are not included. |
+| `pageBuilder` | [PageBuilderData](types.md#pagebuilderdata) | The page's widgets and page template in its latest version. Only set when `includePageBuilder` was asked for, and null for a page that has no Page Builder data. |
 
 ### WebPageInfo
 

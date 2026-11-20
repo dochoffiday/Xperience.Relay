@@ -7,7 +7,8 @@ namespace Xperience.Relay.Contracts.Commands;
 /// if it was published before; a draft or an unpublished page stays unpublished. Plain values go in
 /// <see cref="Fields"/>; linked-item fields (where the value is a list of ContentItemGUIDs) go in
 /// <see cref="LinkedItemFields"/> -- pass an empty list to clear a field. Every field is checked against the content
-/// type before anything changes.
+/// type before anything changes. The page's Page Builder data (widgets and page template) goes in
+/// <see cref="PageBuilder"/>.
 /// </summary>
 [RelayCommand("update-web-page", Access = RelayAccess.Write)]
 public class UpdateWebPageCommand : IRelayCommand
@@ -35,4 +36,10 @@ public class UpdateWebPageCommand : IRelayCommand
 
     /// <summary>Optional binary assets to upload into asset fields. Each entry maps to one field.</summary>
     public List<RelayAsset>? Assets { get; set; }
+
+    /// <summary>
+    /// Optional Page Builder data: the page's widgets, its page template, or both. A part that is left out stays as it
+    /// is. The widgets are checked for structure and the template has to be one the page can use.
+    /// </summary>
+    public PageBuilderData? PageBuilder { get; set; }
 }

@@ -11,7 +11,7 @@ static class Areas
         new("web-pages", "Web pages",
         [
             "create-web-page", "update-web-page", "update-slug", "move-web-page", "publish-web-page", "unpublish-web-page",
-            "delete-web-page", "get-page-info", "get-page", "query-web-page-items",
+            "delete-web-page", "get-page-info", "get-page", "get-page-templates", "query-web-page-items",
         ]),
         new("content-items", "Content items",
         [

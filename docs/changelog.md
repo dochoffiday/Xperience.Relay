@@ -2,7 +2,14 @@
 
 Versions are tagged in the repository as `v<major>.<minor>.<patch>`, and a tag publishes the five NuGet packages at that version. This page lists the changes that matter to callers; for anything older than 0.4.0 see the tags and commit history on GitHub.
 
-## Unreleased
+## 0.7.0 (2026-11-20)
+
+### Added
+
+- Page Builder data. [`create-web-page`](commands/web-pages/index.md#create-web-page) and [`update-web-page`](commands/web-pages/index.md#update-web-page) take a `pageBuilder` object with the page's widgets, its page template, or both, and [`get-page`](commands/web-pages/index.md#get-page) returns them with `includePageBuilder`. The data is checked before anything changes, and written through Kentico's own draft update, so a page that is live is published again with the change. See [Work with Page Builder data](guides/page-builder.md).
+- [`get-page-templates`](commands/web-pages/index.md#get-page-templates) lists the page templates a page, or a page that isn't created yet, can use, which are the identifiers that go in `pageBuilder.template`.
+
+## 0.6.1 (2026-10-22)
 
 **Upgrading from 0.6.0:** the query commands are stricter about what they accept. Check callers of `get-form-submissions` that pass a `whereClause` or `orderBy` with anything but comparisons of the form's columns, and callers of the other query commands that pass a column that isn't a plain name of a column the type has.
 

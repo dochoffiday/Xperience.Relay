@@ -19,7 +19,8 @@ A page has one variant per language, and publishing is per variant. Changes go t
 | [`unpublish-web-page`](#unpublish-web-page) | Write | Unpublishes a web page language variant. |
 | [`delete-web-page`](#delete-web-page) | Write | Deletes a language variant of a web page. |
 | [`get-page-info`](#get-page-info) | Read | Fetches a web page's system fields (content type, tree path, parent ID, ...) without its content-type-specific field data. |
-| [`get-page`](#get-page) | Read | Fetches a web page's system fields plus the field values of its latest version (drafts included). |
+| [`get-page`](#get-page) | Read | Fetches a web page's system fields plus the field values of its latest version (drafts included), and optionally its Page Builder data. |
+| [`get-page-templates`](#get-page-templates) | Read | Lists the page templates that a page can use, which are the identifiers that go in the `template` of [`PageBuilderData`](../../reference/types.md#pagebuilderdata). |
 | [`query-web-page-items`](#query-web-page-items) | Read | Queries web pages of one or more content types, returning only the requested columns. |
 <!-- relay:end commands -->
 
@@ -55,6 +56,7 @@ Names are shown the way they appear in the JSON; a C# command uses the same name
 | `tagFields` | { name: guid[] } | No | Tag fields -- field name to list of tag GUIDs. The field must be a tag (taxonomy) field. |
 | `publishAfterCreate` | boolean | No | When true, publishes the page immediately after creation. Defaults to false. |
 | `assets` | [RelayAsset](../../reference/types.md#relayasset)[] | No | Optional binary assets to upload into asset fields. Each entry maps to one field. |
+| `pageBuilder` | [PageBuilderData](../../reference/types.md#pagebuilderdata) | No | Optional Page Builder data for the new page: its widgets, its page template, or both. The widgets are checked for structure and the template has to be one the page can use (see [`get-page-templates`](#get-page-templates)). |
 <!-- relay:end parameters:create-web-page -->
 
 <!-- relay:begin result:create-web-page -->
@@ -76,6 +78,7 @@ A successful run returns a [CreateWebPageResult](../../reference/types.md#create
 - **URL slug.** When `urlSlug` is left out Kentico makes one from the display name. Change it later with [`update-slug`](#update-slug).
 - **Fields.** `fields` takes plain values: text, numbers, booleans and dates. Field names are not case sensitive. A field the content type doesn't have is refused (Kentico would drop it without saying so), and a value has to fit its field: a whole number for an integer field, a date that parses for a date field, text no longer than the field allows, and so on. Every problem found is reported in one answer. Fields that come from a reusable field schema count as fields of the type.
 - **Linked items, tags and files.** `linkedItemFields` takes content item GUIDs for content item reference fields, `tagFields` takes tag GUIDs for tag fields, and `assets` takes Base64 files for asset fields. Each one only goes into a field of that kind. See [Upload files](../../guides/uploading-assets.md).
+- **Page Builder data.** `pageBuilder` sets the widgets and the page template of the page as it is created, for a content type that uses Page Builder. `widgets` is the JSON Kentico stores (an `editableAreas` list of sections, zones, widgets and variants) and `template` names one of the templates that [`get-page-templates`](#get-page-templates) lists for the page's content type and parent. Both are checked before anything is created: a widget without a GUID identifier, or a template the page can't use, is refused, and nothing is created. See [Work with Page Builder data](../../guides/page-builder.md).
 - **Language.** The page is created in `languageName`, or in [`DefaultLanguageName`](../../configuration.md#defaultlanguagename). Relay has no command that adds another language to an existing page.
 - **The result.** `webPageItemId` is the ID that the other page commands call `webPageId`.
 
@@ -203,6 +206,103 @@ Response (HTTP 200):
   }
 }
 ```
+
+#### Create a landing page with its widgets and template { #create-web-page-example-with-page-builder }
+
+The page has one section with one rich text widget. The template has to be one the page can use: "get-page-templates" lists them.
+
+=== "curl"
+
+    ```bash
+    curl -X POST "https://your-site.example/api/relay/commands" \
+      -H "X-Relay-Api-Key: YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+      "verb": "create-web-page",
+      "parameters": {
+        "websiteChannelName": "DancingGoatPages",
+        "parentWebPageItemId": 4,
+        "contentTypeName": "DancingGoat.LandingPage",
+        "displayName": "Coffee tasting night",
+        "publishAfterCreate": true,
+        "pageBuilder": {
+          "widgets": {
+            "editableAreas": [
+              {
+                "identifier": "areaMain",
+                "sections": [
+                  {
+                    "identifier": "5f4e6a0e-1b6c-4d6e-9a54-0e7a3d6b2c11",
+                    "type": "DancingGoat.SingleColumnSection",
+                    "properties": {
+                      "theme": null
+                    },
+                    "zones": [
+                      {
+                        "identifier": "8d1d9c7a-0f56-43c4-8d0e-6a1c1b5f9a22",
+                        "widgets": [
+                          {
+                            "identifier": "c1f3b6d2-71a5-4ad5-b0b4-3f1d2d4e5a33",
+                            "type": "Kentico.Widget.RichText",
+                            "variants": [
+                              {
+                                "identifier": "e2a4c7f3-82b6-4be6-81c5-4a2e3e5f6b44",
+                                "properties": {
+                                  "content": "<p>Join us on Friday for a tasting of three new roasts.</p>"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "template": {
+            "identifier": "DancingGoat.LandingPageSingleColumn",
+            "properties": null,
+            "fieldIdentifiers": null
+          }
+        }
+      }
+    }'
+    ```
+
+=== "C#"
+
+    ```csharp
+    var result = await client.ExecuteAsync(new CreateWebPageCommand
+    {
+        WebsiteChannelName = "DancingGoatPages",
+        ParentWebPageItemId = 4,
+        ContentTypeName = "DancingGoat.LandingPage",
+        DisplayName = "Coffee tasting night",
+        PublishAfterCreate = true,
+        PageBuilder = new PageBuilderData
+        {
+            Widgets = JsonDocument.Parse("{\n          \"editableAreas\": [\n            {\n              \"identifier\": \"areaMain\",\n              \"sections\": [\n                {\n                  \"identifier\": \"5f4e6a0e-1b6c-4d6e-9a54-0e7a3d6b2c11\",\n                  \"type\": \"DancingGoat.SingleColumnSection\",\n                  \"properties\": {\n                    \"theme\": null\n                  },\n                  \"zones\": [\n                    {\n                      \"identifier\": \"8d1d9c7a-0f56-43c4-8d0e-6a1c1b5f9a22\",\n                      \"widgets\": [\n                        {\n                          \"identifier\": \"c1f3b6d2-71a5-4ad5-b0b4-3f1d2d4e5a33\",\n                          \"type\": \"Kentico.Widget.RichText\",\n                          \"variants\": [\n                            {\n                              \"identifier\": \"e2a4c7f3-82b6-4be6-81c5-4a2e3e5f6b44\",\n                              \"properties\": {\n                                \"content\": \"<p>Join us on Friday for a tasting of three new roasts.</p>\"\n                              }\n                            }\n                          ]\n                        }\n                      ]\n                    }\n                  ]\n                }\n              ]\n            }\n          ]\n        }").RootElement,
+            Template = JsonDocument.Parse("{\n          \"identifier\": \"DancingGoat.LandingPageSingleColumn\",\n          \"properties\": null,\n          \"fieldIdentifiers\": null\n        }").RootElement,
+        },
+    });
+    var data = result.GetData<CreateWebPageResult>();
+    ```
+
+Response (HTTP 200):
+
+```json
+{
+  "success": true,
+  "message": "Created web page 'Coffee tasting night' (ID=68), published.",
+  "error": null,
+  "data": {
+    "webPageItemId": 68,
+    "webPageItemGuid": "c6df5be8-3870-4b38-a5c0-140be1622543"
+  }
+}
+```
 <!-- relay:end examples:create-web-page -->
 
 <!-- relay:begin errors:create-web-page -->
@@ -293,7 +393,9 @@ A command that can't be carried out comes back with HTTP 200 and `success` set t
 - [`update-web-page`](#update-web-page) to change the fields later
 - [`publish-web-page`](#publish-web-page) to publish a draft
 - [`get-page-info`](#get-page-info) to look up the parent's ID
+- [`get-page-templates`](#get-page-templates) to see which templates the page can use
 - [Create, edit and publish a page](../../guides/page-lifecycle.md)
+- [Work with Page Builder data](../../guides/page-builder.md)
 
 ---
 
@@ -305,7 +407,7 @@ A command that can't be carried out comes back with HTTP 200 and `success` set t
 | `update-web-page` | [Write](../../concepts/access-tiers.md) | nothing; the `message` says what happened | `UpdateWebPageCommand` |
 <!-- relay:end header:update-web-page -->
 
-Changes fields of a page in one language. Relay edits through a draft, the way the admin UI does, and leaves the page in the state it found it in: a page that was published is published again with the change, and a page that was a draft or unpublished stays that way.
+Changes fields of a page, and its Page Builder data, in one language. Relay edits through a draft, the way the admin UI does, and leaves the page in the state it found it in: a page that was published is published again with the change, and a page that was a draft or unpublished stays that way.
 
 <!-- relay:begin parameters:update-web-page -->
 ### Parameters { #update-web-page-parameters }
@@ -320,6 +422,7 @@ Names are shown the way they appear in the JSON; a C# command uses the same name
 | `linkedItemFields` | { name: guid[] } | No | Linked-items fields. Maps field name to a list of ContentItemGUIDs. The field must be a content item reference field. An empty list clears the field. |
 | `tagFields` | { name: guid[] } | No | Tag fields. Maps field name to a list of tag GUIDs. The field must be a tag (taxonomy) field. An empty list clears the field. |
 | `assets` | [RelayAsset](../../reference/types.md#relayasset)[] | No | Optional binary assets to upload into asset fields. Each entry maps to one field. |
+| `pageBuilder` | [PageBuilderData](../../reference/types.md#pagebuilderdata) | No | Optional Page Builder data: the page's widgets, its page template, or both. A part that is left out stays as it is. The widgets are checked for structure and the template has to be one the page can use. |
 <!-- relay:end parameters:update-web-page -->
 
 <!-- relay:begin result:update-web-page -->
@@ -344,6 +447,7 @@ What happens to the page depends on its latest version:
 - **Failures leave nothing behind.** If Kentico declines to create the draft, to save the change or to publish it, the result says which step failed. A draft made for an edit that then failed is discarded again (a draft that was already there is kept as it was), and Kentico's cached copy of the page is dropped so the next edit doesn't write the refused value again. If only the final publish fails, the change stays saved as a draft and the live page is unchanged. Relay never reports a success it didn't get.
 - **Checks.** The fields are checked the way [`create-web-page`](#create-web-page) checks them, before the draft is made, so a bad request changes nothing.
 - **Clearing a field.** An empty list in `linkedItemFields` or `tagFields` clears that field. `null` in `fields` is refused for a field that must have a value.
+- **Page Builder data.** `pageBuilder` changes the page's widgets, its template or both, in the same draft as the fields. A part that is left out stays as it is, and a part that is sent replaces the whole of it: the widgets sent replace all of the page's widgets, so read them with [`get-page`](#get-page) and `includePageBuilder`, change what you need and send the whole structure back. Before the draft is made Relay checks the structure of the widgets, and that the template is one [`get-page-templates`](#get-page-templates) lists for the page (the template the page has is always accepted). Kentico keeps its record of which content items the page's widgets use in step with the widgets. See [Work with Page Builder data](../../guides/page-builder.md).
 - **Something to change.** At least one of `fields`, `linkedItemFields`, `tagFields` and `assets` must be given, otherwise the answer is "No fields provided — nothing to update."
 - **The URL.** This command doesn't change the page's URL slug; use [`update-slug`](#update-slug).
 
@@ -441,6 +545,134 @@ Response (HTTP 200):
   "data": null
 }
 ```
+
+#### Change the page template { #update-web-page-example-page-template }
+
+Only the template is sent, so the page's widgets stay as they are.
+
+=== "curl"
+
+    ```bash
+    curl -X POST "https://your-site.example/api/relay/commands" \
+      -H "X-Relay-Api-Key: YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+      "verb": "update-web-page",
+      "parameters": {
+        "webPageId": 9,
+        "pageBuilder": {
+          "template": {
+            "identifier": "DancingGoat.ArticleWithSidebar",
+            "properties": null,
+            "fieldIdentifiers": null
+          }
+        }
+      }
+    }'
+    ```
+
+=== "C#"
+
+    ```csharp
+    var result = await client.ExecuteAsync(new UpdateWebPageCommand
+    {
+        WebPageId = 9,
+        PageBuilder = new PageBuilderData
+        {
+            Template = JsonDocument.Parse("{\n          \"identifier\": \"DancingGoat.ArticleWithSidebar\",\n          \"properties\": null,\n          \"fieldIdentifiers\": null\n        }").RootElement,
+        },
+    });
+    ```
+
+Response (HTTP 200):
+
+```json
+{
+  "success": true,
+  "message": "Updated the Page Builder data of web page 9.",
+  "error": null,
+  "data": null
+}
+```
+
+#### Change a widget { #update-web-page-example-widgets }
+
+The widgets sent replace all of the page's widgets, so the request carries the whole structure, changed where the content should change. Read it with `get-page` first.
+
+=== "curl"
+
+    ```bash
+    curl -X POST "https://your-site.example/api/relay/commands" \
+      -H "X-Relay-Api-Key: YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+      "verb": "update-web-page",
+      "parameters": {
+        "webPageId": 68,
+        "pageBuilder": {
+          "widgets": {
+            "editableAreas": [
+              {
+                "identifier": "areaMain",
+                "sections": [
+                  {
+                    "identifier": "5f4e6a0e-1b6c-4d6e-9a54-0e7a3d6b2c11",
+                    "type": "DancingGoat.SingleColumnSection",
+                    "properties": {
+                      "theme": null
+                    },
+                    "zones": [
+                      {
+                        "identifier": "8d1d9c7a-0f56-43c4-8d0e-6a1c1b5f9a22",
+                        "widgets": [
+                          {
+                            "identifier": "c1f3b6d2-71a5-4ad5-b0b4-3f1d2d4e5a33",
+                            "type": "Kentico.Widget.RichText",
+                            "variants": [
+                              {
+                                "identifier": "e2a4c7f3-82b6-4be6-81c5-4a2e3e5f6b44",
+                                "properties": {
+                                  "content": "<p>Join us on Saturday for a tasting of three new roasts.</p>"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    }'
+    ```
+
+=== "C#"
+
+    ```csharp
+    var result = await client.ExecuteAsync(new UpdateWebPageCommand
+    {
+        WebPageId = 68,
+        PageBuilder = new PageBuilderData
+        {
+            Widgets = JsonDocument.Parse("{\n          \"editableAreas\": [\n            {\n              \"identifier\": \"areaMain\",\n              \"sections\": [\n                {\n                  \"identifier\": \"5f4e6a0e-1b6c-4d6e-9a54-0e7a3d6b2c11\",\n                  \"type\": \"DancingGoat.SingleColumnSection\",\n                  \"properties\": {\n                    \"theme\": null\n                  },\n                  \"zones\": [\n                    {\n                      \"identifier\": \"8d1d9c7a-0f56-43c4-8d0e-6a1c1b5f9a22\",\n                      \"widgets\": [\n                        {\n                          \"identifier\": \"c1f3b6d2-71a5-4ad5-b0b4-3f1d2d4e5a33\",\n                          \"type\": \"Kentico.Widget.RichText\",\n                          \"variants\": [\n                            {\n                              \"identifier\": \"e2a4c7f3-82b6-4be6-81c5-4a2e3e5f6b44\",\n                              \"properties\": {\n                                \"content\": \"<p>Join us on Saturday for a tasting of three new roasts.</p>\"\n                              }\n                            }\n                          ]\n                        }\n                      ]\n                    }\n                  ]\n                }\n              ]\n            }\n          ]\n        }").RootElement,
+        },
+    });
+    ```
+
+Response (HTTP 200):
+
+```json
+{
+  "success": true,
+  "message": "Updated the Page Builder data of web page 68.",
+  "error": null,
+  "data": null
+}
+```
 <!-- relay:end examples:update-web-page -->
 
 <!-- relay:begin errors:update-web-page -->
@@ -472,6 +704,71 @@ A command that can't be carried out comes back with HTTP 200 and `success` set t
       "data": null
     }
     ```
+
+???+ failure "A template the page can't use"
+
+    Parameters:
+
+    ```json
+    {
+      "webPageId": 9,
+      "pageBuilder": {
+        "template": {
+          "identifier": "DancingGoat.LandingPageSingleColumn",
+          "properties": null,
+          "fieldIdentifiers": null
+        }
+      }
+    }
+    ```
+
+    Response:
+
+    ```json
+    {
+      "success": false,
+      "message": null,
+      "error": "Page template 'DancingGoat.LandingPageSingleColumn' isn't available for content type 'DancingGoat.ArticlePage'. \"get-page-templates\" lists the ones that are.",
+      "data": null
+    }
+    ```
+
+???+ failure "Widgets that aren't in the shape Kentico stores"
+
+    Parameters:
+
+    ```json
+    {
+      "webPageId": 68,
+      "pageBuilder": {
+        "widgets": {
+          "editableAreas": [
+            {
+              "identifier": "areaMain",
+              "sections": [
+                {
+                  "identifier": "first",
+                  "type": "DancingGoat.SingleColumnSection",
+                  "zones": []
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+    ```
+
+    Response:
+
+    ```json
+    {
+      "success": false,
+      "message": null,
+      "error": "Widgets.editableAreas[0].sections[0]: 'identifier' must be a GUID.",
+      "data": null
+    }
+    ```
 <!-- relay:end errors:update-web-page -->
 
 ### See also { #update-web-page-see-also }
@@ -479,7 +776,9 @@ A command that can't be carried out comes back with HTTP 200 and `success` set t
 - [`update-slug`](#update-slug) to change the URL
 - [`publish-web-page`](#publish-web-page) to put a draft live
 - [`get-page`](#get-page) to read the fields back
+- [`get-page-templates`](#get-page-templates) to see which templates the page can use
 - [Drafts and publishing](../../concepts/drafts-and-publishing.md)
+- [Work with Page Builder data](../../guides/page-builder.md)
 
 ---
 
@@ -1307,6 +1606,7 @@ Names are shown the way they appear in the JSON; a C# command uses the same name
 |---|---|---|---|
 | `webPageId` | integer | Yes | ID of the web page. |
 | `languageName` | string | No | Defaults to [`RelayKenticoOptions.DefaultLanguageName`](../../configuration.md#defaultlanguagename) when null. |
+| `includePageBuilder` | boolean | No | When true, the result also holds the page's widgets and page template. Defaults to false, since the widgets of a page can be large. |
 <!-- relay:end parameters:get-page -->
 
 <!-- relay:begin result:get-page -->
@@ -1325,11 +1625,13 @@ A successful run returns a [WebPageData](../../reference/types.md#webpagedata) i
 | `languageName` | string | The language that was asked for (the page isn't checked to have a variant in it). |
 | `channelName` | string | Code name of the website channel the page belongs to, e.g. `DancingGoatPages`. |
 | `fields` | { name: any } | Field values of the page's latest version, by field name, as JSON (text, numbers, dates, ...). Asset, tag and reference fields come as the JSON text Kentico stores in them. Only the content type's own fields are listed: fields that come from reusable field schemas are not included. |
+| `pageBuilder` | [PageBuilderData](../../reference/types.md#pagebuilderdata) | The page's widgets and page template in its latest version. Only set when `includePageBuilder` was asked for, and null for a page that has no Page Builder data. |
 <!-- relay:end result:get-page -->
 
 ### Behavior { #get-page-behavior }
 
 - **Field values.** `fields` is keyed by the content type's own field names. Text is a string, numbers and booleans are JSON values, dates are ISO strings without a time zone (`"2026-10-01T00:00:00"`), and a value that isn't set is `null`. Reference, tag and asset fields come as the JSON text Kentico stores in them: a string that contains JSON, for example `"[{\"Identifier\":\"b8117d96-...\"}]"`. Fields that come from reusable field schemas aren't included.
+- **Page Builder data.** With `includePageBuilder` the result has a `pageBuilder` holding the page's `widgets` and `template` in its latest version, as the JSON Kentico stores them. It is left out by default because the widgets of a page can be large, and it is `null` for a page that has none. Either part can be sent back with [`update-web-page`](#update-web-page).
 - **Published version.** To read what is live, use [`query-web-page-items`](#query-web-page-items) with `publishedOnly`.
 - **Language.** `languageName` defaults to [`DefaultLanguageName`](../../configuration.md#defaultlanguagename), and the answer reports the language you asked for. A page that has no variant in it comes back with the values of the language Kentico falls back to.
 
@@ -1395,6 +1697,99 @@ Response (HTTP 200):
   }
 }
 ```
+
+#### Read a page's widgets and template { #get-page-example-with-page-builder }
+
+`includePageBuilder` adds the widgets and the template. The widgets come back as the JSON Kentico stores.
+
+=== "curl"
+
+    ```bash
+    curl -X POST "https://your-site.example/api/relay/commands" \
+      -H "X-Relay-Api-Key: YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+      "verb": "get-page",
+      "parameters": {
+        "webPageId": 68,
+        "includePageBuilder": true
+      }
+    }'
+    ```
+
+=== "C#"
+
+    ```csharp
+    var result = await client.ExecuteAsync(new GetPageCommand
+    {
+        WebPageId = 68,
+        IncludePageBuilder = true,
+    });
+    var data = result.GetData<WebPageData>();
+    ```
+
+Response (HTTP 200):
+
+```json
+{
+  "success": true,
+  "message": null,
+  "error": null,
+  "data": {
+    "fields": {},
+    "pageBuilder": {
+      "widgets": {
+        "editableAreas": [
+          {
+            "identifier": "areaMain",
+            "sections": [
+              {
+                "identifier": "5f4e6a0e-1b6c-4d6e-9a54-0e7a3d6b2c11",
+                "type": "DancingGoat.SingleColumnSection",
+                "properties": {
+                  "theme": null
+                },
+                "zones": [
+                  {
+                    "identifier": "8d1d9c7a-0f56-43c4-8d0e-6a1c1b5f9a22",
+                    "widgets": [
+                      {
+                        "identifier": "c1f3b6d2-71a5-4ad5-b0b4-3f1d2d4e5a33",
+                        "type": "Kentico.Widget.RichText",
+                        "variants": [
+                          {
+                            "identifier": "e2a4c7f3-82b6-4be6-81c5-4a2e3e5f6b44",
+                            "properties": {
+                              "content": "<p>Join us on Friday for a tasting of three new roasts.</p>"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "template": {
+        "identifier": "DancingGoat.LandingPageSingleColumn",
+        "properties": null,
+        "fieldIdentifiers": null
+      }
+    },
+    "webPageId": 68,
+    "webPageGuid": "c6df5be8-3870-4b38-a5c0-140be1622543",
+    "name": "CoffeeTastingNight-mks6u4l8",
+    "contentType": "DancingGoat.LandingPage",
+    "treePath": "/Landing_pages/Coffee_tasting_night",
+    "parentWebPageId": 4,
+    "languageName": "en",
+    "channelName": "DancingGoatPages"
+  }
+}
+```
 <!-- relay:end examples:get-page -->
 
 <!-- relay:begin errors:get-page -->
@@ -1404,7 +1799,226 @@ Response (HTTP 200):
 
 - [`get-page-info`](#get-page-info) when you don't need the fields
 - [`update-web-page`](#update-web-page) to change them
+- [`get-page-templates`](#get-page-templates) to see which templates the page can use
 - [`query-web-page-items`](#query-web-page-items) to read many pages at once
+- [Work with Page Builder data](../../guides/page-builder.md)
+
+---
+
+## get-page-templates
+
+<!-- relay:begin header:get-page-templates -->
+| Verb | Access | Returns | C# command |
+|---|---|---|---|
+| `get-page-templates` | [Read](../../concepts/access-tiers.md) | [`GetPageTemplatesResult`](../../reference/types.md#getpagetemplatesresult) | `GetPageTemplatesCommand` |
+<!-- relay:end header:get-page-templates -->
+
+Lists the page templates a page can use. A template gives a Page Builder page its layout, and its identifier is what goes in the `template` of [`pageBuilder`](../../reference/types.md#pagebuilderdata) when you create or update a page. The templates are registered by the site's code, so the list is what the site's administration offers an editor for that page.
+
+<!-- relay:begin parameters:get-page-templates -->
+### Parameters { #get-page-templates-parameters }
+
+Names are shown the way they appear in the JSON; a C# command uses the same names in PascalCase.
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `webPageId` | integer | No | ID of an existing web page. Give this or `contentTypeName`. |
+| `contentTypeName` | string | No | Code name of the content type of a page that isn't created yet, e.g. `DancingGoat.ArticlePage`. Give this or `webPageId`. |
+| `parentWebPageItemId` | integer | No | ID of the parent of the page that isn't created yet, or 0 (the default) for the root of the channel. A site can limit the templates by where the page goes. Used with `contentTypeName`. |
+| `languageName` | string | No | Defaults to [`RelayKenticoOptions.DefaultLanguageName`](../../configuration.md#defaultlanguagename) when null. |
+<!-- relay:end parameters:get-page-templates -->
+
+<!-- relay:begin result:get-page-templates -->
+### Result { #get-page-templates-result }
+
+A successful run returns a [GetPageTemplatesResult](../../reference/types.md#getpagetemplatesresult) in `data`:
+
+| Field | Type | Description |
+|---|---|---|
+| `templates` | [PageTemplateResult](../../reference/types.md#pagetemplateresult)[] | The templates the page can use, by name. |
+| `currentTemplate` | string | Identifier of the template the page uses now, when an existing page was asked about and it has one. It is listed among `templates` unless the site no longer offers it. |
+<!-- relay:end result:get-page-templates -->
+
+### Behavior { #get-page-templates-behavior }
+
+- **Which page.** Give `webPageId` for a page that exists, or `contentTypeName` for a page that isn't created yet. Giving both or neither is refused. For a new page, `parentWebPageItemId` says where it will go (0 is the root of the channel), because a site can limit its templates by parent. The content type has to be a web page content type.
+- **What is listed.** The templates registered for the page's content type or for all page content types, after any filter the site has added: the list an editor sees when picking a template. They come sorted by name. A content type with no template gives an empty list.
+- **Names.** `name` and `description` are localized the way the administration shows them: a template that the site registers with a localization key, such as `{$dancinggoat.articletemplate.title$}`, comes back with its text. `contentTypeNames` says which content types a template is registered for, and is empty for a template registered for all of them.
+- **The current template.** For an existing page, `currentTemplate` is the identifier of the template it uses now. The site may no longer offer that template, so it can be missing from `templates`. [`update-web-page`](#update-web-page) still accepts it.
+- **Sites without templates.** A site that registers no page templates, such as one that doesn't use Page Builder, gets an empty list.
+
+<!-- relay:begin examples:get-page-templates -->
+### Examples { #get-page-templates-examples }
+
+The examples were captured from a live site running the Dancing Goat sample. Replace `https://your-site.example` and `YOUR_API_KEY` with your own site and key.
+
+#### The templates of an article page { #get-page-templates-example-article-page }
+
+The sample site registers two templates for article pages. `currentTemplate` is the one this page uses now.
+
+=== "curl"
+
+    ```bash
+    curl -X POST "https://your-site.example/api/relay/commands" \
+      -H "X-Relay-Api-Key: YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+      "verb": "get-page-templates",
+      "parameters": {
+        "webPageId": 9
+      }
+    }'
+    ```
+
+=== "C#"
+
+    ```csharp
+    var result = await client.ExecuteAsync(new GetPageTemplatesCommand
+    {
+        WebPageId = 9,
+    });
+    var data = result.GetData<GetPageTemplatesResult>();
+    ```
+
+Response (HTTP 200):
+
+```json
+{
+  "success": true,
+  "message": "Found 2 page template(s) for content type 'DancingGoat.ArticlePage'.",
+  "error": null,
+  "data": {
+    "templates": [
+      {
+        "identifier": "DancingGoat.Article",
+        "name": "Article detail",
+        "description": "Displays an article detail with related articles underneath.",
+        "iconClass": "xp-l-text",
+        "contentTypeNames": [
+          "DancingGoat.ArticlePage"
+        ]
+      },
+      {
+        "identifier": "DancingGoat.ArticleWithSidebar",
+        "name": "Article detail with sidebar",
+        "description": "Displays an article detail with sidebar.",
+        "iconClass": "xp-l-text-col",
+        "contentTypeNames": [
+          "DancingGoat.ArticlePage"
+        ]
+      }
+    ],
+    "currentTemplate": "DancingGoat.Article"
+  }
+}
+```
+
+#### The templates of a page that isn't created yet { #get-page-templates-example-new-page }
+
+Without a page, the content type and the parent it will go under say what the templates are for.
+
+=== "curl"
+
+    ```bash
+    curl -X POST "https://your-site.example/api/relay/commands" \
+      -H "X-Relay-Api-Key: YOUR_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+      "verb": "get-page-templates",
+      "parameters": {
+        "contentTypeName": "DancingGoat.LandingPage",
+        "parentWebPageItemId": 4
+      }
+    }'
+    ```
+
+=== "C#"
+
+    ```csharp
+    var result = await client.ExecuteAsync(new GetPageTemplatesCommand
+    {
+        ContentTypeName = "DancingGoat.LandingPage",
+        ParentWebPageItemId = 4,
+    });
+    var data = result.GetData<GetPageTemplatesResult>();
+    ```
+
+Response (HTTP 200):
+
+```json
+{
+  "success": true,
+  "message": "Found 1 page template(s) for content type 'DancingGoat.LandingPage'.",
+  "error": null,
+  "data": {
+    "templates": [
+      {
+        "identifier": "DancingGoat.LandingPageSingleColumn",
+        "name": "Single column landing page",
+        "description": "A default single column page template with two sections differentiated by a background color.",
+        "iconClass": "xp-l-header-text",
+        "contentTypeNames": [
+          "DancingGoat.LandingPage"
+        ]
+      }
+    ],
+    "currentTemplate": null
+  }
+}
+```
+<!-- relay:end examples:get-page-templates -->
+
+<!-- relay:begin errors:get-page-templates -->
+### Errors { #get-page-templates-errors }
+
+A command that can't be carried out comes back with HTTP 200 and `success` set to `false`; `error` says why. These are real answers:
+
+???+ failure "No page and no content type"
+
+    Parameters:
+
+    ```json
+    {}
+    ```
+
+    Response:
+
+    ```json
+    {
+      "success": false,
+      "message": null,
+      "error": "Give either WebPageId or ContentTypeName.",
+      "data": null
+    }
+    ```
+
+???+ failure "A content type that isn't a page type"
+
+    Parameters:
+
+    ```json
+    {
+      "contentTypeName": "DancingGoat.Cafe"
+    }
+    ```
+
+    Response:
+
+    ```json
+    {
+      "success": false,
+      "message": null,
+      "error": "Content type 'DancingGoat.Cafe' was not found, or isn't a web page content type.",
+      "data": null
+    }
+    ```
+<!-- relay:end errors:get-page-templates -->
+
+### See also { #get-page-templates-see-also }
+
+- [`update-web-page`](#update-web-page) and [`create-web-page`](#create-web-page) to set a template
+- [`get-page`](#get-page) to read a page's template and widgets
+- [Work with Page Builder data](../../guides/page-builder.md)
 
 ---
 

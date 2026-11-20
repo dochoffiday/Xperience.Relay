@@ -136,7 +136,7 @@ curl "https://your-site.example/api/relay/verbs" -H "X-Relay-Api-Key: YOUR_API_K
 
 ```json
 {
-  "relayVersion": "0.6.0.0",
+  "relayVersion": "0.7.0.0",
   "verbs": [
     {
       "verb": "create-content-item",

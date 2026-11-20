@@ -1,0 +1,55 @@
+{
+  "title": "Change a widget",
+  "note": "The widgets sent replace all of the page's widgets, so the request carries the whole structure, changed where the content should change. Read it with `get-page` first.",
+  "order": 16,
+  "status": 200,
+  "request": {
+    "verb": "update-web-page",
+    "parameters": {
+      "webPageId": 68,
+      "pageBuilder": {
+        "widgets": {
+          "editableAreas": [
+            {
+              "identifier": "areaMain",
+              "sections": [
+                {
+                  "identifier": "5f4e6a0e-1b6c-4d6e-9a54-0e7a3d6b2c11",
+                  "type": "DancingGoat.SingleColumnSection",
+                  "properties": {
+                    "theme": null
+                  },
+                  "zones": [
+                    {
+                      "identifier": "8d1d9c7a-0f56-43c4-8d0e-6a1c1b5f9a22",
+                      "widgets": [
+                        {
+                          "identifier": "c1f3b6d2-71a5-4ad5-b0b4-3f1d2d4e5a33",
+                          "type": "Kentico.Widget.RichText",
+                          "variants": [
+                            {
+                              "identifier": "e2a4c7f3-82b6-4be6-81c5-4a2e3e5f6b44",
+                              "properties": {
+                                "content": "<p>Join us on Saturday for a tasting of three new roasts.</p>"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Updated the Page Builder data of web page 68.",
+    "error": null,
+    "data": null
+  }
+}

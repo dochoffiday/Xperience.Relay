@@ -9,6 +9,7 @@ public class RelayAccessTests
     {
         ["get-page-info"] = RelayAccess.Read,
         ["get-page"] = RelayAccess.Read,
+        ["get-page-templates"] = RelayAccess.Read,
         ["get-content-info"] = RelayAccess.Read,
         ["get-content"] = RelayAccess.Read,
         ["query-web-page-items"] = RelayAccess.Read,

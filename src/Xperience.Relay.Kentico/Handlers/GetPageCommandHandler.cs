@@ -4,6 +4,7 @@ using CMS.Websites;
 using Xperience.Relay.Contracts;
 using Xperience.Relay.Contracts.Commands;
 using Xperience.Relay.Core;
+using Xperience.Relay.Kentico.Internal;
 
 namespace Xperience.Relay.Kentico.Handlers;
 
@@ -19,15 +20,18 @@ public class GetPageCommandHandler : IRelayCommandHandler<GetPageCommand>
 
     private readonly GetPageInfoCommandHandler _pageInfoHandler;
     private readonly IContentQueryExecutor _contentQueryExecutor;
+    private readonly PageBuilderReader _pageBuilderReader;
     private readonly RelayKenticoOptions _optionsValue;
 
     public GetPageCommandHandler(
         GetPageInfoCommandHandler pageInfoHandler,
         IContentQueryExecutor contentQueryExecutor,
+        PageBuilderReader pageBuilderReader,
         Microsoft.Extensions.Options.IOptions<RelayKenticoOptions> options)
     {
         _pageInfoHandler = pageInfoHandler;
         _contentQueryExecutor = contentQueryExecutor;
+        _pageBuilderReader = pageBuilderReader;
         _optionsValue = options.Value;
     }
 
@@ -79,6 +83,11 @@ public class GetPageCommandHandler : IRelayCommandHandler<GetPageCommand>
             ChannelName = info.ChannelName,
             Fields = fieldData,
         };
+
+        if (command.IncludePageBuilder)
+        {
+            data.PageBuilder = _pageBuilderReader.Read(command.WebPageId, languageName)?.ToData();
+        }
 
         return RelayCommandResult.Ok(data: data);
     }

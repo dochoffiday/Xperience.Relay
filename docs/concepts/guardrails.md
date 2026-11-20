@@ -53,6 +53,10 @@ The commands that look things up take names and conditions from the caller, and 
 - **Conditions.** [`get-form-submissions`](../commands/forms-and-contacts/index.md#get-form-submissions) takes a `whereClause` and an `orderBy`. A condition compares the form's columns with values (`=`, `<>`, `!=`, `<`, `>`, `<=`, `>=`, `LIKE`, `IN`, `BETWEEN`, `IS NULL`) and combines the comparisons with `AND`, `OR`, `NOT` and parentheses. An ordering lists the form's columns, each followed by `ASC` or `DESC` if you like. Function calls, subqueries, comments and a second statement are refused; for those, use [`query-sql`](../commands/sql/index.md#query-sql) with an Admin key. What is sent to Kentico is SQL generated from what was checked, not the text of the request.
 - **Sizes.** A query takes at most 25 content types, 500 columns and 50 `whereEquals` entries. The text of [`search-content`](../commands/content-items/index.md#search-content) can be 1000 characters, a condition 2000 and an ordering 500.
 
+## Checks on Page Builder data
+
+[`create-web-page`](../commands/web-pages/index.md#create-web-page) and [`update-web-page`](../commands/web-pages/index.md#update-web-page) check the `pageBuilder` data before anything changes: that the widgets have the structure Kentico stores, with a GUID `identifier` on every section, zone, widget and variant and none used twice; that the template has an `identifier` and is one the page can use ([`get-page-templates`](../commands/web-pages/index.md#get-page-templates) lists them); and that each part is under 2,000,000 characters. The `type` of a widget and what its `properties` hold are the site's own business and aren't checked. See [Work with Page Builder data](../guides/page-builder.md).
+
 ## Checks on other commands
 
 Some commands check what Kentico would not:

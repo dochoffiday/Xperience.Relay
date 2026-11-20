@@ -1,0 +1,16 @@
+{
+  "title": "No page and no content type",
+  "kind": "error",
+  "order": 3,
+  "status": 200,
+  "request": {
+    "verb": "get-page-templates",
+    "parameters": {}
+  },
+  "response": {
+    "success": false,
+    "message": null,
+    "error": "Give either WebPageId or ContentTypeName.",
+    "data": null
+  }
+}

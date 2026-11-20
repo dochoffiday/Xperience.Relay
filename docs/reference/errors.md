@@ -104,6 +104,18 @@ A create or update command checks its fields against the content type before it 
 | `A tag can't be moved under itself or under one of its own child tags.` | The new parent is the tag or one of its descendants. |
 | `Tag N belongs to a different taxonomy, so tag M can't be moved under it.` | A tag's parent has to be in the same taxonomy. |
 
+### Page Builder
+
+| Message | What it means |
+|---|---|
+| `PageBuilder needs Widgets, Template or both.` | `pageBuilder` was sent with neither part. |
+| `PageBuilder.Widgets must be an object with an 'editableAreas' list.` | The widgets aren't in the shape Kentico stores. See [Work with Page Builder data](../guides/page-builder.md). |
+| `Widgets.editableAreas[0].sections[1]: 'identifier' must be a GUID.` | One level of the widgets lacks something, or has something of the wrong kind. The message says where, and every such place is listed. |
+| `PageBuilder.Template: 'identifier' is required.` | The template needs the identifier of one of the site's page templates. |
+| `Page template '...' isn't available for content type '...'. "get-page-templates" lists the ones that are.` | The template isn't registered for the page's content type, or the site doesn't offer it for this page. |
+| `Give either WebPageId or ContentTypeName.` | [`get-page-templates`](../commands/web-pages/index.md#get-page-templates) takes one of the two, not both or neither. |
+| `Content type '...' was not found, or isn't a web page content type.` | `get-page-templates` was given a content type that doesn't exist or isn't a page type. |
+
 ## Kentico's own errors
 
 When Kentico itself throws, Relay passes the exception on as a failed result:

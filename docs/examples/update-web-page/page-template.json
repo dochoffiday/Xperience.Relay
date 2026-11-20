@@ -1,0 +1,25 @@
+{
+  "title": "Change the page template",
+  "note": "Only the template is sent, so the page's widgets stay as they are.",
+  "order": 15,
+  "status": 200,
+  "request": {
+    "verb": "update-web-page",
+    "parameters": {
+      "webPageId": 9,
+      "pageBuilder": {
+        "template": {
+          "identifier": "DancingGoat.ArticleWithSidebar",
+          "properties": null,
+          "fieldIdentifiers": null
+        }
+      }
+    }
+  },
+  "response": {
+    "success": true,
+    "message": "Updated the Page Builder data of web page 9.",
+    "error": null,
+    "data": null
+  }
+}

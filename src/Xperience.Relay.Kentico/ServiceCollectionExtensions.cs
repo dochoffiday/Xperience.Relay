@@ -21,12 +21,16 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ContentVersionReader>();
         services.AddScoped<ContentFieldChecker>();
         services.AddScoped<FailedWriteCacheCleaner>();
+        services.AddScoped<PageBuilderReader>();
+        services.AddScoped<PageTemplateCatalog>();
+        services.AddScoped<PageBuilderPreparer>();
 
         services.AddScoped<IRelayCommandHandler<MoveWebPageCommand>, MoveWebPageCommandHandler>();
         services.AddScoped<IRelayCommandHandler<MoveContentItemCommand>, MoveContentItemCommandHandler>();
         services.AddScoped<GetPageInfoCommandHandler>();
         services.AddScoped<IRelayCommandHandler<GetPageInfoCommand>>(sp => sp.GetRequiredService<GetPageInfoCommandHandler>());
         services.AddScoped<IRelayCommandHandler<GetPageCommand>, GetPageCommandHandler>();
+        services.AddScoped<IRelayCommandHandler<GetPageTemplatesCommand>, GetPageTemplatesCommandHandler>();
         services.AddScoped<GetContentInfoCommandHandler>();
         services.AddScoped<IRelayCommandHandler<GetContentInfoCommand>>(sp => sp.GetRequiredService<GetContentInfoCommandHandler>());
         services.AddScoped<IRelayCommandHandler<GetContentCommand>, GetContentCommandHandler>();

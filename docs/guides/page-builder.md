@@ -130,7 +130,7 @@ Relay does not check the `type` of a section or widget, nor the `properties` of 
 
 Kentico keeps a record of the content items that a page's widgets refer to. Relay writes through Kentico's own draft update, which keeps that record in step with the widgets: when a widget that picks content items is removed its items are dropped from the record, and when it comes back they are added again. There is nothing to send for it. Kentico works out which widget properties refer to content items from the components the site registers, so on a site whose code registers none the record isn't kept: another reason to write Page Builder data only on a site that uses Page Builder.
 
-## The same in C#
+## The same in C\# { #the-same-in-csharp }
 
 ```csharp
 using System.Text.Json;

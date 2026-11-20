@@ -129,7 +129,7 @@ The answers: `Unpublished web page 68 (en).` and then `Published web page 68 (en
 
 The answer: `Deleted web page 68 (en).`
 
-## The same flow in C#
+## The same flow in C\# { #the-same-flow-in-csharp }
 
 ```csharp
 using System.Text.Json;

@@ -33,6 +33,8 @@ Packages ship their XML documentation, and the build treats a broken `<see cref>
 
 The site is built with MkDocs Material. Most pages are hand-written Markdown in `docs/`. The command pages mix both. There is one page for each area of commands, `docs/commands/<area>/index.md`, with a section for every command in it. The parts between `<!-- relay:begin NAME -->` and `<!-- relay:end NAME -->` are generated (a name ends in the verb, as in `parameters:create-web-page`), and everything else is yours to edit.
 
+A heading that ends in `#`, such as one about C#, loses it unless the `#` is escaped (`## The same in C\#`), because Markdown reads it as the closing hashes of the heading.
+
 Generated from the code and its XML docs:
 
 - the list of commands at the top of each area page, and in each command's section the table at the top, its parameters and its result, as well as the [types](reference/types.md) page
